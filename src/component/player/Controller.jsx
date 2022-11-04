@@ -7,6 +7,7 @@ import {
   faPause,
   faPlay,
   faRepeat,
+  faStop,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -28,6 +29,10 @@ export default function Controller({
     if (type === "pause") {
       stopAnimation();
     }
+    if (type === "stop") {
+      stopAnimation();
+      changeConfig("globalFrame", 0);
+    }
     if (type === "repeat") {
       setIsRepeat(!isRepeat);
       // アニメーションは一回止めてしまう
@@ -40,16 +45,34 @@ export default function Controller({
       }
     }
     if (type === "next") {
-      changeConfig("globalFrame", globalFrame + 1);
+      // 最大からもう1個→押したとき、0に戻す
+      let value = globalFrame + 1;
+      if (value >= maxFrame) {
+        value = 0;
+      }
+      changeConfig("globalFrame", value);
     }
     if (type === "prev") {
-      changeConfig("globalFrame", globalFrame - 1);
+      let value = globalFrame - 1;
+      if (value <= 0) {
+        value = maxFrame - 1;
+      }
+      changeConfig("globalFrame", value);
     }
   };
   return (
     <div css={styles.container} className="controller" data-testid="controller">
       <ul css={styles.wrapper}>
         <li css={[styles.li, styles.playLi]}>
+          <button
+            type="button"
+            onClick={control}
+            data-type="stop"
+            title="stop"
+            css={[styles.button, styles.stop]}
+          >
+            <FontAwesomeIcon icon={faStop} />
+          </button>
           {isRunning ? (
             <button
               type="button"
@@ -145,8 +168,8 @@ const styles = {
     list-style: none;
   `,
   playLi: css`
-    margin-left: 60px;
-    margin-right: 38px;
+    margin-left: 30px;
+    margin-right: 10px;
   `,
   frame: css`
     width: 2em;
@@ -178,16 +201,12 @@ const styles = {
     cursor: pointer;
     height: 31px;
   `,
-  oldButton: css`
-    border: none;
-    color: #fafafa;
-    padding: 0.2rem 1rem 0.3rem;
-    text-align: center;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
+  stop: css`
+    background-color: #e53935;
+    margin-right: 0.5em;
+    :hover {
+      background-color: #c62828;
+    }
   `,
   play: css`
     background-color: #2196f3;
@@ -213,8 +232,7 @@ const styles = {
     margin-left: 0.5rem;
   `,
   repeatOn: css`
-    background-color: #e0e0e0;
-    color: #424242;
+    background-color: #81c784;
     margin-left: 0.5rem;
   `,
   prev: css`
