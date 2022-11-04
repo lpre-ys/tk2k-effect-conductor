@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useState } from "react";
-import { FaRegCopy } from "react-icons/fa";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
 export default function Export({ configList, maxFrame }) {
@@ -73,7 +74,8 @@ export default function Export({ configList, maxFrame }) {
         onClick={handleExport}
         disabled={disabled}
       >
-        <FaRegCopy css={styles.icon} />
+        <FontAwesomeIcon icon={faCopy} css={styles.icon} />
+        {/* <FaRegCopy css={styles.icon} /> */}
         COPY!!
       </button>
     </div>
@@ -120,7 +122,8 @@ const styles = {
   `,
   icon: css`
     position: absolute;
-    top: 0.5em;
-    left: 0.6em;
+    font-size: 1.1em;
+    top: 0.4em;
+    left: 0.5em;
   `,
 };

@@ -8,7 +8,6 @@ import makeTransparentImage from "./util/makeTransparentImage";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
-import "./icon/LigatureSymbols.woff";
 
 const INIT_MAX_FRAME = 20;
 

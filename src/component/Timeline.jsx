@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
-import { FaPlus, FaRegCopy, FaTrashAlt } from "react-icons/fa";
 import TimeCelView from "./timeline/TimeCelView";
 
 const FRAME_SIZE = 20;
@@ -52,11 +54,12 @@ export default function Timeline({
       <h1 css={styles.header}>タイムライン</h1>
       <div>
         <button css={styles.button} type="button" onClick={handleAdd}>
-          <FaPlus css={styles.icon} />
+          <FontAwesomeIcon icon={faPlus} css={styles.icon} />
           追加
         </button>
         <button css={styles.button} type="button" onClick={handleCopy}>
-          <FaRegCopy css={styles.icon} />
+          <FontAwesomeIcon icon={faCopy} css={styles.icon} />
+          {/* <FaRegCopy css={styles.icon} /> */}
           コピー
         </button>
         <button
@@ -69,7 +72,7 @@ export default function Timeline({
           onClick={handleDelete}
           disabled={configList.length < 2}
         >
-          <FaTrashAlt css={styles.icon} />
+          <FontAwesomeIcon icon={faTrashAlt} css={styles.icon} />
           削除
         </button>
       </div>

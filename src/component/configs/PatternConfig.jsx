@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { FaExclamation } from "react-icons/fa";
 import PatternImage from "./Pattern/PatternImage";
 
 export default function PatternConfig({ config, update, image, bgColor }) {
@@ -54,7 +55,8 @@ export default function PatternConfig({ config, update, image, bgColor }) {
       <h2>
         パターン
         {!validateAll() && (
-          <FaExclamation
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
             css={styles.exIcon}
             onClick={() => {
               // RESET
@@ -109,11 +111,12 @@ const styles = {
     color: #b71c1c;
   `,
   exIcon: css`
-    font-size: 0.8em;
     color: #b71c1c;
     cursor: pointer;
+    margin-left: 0.2em;
+    width: 1em;
     :hover {
-      font-size: 0.9em;
+      font-size: 1.1em;
       color: #e53935;
     }
   `,

@@ -1,6 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import {
+  faBackwardStep,
+  faForwardStep,
+  faPause,
+  faPlay,
+  faRepeat,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Controller({
   globalFrame,
@@ -12,8 +20,8 @@ export default function Controller({
   playAnimation,
   stopAnimation,
 }) {
-  const control = ({ target }) => {
-    const type = target.dataset.type;
+  const control = ({ currentTarget }) => {
+    const type = currentTarget.dataset.type;
     if (type === "play") {
       playAnimation();
     }
@@ -26,7 +34,7 @@ export default function Controller({
       stopAnimation();
     }
     if (type === "frame") {
-      const value = parseInt(target.value) - 1; // 表示だけ1大きいので、ここで吸収しておく
+      const value = parseInt(currentTarget.value) - 1; // 表示だけ1大きいので、ここで吸収しておく
       if (value < maxFrame && value > -1) {
         changeConfig("globalFrame", value);
       }
@@ -49,7 +57,9 @@ export default function Controller({
               data-type="pause"
               title="pause"
               css={[styles.button, styles.pause]}
-            ></button>
+            >
+              <FontAwesomeIcon icon={faPause} />
+            </button>
           ) : (
             <button
               type="button"
@@ -57,7 +67,9 @@ export default function Controller({
               data-type="play"
               title="play"
               css={[styles.button, styles.play]}
-            ></button>
+            >
+              <FontAwesomeIcon icon={faPlay} css={styles.playIcon} />
+            </button>
           )}
           <button
             type="button"
@@ -65,7 +77,9 @@ export default function Controller({
             title="repeat"
             css={[styles.button, isRepeat ? styles.repeatOn : styles.repeatOff]}
             onClick={control}
-          ></button>
+          >
+            <FontAwesomeIcon icon={faRepeat} />
+          </button>
         </li>
         <li css={styles.li}>
           <button
@@ -74,7 +88,9 @@ export default function Controller({
             title="prev"
             css={[styles.button, styles.prev]}
             onClick={control}
-          />
+          >
+            <FontAwesomeIcon icon={faBackwardStep} />
+          </button>
           <label>
             <input
               type="number"
@@ -91,7 +107,9 @@ export default function Controller({
             title="next"
             css={[styles.button, styles.next]}
             onClick={control}
-          />
+          >
+            <FontAwesomeIcon icon={faForwardStep} />
+          </button>
         </li>
         <li css={styles.liMaxFrame}>
           <label>
@@ -151,6 +169,18 @@ const styles = {
   button: css`
     border: none;
     color: #fafafa;
+    padding: 0.3rem 1rem 0.4rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 31px;
+  `,
+  oldButton: css`
+    border: none;
+    color: #fafafa;
     padding: 0.2rem 1rem 0.3rem;
     text-align: center;
     text-decoration: none;
@@ -162,21 +192,17 @@ const styles = {
   play: css`
     background-color: #2196f3;
     width: 5rem;
-    :before {
-      font-family: "Icon";
-      content: "\\E106";
-    }
     :hover {
       background-color: #0277bd;
     }
   `,
+  playIcon: css`
+    position: relative;
+    left: 2px;
+  `,
   pause: css`
     background-color: #ff9800;
     width: 5rem;
-    :before {
-      font-family: "Icon";
-      content: "\\E09d";
-    }
     :hover {
       background-color: #ef6c00;
     }
@@ -185,27 +211,15 @@ const styles = {
     background-color: #bdbdbd;
     color: #eeeeee;
     margin-left: 0.5rem;
-    :before {
-      font-family: "Icon";
-      content: "\\E110";
-    }
   `,
   repeatOn: css`
     background-color: #e0e0e0;
     color: #424242;
     margin-left: 0.5rem;
-    :before {
-      font-family: "Icon";
-      content: "\\E110";
-    }
   `,
   prev: css`
     background-color: #e0e0e0;
     color: #424242;
-    :before {
-      font-family: "Icon";
-      content: "\\E00f";
-    }
     :hover {
       color: #fafafa;
       background-color: #757575;
@@ -214,10 +228,6 @@ const styles = {
   next: css`
     background-color: #e0e0e0;
     color: #424242;
-    :before {
-      font-family: "Icon";
-      content: "\\E096";
-    }
     :hover {
       background-color: #757575;
       color: #fafafa;

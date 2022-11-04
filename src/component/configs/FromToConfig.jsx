@@ -1,8 +1,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import {
+  faAngleDown,
+  faAngleRight,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { FaAngleDown, FaAngleRight, FaExclamation } from "react-icons/fa";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 
@@ -45,19 +50,22 @@ export default function FromToConfig({ type, name, config, update }) {
         }}
       >
         {isOption ? (
-          <FaAngleDown
-            data-testid="from-to-config-icon-down"
+          <FontAwesomeIcon
+            icon={faAngleDown}
             css={styles.headerIcon}
+            data-testid="from-to-config-icon-down"
           />
         ) : (
-          <FaAngleRight
-            data-testid="from-to-config-icon-right"
+          <FontAwesomeIcon
+            icon={faAngleRight}
             css={styles.headerIcon}
+            data-testid="from-to-config-icon-right"
           />
         )}
         {name}
         {!validateAll() && (
-          <FaExclamation
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
             css={styles.exIcon}
             onClick={(e) => {
               // RESET
@@ -104,14 +112,15 @@ const styles = {
   header: css`
     cursor: pointer;
     position: relative;
-    padding-left: 1.4em;
+    padding-left: 1.2em;
     user-select: none;
   `,
   headerIcon: css`
     color: #0097a7;
     position: absolute;
-    top: 0.4em;
-    left: 0.35em;
+    top: 0.55em;
+    left: 0.4em;
+    font-size: 1rem;
   `,
   wrapper: css`
     margin: 0 0.5em;
@@ -126,12 +135,13 @@ const styles = {
     color: #b71c1c;
   `,
   exIcon: css`
-    font-size: 0.8em;
     color: #b71c1c;
     cursor: pointer;
+    margin-left: 0.2em;
     :hover {
-      font-size: 0.9em;
+      font-size: 1.1em;
       color: #e53935;
     }
+    width: 1em;
   `,
 };

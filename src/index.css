@@ -16,9 +16,3 @@ code {
 .effect {
   display: flex;
 }
-
-@font-face {
-  font-family: "Icon";
-  src: local("LigatureSymbols"),
-    url("./icon/LigatureSymbols.woff") format("woff");
-}

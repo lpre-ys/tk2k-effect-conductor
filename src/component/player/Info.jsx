@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { FaRegWindowClose } from "react-icons/fa";
+import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Info({ msg, setMsg }) {
   if (msg) {
@@ -11,7 +12,8 @@ export default function Info({ msg, setMsg }) {
           <p css={styles.msg}>{msg}</p>
         </div>
         <h3 css={styles.header}>INFO</h3>
-        <FaRegWindowClose
+        <FontAwesomeIcon
+          icon={faCircleXmark}
           css={styles.closeIcon}
           onClick={() => {
             setMsg("");

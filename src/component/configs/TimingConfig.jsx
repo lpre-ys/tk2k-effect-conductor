@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { FaExclamation } from "react-icons/fa";
 
 export default function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
@@ -71,7 +72,8 @@ export default function TimingConfig({ config, update }) {
       <h2>
         表示タイミング
         {!validateAll() && (
-          <FaExclamation
+          <FontAwesomeIcon
+            icon={faTriangleExclamation}
             css={styles.exIcon}
             onClick={handleReset}
             data-testid="timing-config-icon"
@@ -123,11 +125,11 @@ const styles = {
     color: #b71c1c;
   `,
   exIcon: css`
-    font-size: 0.8em;
     color: #b71c1c;
+    margin-left: 0.2em;
     cursor: pointer;
     :hover {
-      font-size: 0.9em;
+      font-size: 1.1em;
       color: #e53935;
     }
   `,

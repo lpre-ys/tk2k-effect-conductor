@@ -2,10 +2,11 @@
 
 import { css } from "@emotion/react";
 import { useState } from "react";
-import { FaRegImage } from "react-icons/fa";
 import Loader from "./material/Loader";
 import Patterns from "./material/Patterns";
 import MaterialImage from "./material/MaterialImage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
 
 export default function Material({
   material,
@@ -30,7 +31,7 @@ export default function Material({
               }}
               data-testid="material-toggle-is-show-image"
             >
-              <FaRegImage css={styles.icon} />
+              <FontAwesomeIcon icon={faImage} css={styles.icon} />
               プレビュー
             </button>
             <MaterialImage
