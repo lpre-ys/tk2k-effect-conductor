@@ -1,0 +1,4 @@
+const FRAME_SIZE = 20;
+const TIMELINE_HEIGHT = 28;
+
+export { FRAME_SIZE, TIMELINE_HEIGHT };

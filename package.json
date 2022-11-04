@@ -2,20 +2,34 @@
   "name": "tk2k-easing-effect",
   "version": "0.1.0",
   "private": true,
+  "author": "lpre_ys",
+  "description": "tk2k effect maker",
   "dependencies": {
+    "@emotion/react": "^11.10.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "d3-ease": "^3.0.1",
+    "iconv-lite": "^0.6.3",
+    "konva": "^8.3.13",
+    "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.2",
+    "react-hook-form": "^7.37.0",
+    "react-icons": "^4.6.0",
+    "react-konva": "^18.2.2",
     "react-scripts": "5.0.1",
+    "use-image": "^1.1.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-build": "electron-builder --win --x64 --dir"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +48,32 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^21.1.1",
+    "electron-builder": "^23.6.0"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(konva|d3-ease)).*\\.js$"
+    ]
+  },
+  "main": "public/electron.js",
+  "homepage": "./",
+  "build": {
+    "appId": "com.lpre-ys.effect-tool",
+    "productName": "tk2KEffectTool",
+    "files": [
+      "!fallback",
+      "electron/**/*",
+      "build/**/*",
+      "package.json"
+    ],
+    "extraFiles": [
+      "fallback"
+    ],
+    "directories": {
+      "buildResources": "asset"
+    }
   }
 }
