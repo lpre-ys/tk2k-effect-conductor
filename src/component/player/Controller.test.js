@@ -101,35 +101,35 @@ describe("repeat", () => {
 });
 
 describe("Prev / Next", () => {
-  test("click prev, then call changeConfig with globalFrame -1", () => {
+  test("click prev, then call setGlobalFrame with globalFrame -1", () => {
     const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={3} changeConfig={mockFn} />);
+    render(<Controller maxFrame={10} globalFrame={3} setGlobalFrame={mockFn} />);
 
     const target = screen.getByTitle("prev");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith('globalFrame', 2);
+    expect(mockFn).toBeCalledWith(2);
   });
-  test("click next, then call changeConfig with globalFrame +1", () => {
+  test("click next, then call setGlobalFrame with globalFrame +1", () => {
     const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={3} changeConfig={mockFn} />);
+    render(<Controller maxFrame={10} globalFrame={3} setGlobalFrame={mockFn} />);
 
     const target = screen.getByTitle("next");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith('globalFrame', 4);
+    expect(mockFn).toBeCalledWith(4);
   });
 });
 
 describe("frame", () => {
-  test("change, then call changeConfig with globalFrame value - 1", () => {
+  test("change, then call setGlobalFrame with globalFrame value - 1", () => {
     const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={0} changeConfig={mockFn} />);
+    render(<Controller maxFrame={10} globalFrame={0} setGlobalFrame={mockFn} />);
 
     const target = screen.getByTestId("controller-frame");
     fireEvent.change(target, { target: { value: "7" } });
 
-    expect(mockFn).toBeCalledWith('globalFrame', 6);
+    expect(mockFn).toBeCalledWith(6);
   });
 });
 
@@ -140,13 +140,13 @@ describe("maxFrame", () => {
       <Controller
         maxFrame={10}
         globalFrame={0}
-        changeConfig={mockFn}
+        setMaxFrame={mockFn}
       />
     );
 
     const target = screen.getByTestId("controller-max-frame");
     fireEvent.change(target, { target: { value: "30" } });
 
-    expect(mockFn).toBeCalledWith("maxFrame", "30");
+    expect(mockFn).toBeCalledWith("30");
   });
 });

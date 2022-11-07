@@ -1,9 +1,7 @@
 import {
   fireEvent,
-  queryAllByTestId,
   render,
-  screen,
-  waitFor,
+  screen
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Player from "./Player";
@@ -17,7 +15,7 @@ jest.mock("react-konva", () => {
     Layer: ({ children }) => {
       return <div data-testid="mock-layer">{children}</div>;
     },
-    Line: ({ }) => {
+    Line: () => {
       return <div data-testid="mock-line"></div>;
     },
   };
@@ -33,12 +31,7 @@ jest.mock("./player/Export", () => ({ maxFrame, configList }) => {
 });
 describe("Export", () => {
   test("maxFrame is props.frameConfig.maxFrame", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByText("maxFrame: 12");
     expect(target).toBeInTheDocument();
@@ -46,7 +39,8 @@ describe("Export", () => {
   test("configList is props.celConfigList", () => {
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
+        maxFrame={10}
+        globalFrame={0}
         celConfigList={[defaultCelConfig, defaultCelConfig]}
         material={defaultMaterial}
       />
@@ -59,23 +53,13 @@ describe("Export", () => {
 
 describe("ViewSettings", () => {
   test("INIT bgColor is transparent", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByLabelText("背景色:");
     expect(target).toHaveValue("transparent");
   });
   test("change bgColor, then update bgColor", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByLabelText("背景色:");
 
@@ -83,35 +67,20 @@ describe("ViewSettings", () => {
     expect(target).toHaveValue("red");
   });
   test("INIT isShowCelBorder is false", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     expect(target).not.toBeChecked();
   });
   test("click once checkbox, then isShowCelBorder is true", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     userEvent.click(target);
     expect(target).toBeChecked();
   });
   test("click twice checkbox, then isShowCelBorder is false", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     userEvent.click(target);
@@ -131,34 +100,19 @@ jest.mock("./player/Background", () => ({ color, image }) => {
 
 describe("background", () => {
   test("has component", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByTestId("mock-background");
     expect(target).toBeInTheDocument();
   });
   test("init color is transparent", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByText("color: transparent");
     expect(target).toBeInTheDocument();
   });
   test("init image is null", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 12, globalFrame: 34 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
 
     const target = screen.getByText("image: null");
     expect(target).toBeInTheDocument();
@@ -181,12 +135,7 @@ jest.mock("./player/Cel", () => ({ id, setMsg }) => {
 });
 describe("Cel", () => {
   test("celConfigList is empty, then no Cel component", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const target = screen.queryAllByTestId("mock-cel");
     expect(target).toHaveLength(0);
@@ -194,7 +143,8 @@ describe("Cel", () => {
   test("celConfigList length is 1, then 1 Cel component", () => {
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
+        maxFrame={10}
+        globalFrame={0}
         celConfigList={[defaultCelConfig]}
         material={defaultMaterial}
       />
@@ -206,7 +156,8 @@ describe("Cel", () => {
   test("celConfigList length is 3, then 3 Cel component", () => {
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
+        maxFrame={10}
+        globalFrame={0}
         celConfigList={[defaultCelConfig, defaultCelConfig, defaultCelConfig]}
         material={defaultMaterial}
       />
@@ -219,34 +170,19 @@ describe("Cel", () => {
 
 describe("Controller", () => {
   test("has component", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const target = screen.queryByTestId("controller");
     expect(target).toBeInTheDocument();
   });
   test("INIT then show Play button", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const target = screen.getByTitle("play");
     expect(target).toBeInTheDocument();
   });
   test("start, then show Pause button", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const play = screen.getByTitle("play");
     userEvent.click(play);
@@ -255,12 +191,7 @@ describe("Controller", () => {
     expect(target).toBeInTheDocument();
   });
   test("pause, then show Play button", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const play = screen.getByTitle("play");
     userEvent.click(play);
@@ -270,75 +201,68 @@ describe("Controller", () => {
 
     expect(screen.getByTitle("play")).toBeInTheDocument();
   });
-  test('repeat, then set Repeat ON', () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+  test("repeat, then set Repeat ON", () => {
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
-    const repeat = screen.getByTitle('repeat');
+    const repeat = screen.getByTitle("repeat");
     userEvent.click(repeat);
 
-    expect(screen.getByTitle('repeat')).toHaveStyle({ color: '#fafafa' })
+    expect(screen.getByTitle("repeat")).toHaveStyle({ color: "#fafafa" });
   });
 
-  test("change frame, then call changeConfig", () => {
+  test("change frame, then call setGlobalFrame", () => {
     const mockFn = jest.fn();
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
+        maxFrame={10}
+        globalFrame={0}
         celConfigList={[]}
-        changeConfig={mockFn}
+        setGlobalFrame={mockFn}
       />
     );
 
     const target = screen.getByTestId("controller-frame");
     fireEvent.change(target, { target: { value: "5" } });
 
-    expect(mockFn).toBeCalledWith("globalFrame", 4);
+    expect(mockFn).toBeCalledWith(4);
   });
-  test('next, then call changeConfig +1', () => {
+  test("next, then call setGlobalFrame +1", () => {
     const mockFn = jest.fn();
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 5 }}
+        maxFrame={10}
+        globalFrame={5}
         celConfigList={[]}
-        changeConfig={mockFn}
+        setGlobalFrame={mockFn}
       />
     );
 
-    const target = screen.getByTitle('next');
+    const target = screen.getByTitle("next");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith('globalFrame', 6);
-  })
-  test('prev, then call changeConfig -1', () => {
+    expect(mockFn).toBeCalledWith(6);
+  });
+  test("prev, then call setGlobalFrame -1", () => {
     const mockFn = jest.fn();
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 5 }}
+        maxFrame={10}
+        globalFrame={5}
         celConfigList={[]}
-        changeConfig={mockFn}
+        setGlobalFrame={mockFn}
       />
     );
 
-    const target = screen.getByTitle('prev');
+    const target = screen.getByTitle("prev");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith('globalFrame', 4);
-  })
+    expect(mockFn).toBeCalledWith(4);
+  });
 });
 
 describe("Info", () => {
   test("INIT, then no component", () => {
-    render(
-      <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
-        celConfigList={[]}
-      />
-    );
+    render(<Player maxFrame={10} globalFrame={0} celConfigList={[]} />);
 
     const target = screen.queryByText("INFO");
     expect(target).not.toBeInTheDocument();
@@ -346,7 +270,8 @@ describe("Info", () => {
   test("click Cel, then show message", () => {
     render(
       <Player
-        frameConfig={{ maxFrame: 10, globalFrame: 0 }}
+        maxFrame={10}
+        globalFrame={0}
         celConfigList={[defaultCelConfig]}
         material={defaultMaterial}
       />

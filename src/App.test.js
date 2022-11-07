@@ -11,10 +11,6 @@ const INIT_MATERIAL = {
   transparentColor: null,
   bgColor: "transparent",
 };
-// const INIT_CONFIG = {
-//   maxFrame: 20, // INIT_MAX_FRAME
-//   globalFrame: 0,
-// };
 
 const INIT_CEL_CONFIG = {
   x: {
@@ -205,24 +201,28 @@ jest.mock("./component/Player", () => {
   return {
     __esModule: true,
     default: forwardRef(
-      ({ material, frameConfig, celConfigList, changeConfig }, ref) => {
+      ({ material, maxFrame, setMaxFrame, globalFrame, setGlobalFrame, celConfigList, changeConfig }, ref) => {
         ref.current = { pause: mockPause, playpause: mockPlaypause };
         return (
           <div data-testid="player">
             <p data-testid="player-material-json">{JSON.stringify(material)}</p>
-            <p data-testid="player-max-frame">{frameConfig.maxFrame}</p>
-            <p data-testid="player-global-frame">{frameConfig.globalFrame}</p>
+            <p data-testid="player-max-frame">{maxFrame}</p>
+            <p data-testid="player-global-frame">{globalFrame}</p>
             <p data-testid="player-cel-config-list-json">
               {JSON.stringify(celConfigList)}
             </p>
             <input
               type="text"
-              data-testid="player-change-config"
+              data-testid="player-set-global-frame"
               onChange={({ target }) => {
-                const [type, value] = target.value
-                  .split(":")
-                  .map((v) => v.trim());
-                changeConfig(type, value);
+                setGlobalFrame(target.value)
+              }}
+            />
+            <input
+              type="text"
+              data-testid="player-set-max-frame"
+              onChange={({ target }) => {
+                setMaxFrame(target.value)
               }}
             />
           </div>
@@ -259,41 +259,42 @@ describe("<Player />", () => {
     const target = screen.getByTestId("player-cel-config-list-json");
     expect(JSON.parse(target.textContent)).toEqual([INIT_CEL_CONFIG]);
   });
-  describe("changeConfig", () => {
-    test("type: maxFrame, then update maxFrame", () => {
-      render(<App />);
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "maxFrame: 42" },
-      });
-      expect(screen.getByTestId("player-max-frame")).toHaveTextContent("42");
+  test("setMaxFrame, then update maxFrame", () => {
+    render(<App />);
+    fireEvent.change(screen.getByTestId("player-set-max-frame"), {
+      target: { value: "42" },
     });
+    expect(screen.getByTestId("player-max-frame")).toHaveTextContent("42");
+  });
+
+  describe("changeConfig", () => {
 
     test("type: globalFrame, value: 0 then update globalFrame", () => {
       render(<App />);
       // 初期値が0なので、1回7に変えてから0に戻して、変わった事を確認する
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 7" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "7" },
       });
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("7");
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 0" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "0" },
       });
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("0");
     });
     test("type: globalFrame, value: max - 1 then update globalFrame", () => {
       render(<App />);
       // 初期値でのテスト
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 19" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "19" },
       });
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("19");
 
       // max更新後のテスト
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "maxFrame: 30" },
+      fireEvent.change(screen.getByTestId("player-set-max-frame"), {
+        target: { value: "30" },
       });
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 29" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "29" },
       });
 
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("29");
@@ -301,25 +302,25 @@ describe("<Player />", () => {
 
     test("type: globalFrame, value: -1 then no update", () => {
       render(<App />);
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: -1" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "-1" },
       });
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("0");
     });
     test("type: globalFrame, value: max then no update", () => {
       render(<App />);
       // 初期値でのテスト
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 20" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "20" },
       });
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("0");
 
       // max更新後のテスト
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "maxFrame: 30" },
+      fireEvent.change(screen.getByTestId("player-set-max-frame"), {
+        target: { value: "30" },
       });
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 30" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "30" },
       });
 
       expect(screen.getByTestId("player-global-frame")).toHaveTextContent("0");
@@ -334,8 +335,8 @@ describe("<Player />", () => {
     test("Left key down, then call ref.pause and globalFrame -1", () => {
       render(<App />);
       // globalFrameの初期値が0だと面倒なので、最初に適当な値（7）にでもしておく。
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 7" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "7" },
       });
       fireEvent.keyDown(document, {
         target: { tagName: "test" },
@@ -348,8 +349,8 @@ describe("<Player />", () => {
     test("Right key down, then call ref.pause and globalFrame +1", () => {
       render(<App />);
       // globalFrameの初期値が0だと面倒なので、最初に適当な値（7）にでもしておく。
-      fireEvent.change(screen.getByTestId("player-change-config"), {
-        target: { value: "globalFrame: 7" },
+      fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+        target: { value: "7" },
       });
       fireEvent.keyDown(document, {
         target: { tagName: "test" },
@@ -439,8 +440,8 @@ describe("<Configs />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -457,8 +458,8 @@ describe("<Configs />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -475,8 +476,8 @@ describe("<Configs />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -561,8 +562,9 @@ jest.mock(
     ({
       selected,
       handler,
-      frameConfig,
-      handleChangeConfig,
+      maxFrame,
+      globalFrame,
+      setGlobalFrame,
       configList,
       handleAdd,
       handleDelete,
@@ -571,8 +573,8 @@ jest.mock(
       return (
         <div data-testid="timeline">
           <p data-testid="timeline-selected">{selected}</p>
-          <p data-testid="timeline-max-frame">{frameConfig.maxFrame}</p>
-          <p data-testid="timeline-global-frame">{frameConfig.globalFrame}</p>
+          <p data-testid="timeline-max-frame">{maxFrame}</p>
+          <p data-testid="timeline-global-frame">{globalFrame}</p>
           <p data-testid="timeline-config-list">{JSON.stringify(configList)}</p>
           <input
             type="text"
@@ -583,12 +585,9 @@ jest.mock(
           />
           <input
             type="text"
-            data-testid="timeline-change-config"
+            data-testid="timeline-set-global-frame"
             onChange={({ target }) => {
-              const [type, value] = target.value
-                .split(":")
-                .map((v) => v.trim());
-              handleChangeConfig(type, value);
+              setGlobalFrame(target.value);
             }}
           />
           <button
@@ -642,41 +641,41 @@ describe("<Timeline />", () => {
       expect(target).toHaveTextContent("42");
     });
   });
-  test("frameConfig is App.frameConfig", () => {
+  test("globalFrame is App.state.globalFrame", () => {
     render(<App />);
 
-    const targetG = screen.getByTestId("timeline-global-frame");
-    const targetM = screen.getByTestId("timeline-max-frame");
-    expect(targetG).toHaveTextContent(0);
-    expect(targetM).toHaveTextContent(20);
+    const target = screen.getByTestId("timeline-global-frame");
+    expect(target).toHaveTextContent(0);
 
     // 別のコンポーネント経由で変更して、値が追従すること
-    fireEvent.change(screen.getByTestId("player-change-config"), {
-      target: { value: "globalFrame: 12" },
+    fireEvent.change(screen.getByTestId("player-set-global-frame"), {
+      target: { value: "12" },
     });
-    expect(targetG).toHaveTextContent(12);
-    fireEvent.change(screen.getByTestId("player-change-config"), {
-      target: { value: "maxFrame: 26" },
-    });
-    expect(targetM).toHaveTextContent(26);
+    expect(target).toHaveTextContent(12);
   });
-  test("handleChangeConfig is change App.frameConfig", () => {
+  test("maxFrame is App.state.maxFrame", () => {
     render(<App />);
 
-    const targetG = screen.getByTestId("timeline-global-frame");
-    const targetM = screen.getByTestId("timeline-max-frame");
-    expect(targetG).toHaveTextContent(0);
-    expect(targetM).toHaveTextContent(20);
+    const target = screen.getByTestId("timeline-max-frame");
+    expect(target).toHaveTextContent(20);
+
+    // 別のコンポーネント経由で変更して、値が追従すること
+    fireEvent.change(screen.getByTestId("player-set-max-frame"), {
+      target: { value: "26" },
+    });
+    expect(target).toHaveTextContent(26);
+  });
+  test("setGlobalFrame is change App.setGlobalFrame", () => {
+    render(<App />);
+
+    const target = screen.getByTestId("timeline-global-frame");
+    expect(target).toHaveTextContent(0);
 
     // Timeline経由で値を変更して、反映されること
-    fireEvent.change(screen.getByTestId("timeline-change-config"), {
-      target: { value: "globalFrame: 17" },
+    fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+      target: { value: "17" },
     });
-    expect(targetG).toHaveTextContent(17);
-    fireEvent.change(screen.getByTestId("timeline-change-config"), {
-      target: { value: "maxFrame: 99" },
-    });
-    expect(targetM).toHaveTextContent(99);
+    expect(target).toHaveTextContent(17);
   });
   test("configList is App.celConfigList", () => {
     render(<App />);
@@ -698,8 +697,8 @@ describe("<Timeline />", () => {
     test("added, then start is globalFrame + 1", () => {
       render(<App />);
 
-      fireEvent.change(screen.getByTestId("timeline-change-config"), {
-        target: { value: "globalFrame: 3" },
+      fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+        target: { value: "3" },
       });
       userEvent.click(screen.getByTestId("timeline-add"));
 
@@ -711,11 +710,11 @@ describe("<Timeline />", () => {
     test("added, then volume is maxFrame - globalFrame", () => {
       render(<App />);
 
-      fireEvent.change(screen.getByTestId("timeline-change-config"), {
-        target: { value: "globalFrame: 9" },
+      fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+        target: { value: "9" },
       });
-      fireEvent.change(screen.getByTestId("timeline-change-config"), {
-        target: { value: "maxFrame: 11" },
+      fireEvent.change(screen.getByTestId("player-set-max-frame"), {
+        target: { value: "11" },
       });
       userEvent.click(screen.getByTestId("timeline-add"));
 
@@ -787,8 +786,8 @@ describe("<Timeline />", () => {
 
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -847,8 +846,8 @@ describe("<Timeline />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -874,8 +873,8 @@ describe("<Timeline />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -901,8 +900,8 @@ describe("<Timeline />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -928,8 +927,8 @@ describe("<Timeline />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }
@@ -948,8 +947,8 @@ describe("<Timeline />", () => {
       render(<App />);
       // globalFrameを変える事により、startで判別がつくようにする
       for (let i = 0; i < 4; i++) {
-        fireEvent.change(screen.getByTestId("timeline-change-config"), {
-          target: { value: `globalFrame: ${10 + i}` },
+        fireEvent.change(screen.getByTestId("timeline-set-global-frame"), {
+          target: { value: `${10 + i}` },
         });
         userEvent.click(screen.getByTestId("timeline-add"));
       }

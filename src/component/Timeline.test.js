@@ -2,14 +2,13 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Timeline from "./Timeline";
 
-const defaultConfig = { maxFrame: 10, globalFrame: 0 };
-
 describe("Buttons", () => {
   test("add,　then Call props.handleAdd", () => {
     const mockFn = jest.fn();
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={[]}
         handleAdd={mockFn}
       />
@@ -22,7 +21,8 @@ describe("Buttons", () => {
     const mockFn = jest.fn();
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={[]}
         handleCopy={mockFn}
       />
@@ -35,7 +35,8 @@ describe("Buttons", () => {
     const mockFn = jest.fn();
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={[1]}
         handleDelete={mockFn}
       />
@@ -48,7 +49,8 @@ describe("Buttons", () => {
     const mockFn = jest.fn();
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={[1, 2]}
         handleDelete={mockFn}
       />
@@ -86,20 +88,22 @@ jest.mock(
 describe("TimeCelView", () => {
   test("configList.length = 1, then has 1 TimeCelView", () => {
     // 1回
-    render(<Timeline frameConfig={defaultConfig} configList={[1]} />);
+    render(<Timeline maxFrame={10} globalFrame={0} configList={[1]} />);
 
     const target = screen.queryAllByTestId("time-cel-view");
     expect(target).toHaveLength(1);
   });
   test("configList.length = 4, then has 4 TimeCelView", () => {
     // 複数回
-    render(<Timeline frameConfig={defaultConfig} configList={[1, 2, 3, 4]} />);
+    render(
+      <Timeline maxFrame={10} globalFrame={0} configList={[1, 2, 3, 4]} />
+    );
 
     const targets = screen.queryAllByTestId("time-cel-view");
     expect(targets).toHaveLength(4);
   });
   test("index is configList index", () => {
-    render(<Timeline frameConfig={defaultConfig} configList={[1, 2, 3]} />);
+    render(<Timeline maxFrame={10} globalFrame={0} configList={[1, 2, 3]} />);
 
     const targets = screen.queryAllByTestId("time-cel-view-index");
     expect(targets[0]).toHaveTextContent("index: 0");
@@ -109,7 +113,8 @@ describe("TimeCelView", () => {
   test("config is configList", () => {
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={["testconfig1", "testconfig2"]}
       />
     );
@@ -121,7 +126,12 @@ describe("TimeCelView", () => {
   test("handler is props.handler", () => {
     const mockFn = jest.fn();
     render(
-      <Timeline frameConfig={defaultConfig} configList={[1]} handler={mockFn} />
+      <Timeline
+        maxFrame={10}
+        globalFrame={0}
+        configList={[1]}
+        handler={mockFn}
+      />
     );
 
     userEvent.click(screen.getByTestId("time-cel-view-handler"));
@@ -131,23 +141,24 @@ describe("TimeCelView", () => {
   test("isSelected is only selected cel", () => {
     render(
       <Timeline
-        frameConfig={defaultConfig}
+        maxFrame={10}
+        globalFrame={0}
         configList={[1, 2, 3, 4, 5]}
         selected={3}
       />
     );
 
     const targets = screen.queryAllByTestId("time-cel-view-is-selected");
-    expect(targets[0]).toHaveTextContent('false');
-    expect(targets[1]).toHaveTextContent('false');
-    expect(targets[2]).toHaveTextContent('false');
-    expect(targets[3]).toHaveTextContent('true');
-    expect(targets[4]).toHaveTextContent('false');
+    expect(targets[0]).toHaveTextContent("false");
+    expect(targets[1]).toHaveTextContent("false");
+    expect(targets[2]).toHaveTextContent("false");
+    expect(targets[3]).toHaveTextContent("true");
+    expect(targets[4]).toHaveTextContent("false");
   });
 });
 
 test("has spacer", () => {
-  render(<Timeline frameConfig={defaultConfig} configList={[1]} />);
+  render(<Timeline maxFrame={10} globalFrame={0} configList={[1]} />);
 
   const target = screen.getByTestId("timeline-spacer");
   expect(target).toBeInTheDocument();

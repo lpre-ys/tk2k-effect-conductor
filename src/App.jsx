@@ -23,10 +23,8 @@ export default class App extends React.Component {
         transparentColor: null,
         bgColor: "transparent",
       },
-      config: {
-        maxFrame: INIT_MAX_FRAME,
-        globalFrame: 0,
-      },
+      maxFrame: INIT_MAX_FRAME,
+      globalFrame: 0,
       celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
       selectedCelId: 0,
     };
@@ -39,10 +37,8 @@ export default class App extends React.Component {
       window.appMenu.onReceiveNew(() => {
         // configとCelConfigのリセット
         this.setState({
-          config: {
-            maxFrame: INIT_MAX_FRAME,
-            globalFrame: 0,
-          },
+          maxFrame: INIT_MAX_FRAME,
+          globalFrame: 0,
           celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
           selectedCelId: 0,
         });
@@ -74,8 +70,8 @@ export default class App extends React.Component {
     });
   };
   handleAddCelConfig = () => {
-    const volume = this.state.config.maxFrame - this.state.config.globalFrame;
-    const start = this.state.config.globalFrame + 1;
+    const volume = this.state.maxFrame - this.state.globalFrame;
+    const start = this.state.globalFrame + 1;
     const newList = [...this.state.celConfigList, initCelConfig(start, volume)];
 
     // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
@@ -122,20 +118,18 @@ export default class App extends React.Component {
       selectedCelId: parseInt(value),
     });
   };
-  handleChangeConfig = (type, value) => {
-    if (type === "globalFrame") {
-      // バリデーションここでやる
-      if (value < 0) {
-        return;
-      }
-      if (value >= this.state.config.maxFrame) {
-        return;
-      }
+  setGlobalFrame = (value) => {
+    // バリデーションここでやる???
+    if (value < 0) {
+      return;
     }
-    this.setState((preConfig) => {
-      preConfig.config[type] = parseInt(value);
-      return preConfig;
-    });
+    if (value >= this.state.maxFrame) {
+      return;
+    }
+    this.setState({ globalFrame: parseInt(value) });
+  };
+  setMaxFrame = (value) => {
+    this.setState({ maxFrame: value });
   };
   handleChangeMaterial = (type, value) => {
     this.setState((preConfig) => {
@@ -190,13 +184,13 @@ export default class App extends React.Component {
       if (this.playerRef.current.pause !== null) {
         this.playerRef.current.pause();
       }
-      this.handleChangeConfig("globalFrame", this.state.config.globalFrame - 1);
+      this.setGlobalFrame(this.state.globalFrame - 1);
     }
     if (event.key === "ArrowRight") {
       if (this.playerRef.current.pause !== null) {
         this.playerRef.current.pause();
       }
-      this.handleChangeConfig("globalFrame", this.state.config.globalFrame + 1);
+      this.setGlobalFrame(this.state.globalFrame + 1);
     }
     if (event.key === " ") {
       if (event.target.tagName === "BUTTON") {
@@ -224,8 +218,10 @@ export default class App extends React.Component {
             />
             <Player
               material={this.state.material}
-              frameConfig={this.state.config}
-              changeConfig={this.handleChangeConfig}
+              maxFrame={this.state.maxFrame}
+              setMaxFrame={this.setMaxFrame}
+              globalFrame={this.state.globalFrame}
+              setGlobalFrame={this.setGlobalFrame}
               celConfigList={this.state.celConfigList}
               ref={this.playerRef}
             />
@@ -239,8 +235,9 @@ export default class App extends React.Component {
           <Timeline
             selected={this.state.selectedCelId}
             handler={this.handleChangeSelectedCel}
-            frameConfig={this.state.config}
-            handleChangeConfig={this.handleChangeConfig}
+            maxFrame={this.state.maxFrame}
+            globalFrame={this.state.globalFrame}
+            setGlobalFrame={this.setGlobalFrame}
             configList={this.state.celConfigList}
             handleAdd={this.handleAddCelConfig}
             handleDelete={this.handleDeleteCelConfig}

@@ -11,14 +11,15 @@ const FRAME_SIZE = 20;
 const TIMELINE_HEIGHT = 28;
 
 export default function Timeline({
-  frameConfig: { maxFrame, globalFrame },
+  maxFrame,
+  globalFrame,
   configList,
   handler,
   selected,
   handleAdd,
   handleDelete,
   handleCopy,
-  handleChangeConfig,
+  setGlobalFrame,
 }) {
   const scrollRef = useRef(null);
   const baseList = [];
@@ -28,7 +29,7 @@ export default function Timeline({
         <p
           css={styles.frameText}
           onClick={() => {
-            handleChangeConfig("globalFrame", i);
+            setGlobalFrame(i);
           }}
         >
           {i + 1}

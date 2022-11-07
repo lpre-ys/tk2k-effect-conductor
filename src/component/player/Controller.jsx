@@ -13,8 +13,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Controller({
   globalFrame,
+  setGlobalFrame,
   maxFrame,
-  changeConfig,
+  setMaxFrame,
   isRepeat,
   setIsRepeat,
   isRunning,
@@ -31,7 +32,7 @@ export default function Controller({
     }
     if (type === "stop") {
       stopAnimation();
-      changeConfig("globalFrame", 0);
+      setGlobalFrame(0);
     }
     if (type === "repeat") {
       setIsRepeat(!isRepeat);
@@ -41,7 +42,7 @@ export default function Controller({
     if (type === "frame") {
       const value = parseInt(currentTarget.value) - 1; // 表示だけ1大きいので、ここで吸収しておく
       if (value < maxFrame && value > -1) {
-        changeConfig("globalFrame", value);
+        setGlobalFrame(value);
       }
     }
     if (type === "next") {
@@ -50,14 +51,14 @@ export default function Controller({
       if (value >= maxFrame) {
         value = 0;
       }
-      changeConfig("globalFrame", value);
+      setGlobalFrame(value);
     }
     if (type === "prev") {
       let value = globalFrame - 1;
       if (value <= 0) {
         value = maxFrame - 1;
       }
-      changeConfig("globalFrame", value);
+      setGlobalFrame(value);
     }
   };
   return (
@@ -142,7 +143,7 @@ export default function Controller({
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {
-                changeConfig("maxFrame", target.value);
+                setMaxFrame(target.value);
               }}
               css={styles.maxFrame}
             />

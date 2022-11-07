@@ -21,8 +21,10 @@ const FRAME_SEC = 33; // 30 fps
 function Player(
   {
     material,
-    frameConfig: { maxFrame, globalFrame },
-    changeConfig,
+    maxFrame,
+    globalFrame,
+    setGlobalFrame,
+    setMaxFrame,
     celConfigList,
   },
   ref
@@ -65,7 +67,7 @@ function Player(
           globalFrameCounter = maxFrame - 1; //はみ出したとき用
         }
       }
-      changeConfig("globalFrame", globalFrameCounter);
+      setGlobalFrame(globalFrameCounter);
     }
     if (isNext) {
       animeRef.current = window.requestAnimationFrame(animation);
@@ -141,8 +143,9 @@ function Player(
       </div>
       <Controller
         globalFrame={globalFrame}
+        setGlobalFrame={setGlobalFrame}
         maxFrame={maxFrame}
-        changeConfig={changeConfig}
+        setMaxFrame={setMaxFrame}
         isRepeat={isRepeat}
         setIsRepeat={setIsRepeat}
         isRunning={isRunning}
