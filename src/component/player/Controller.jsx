@@ -168,7 +168,7 @@ const styles = {
     list-style: none;
   `,
   playLi: css`
-    margin-left: 30px;
+    margin-left: 28px;
     margin-right: 10px;
   `,
   frame: css`
@@ -180,6 +180,8 @@ const styles = {
       -webkit-appearance: none;
       margin: 0;
     }
+    position: relative;
+    top: -1px;
   `,
   maxFrame: css`
     width: 2.2em;

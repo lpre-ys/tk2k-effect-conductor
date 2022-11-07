@@ -44,6 +44,7 @@ describe("Options", () => {
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
+
 });
 
 describe("From", () => {
@@ -123,19 +124,43 @@ describe("Header", () => {
     const target = screen.getByRole("heading");
     expect(target).toHaveTextContent("テストネーム");
   });
-  test("not show Option, then show Rignt icon", () => {
-    render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+  describe('Angle icon', () => {
+    test('No Cycle and No RoundTrip, then header icon is gray', () => {
+      render(<FromToConfig config={defaultConfig} />);
 
-    const target = screen.getByTestId("from-to-config-icon-right");
-    expect(target).toBeInTheDocument();
-  });
-  test("show Option, then show Down icon", () => {
-    render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      const target = screen.getByTestId('from-to-config-icon-right');
+      expect(target).toHaveStyle({ color: '#9e9e9e' });
+    });
+    test('has Cycle, then header icon is blue', () => {
+      const config = Object.assign({}, defaultConfig);
+      config.cycle = 3;
+      render(<FromToConfig config={config} />);
 
-    userEvent.click(screen.getByRole("heading"));
+      const target = screen.getByTestId('from-to-config-icon-right');
+      expect(target).toHaveStyle({ color: '#00838F' });
+    });
+    test('on RoundTrip, then header icon is blue', () => {
+      const config = Object.assign({}, defaultConfig);
+      config.isRoundTrip = true;
+      render(<FromToConfig config={config} />);
 
-    const target = screen.getByTestId("from-to-config-icon-down");
-    expect(target).toBeInTheDocument();
+      const target = screen.getByTestId('from-to-config-icon-right');
+      expect(target).toHaveStyle({ color: '#00838F' });
+    });
+    test("not show Option, then show Rignt icon", () => {
+      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+
+      const target = screen.getByTestId("from-to-config-icon-right");
+      expect(target).toBeInTheDocument();
+    });
+    test("show Option, then show Down icon", () => {
+      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+
+      userEvent.click(screen.getByRole("heading"));
+
+      const target = screen.getByTestId("from-to-config-icon-down");
+      expect(target).toBeInTheDocument();
+    });
   });
   describe("Error icon", () => {
     test("no Error, then not show Error icon", () => {

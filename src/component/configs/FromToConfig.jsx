@@ -41,6 +41,13 @@ export default function FromToConfig({ type, name, config, update }) {
     return validate(from) && validate(to);
   };
 
+  const hasOption = () => {
+    return config.cycle !== 0 || config.isRoundTrip;
+  };
+
+  const headerColorStyle = {
+    color: hasOption() ? "#00838F" : "#9E9E9E",
+  };
   return (
     <div>
       <h2
@@ -53,12 +60,14 @@ export default function FromToConfig({ type, name, config, update }) {
           <FontAwesomeIcon
             icon={faAngleDown}
             css={styles.headerIcon}
+            style={headerColorStyle}
             data-testid="from-to-config-icon-down"
           />
         ) : (
           <FontAwesomeIcon
             icon={faAngleRight}
             css={styles.headerIcon}
+            style={headerColorStyle}
             data-testid="from-to-config-icon-right"
           />
         )}
@@ -116,7 +125,7 @@ const styles = {
     user-select: none;
   `,
   headerIcon: css`
-    color: #0097a7;
+    // color: #0097a7;
     position: absolute;
     top: 0.55em;
     left: 0.4em;

@@ -281,7 +281,7 @@ describe("Controller", () => {
     const repeat = screen.getByTitle('repeat');
     userEvent.click(repeat);
 
-    expect(screen.getByTitle('repeat')).toHaveStyle({ color: '#424242' })
+    expect(screen.getByTitle('repeat')).toHaveStyle({ color: '#fafafa' })
   });
 
   test("change frame, then call changeConfig", () => {

@@ -70,7 +70,7 @@ describe("repeat", () => {
 
     const target = screen.queryByTitle("repeat");
     expect(target).toBeInTheDocument();
-    expect(target).toHaveStyle({ color: "#424242" });
+    expect(target).toHaveStyle({ color: "#fafafa" });
   });
   test("is not repeat, then style is Off", () => {
     render(<Controller isRepeat={false} maxFrame={10} globalFrame={0} />);
