@@ -36,7 +36,7 @@ const defaultConfig = {
     easingAdd: "",
   },
   frame: { start: 1, volume: 1 },
-  page: { start: 1, end: 1 },
+  pattern: { start: 1, end: 1 },
 };
 const defaultMaterial = {
   originalImage: null,
@@ -148,10 +148,10 @@ describe("PatternConfig", () => {
     const target = screen.getByText("パターン");
     expect(target).toBeInTheDocument();
   });
-  test("config is props.config.page", () => {
+  test("config is props.config.pattern", () => {
     const config = Object.assign({}, defaultConfig);
-    config.page.start = 5;
-    config.page.end = 10;
+    config.pattern.start = 5;
+    config.pattern.end = 10;
     render(<Configs celId={0} config={config} material={defaultMaterial} />);
 
     expect(screen.getByTestId("pattern-config-start")).toHaveValue(5);

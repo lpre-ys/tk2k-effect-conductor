@@ -342,6 +342,10 @@ function initCelConfig(start, volume) {
       easingAdd: "",
     },
     frame: { start: start, volume: volume },
-    page: { start: 1, end: 1 },
+    pattern: {
+      start: 1,
+      end: 1,
+      isRoundTrip: false,
+    },
   };
 }

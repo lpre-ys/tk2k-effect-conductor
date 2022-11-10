@@ -7,8 +7,7 @@ export default function getDataByLocalFrame(localFrame, config) {
   const scale = calcFrameValue(localFrame, config.scale, config.frame);
   const opacity = calcFrameValue(localFrame, config.opacity, config.frame);
   // フレームの決定
-  const pageNum = config.page.end - config.page.start + 1;
-  const pageIndex = (localFrame % pageNum) + config.page.start - 1;
+  const pageIndex = calcPageIndex(localFrame, config.pattern);
   return {
     x,
     y,
@@ -16,6 +15,24 @@ export default function getDataByLocalFrame(localFrame, config) {
     scale,
     opacity,
   };
+}
+
+function calcPageIndex(localFrame, { start, end, isRoundTrip }) {
+  const pageNum = end - start + 1;
+  let pageIndex = 0;
+  if (isRoundTrip) {
+    pageIndex = (localFrame % (pageNum - 1));
+    if (Math.floor(localFrame / (pageNum - 1)) % 2 === 1) {
+      // 復路は反転
+      pageIndex = pageNum - pageIndex - 1;
+    }
+  } else {
+    pageIndex = (localFrame % pageNum);
+  }
+  // 開始分ずらす
+  pageIndex += start - 1;
+
+  return pageIndex;
 }
 
 function calcFrameValue(localFrame, config, frameConfig) {

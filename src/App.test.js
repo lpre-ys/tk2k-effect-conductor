@@ -46,7 +46,7 @@ const INIT_CEL_CONFIG = {
     easingAdd: "",
   },
   frame: { start: 1, volume: 20 }, // 20: INIT_MAX_FRAME
-  page: { start: 1, end: 1 },
+  pattern: { start: 1, end: 1, isRoundTrip: false },
 };
 jest.mock(
   "./component/Material",

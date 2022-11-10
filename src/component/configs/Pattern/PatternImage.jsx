@@ -5,6 +5,7 @@ import useImage from "use-image";
 import { Layer, Rect, Sprite, Stage } from "react-konva";
 import TrImage from "../../../tr2x.png";
 import { css } from "@emotion/react";
+import { config } from "@fortawesome/fontawesome-svg-core";
 
 export default function PatternImage({ image, config, bgColor }) {
   const spriteRef = useRef();
@@ -55,7 +56,7 @@ export default function PatternImage({ image, config, bgColor }) {
     );
   }
 }
-function makePatterns({ start, end }) {
+function makePatterns({ start, end, isRoundTrip }) {
   const patterns = [];
   for (let page = start - 1; page < end; page++) {
     const x = page % 5;
@@ -68,6 +69,21 @@ function makePatterns({ start, end }) {
     patterns.push(96);
     // 縦幅
     patterns.push(96);
+  }
+  if (isRoundTrip) {
+    // 戻りを追加
+    for (let page = end - 2; page >= start; page--) {
+      const x = page % 5;
+      const y = parseInt(page / 5);
+      // 左上
+      patterns.push(x * 96);
+      // 右上
+      patterns.push(y * 96);
+      // 横幅
+      patterns.push(96);
+      // 縦幅
+      patterns.push(96);
+    }
   }
 
   return patterns;

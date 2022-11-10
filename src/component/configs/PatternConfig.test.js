@@ -59,7 +59,7 @@ describe("Start", () => {
     const start = screen.getByTestId("pattern-config-start");
     fireEvent.change(start, { target: { value: 7 } });
 
-    expect(mockFn).toBeCalledWith("page", { start: 7, end: 25 });
+    expect(mockFn).toBeCalledWith("pattern", { start: 7, end: 25 });
     expect(start).toHaveValue(7);
   });
   describe("Validation", () => {
@@ -140,7 +140,7 @@ describe("End", () => {
     const end = screen.getByTestId("pattern-config-end");
     fireEvent.change(end, { target: { value: 14 } });
 
-    expect(mockFn).toBeCalledWith("page", { start: 1, end: 14 });
+    expect(mockFn).toBeCalledWith("pattern", { start: 1, end: 14 });
     expect(end).toHaveValue(14);
   });
   describe("Validation", () => {

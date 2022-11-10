@@ -295,5 +295,5 @@ const defaultCelConfig = {
     easingAdd: "",
   },
   frame: { start: 0, volume: 10 },
-  page: { start: 1, end: 1 },
+  pattern: { start: 1, end: 1 },
 };

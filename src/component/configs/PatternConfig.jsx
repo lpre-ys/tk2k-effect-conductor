@@ -15,7 +15,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
     if (validateStart(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.start = parseInt(target.value);
-      update("page", newConfig);
+      update("pattern", newConfig);
     }
   };
   const handleChangeEnd = ({ target }) => {
@@ -23,7 +23,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
     if (validateEnd(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.end = parseInt(target.value);
-      update("page", newConfig);
+      update("pattern", newConfig);
     }
   };
 
@@ -70,27 +70,46 @@ export default function PatternConfig({ config, update, image, bgColor }) {
       <div css={styles.container}>
         <PatternImage image={image} config={config} bgColor={bgColor} />
         <div css={styles.wrapper}>
-          <label>
-            開始:&nbsp;
-            <input
-              type="number"
-              data-testid="pattern-config-start"
-              css={[styles.number, !validateStart(start) && styles.error]}
-              value={start}
-              onChange={handleChangeStart}
-            />
-          </label>
-          <br />
-          <label>
-            終了:&nbsp;
-            <input
-              type="number"
-              data-testid="pattern-config-end"
-              css={[styles.number, !validateEnd(end) && styles.error]}
-              value={end}
-              onChange={handleChangeEnd}
-            />
-          </label>
+          <div>
+            <label>
+              <input
+                name="round-trip"
+                data-testid="from-to-options-round-trip"
+                type="checkbox"
+                checked={config.isRoundTrip}
+                value="true"
+                onChange={({ target }) => {
+                  const newConfig = Object.assign({}, config);
+                  newConfig.isRoundTrip = target.checked;
+                  update("pattern", newConfig);
+                }}
+              />
+              :&nbsp;往復
+            </label>
+          </div>
+          <div>
+            <label>
+              開始:&nbsp;
+              <input
+                type="number"
+                data-testid="pattern-config-start"
+                css={[styles.number, !validateStart(start) && styles.error]}
+                value={start}
+                onChange={handleChangeStart}
+              />
+            </label>
+            <br />
+            <label>
+              終了:&nbsp;
+              <input
+                type="number"
+                data-testid="pattern-config-end"
+                css={[styles.number, !validateEnd(end) && styles.error]}
+                value={end}
+                onChange={handleChangeEnd}
+              />
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -103,6 +122,12 @@ const styles = {
     align-items: flex-end;
     gap: 8px;
     margin: 0.5em;
+  `,
+  wrapper: css`
+    display: flex;
+    height: 90px;
+    flex-direction: column;
+    justify-content: space-between;
   `,
   number: css`
     width: 3em;

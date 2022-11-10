@@ -12,7 +12,7 @@ export default function Configs({ config, update, material, celId }) {
       <h1>セル: {celId + 1}</h1>
       <TimingConfig config={config.frame} update={update} />
       <PatternConfig
-        config={config.page}
+        config={config.pattern}
         image={material.transparentImage}
         bgColor={material.bgColor}
         update={update}
