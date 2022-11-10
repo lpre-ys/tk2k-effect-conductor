@@ -6,9 +6,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useState } from "react";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
-export default function Export({ configList, maxFrame }) {
-  const [title, setTitle] = useState("");
-  const [materialName, setMaterialName] = useState("");
+export default function Export({
+  configList,
+  maxFrame,
+  title,
+  setTitle,
+  materialName,
+  setMaterialName,
+}) {
   const [disabled, setDisabled] = useState(false);
 
   const handleExport = useCallback(() => {

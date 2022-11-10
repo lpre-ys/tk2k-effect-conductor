@@ -8,6 +8,7 @@ import makeTransparentImage from "./util/makeTransparentImage";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
+import Export from "./component/player/Export";
 
 const INIT_MAX_FRAME = 20;
 
@@ -27,6 +28,8 @@ export default class App extends React.Component {
       globalFrame: 0,
       celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
       selectedCelId: 0,
+      title: "",
+      materialName: "",
     };
     this.playerRef = createRef();
   }
@@ -206,6 +209,15 @@ export default class App extends React.Component {
     }
     event.preventDefault();
   };
+
+  // for Export
+  setTitle = (value) => {
+    this.setState({ title: value });
+  };
+  setMaterialName = (value) => {
+    this.setState({ materialName: value });
+  };
+
   render() {
     return (
       <>
@@ -220,15 +232,25 @@ export default class App extends React.Component {
               msg={this.state.materialMsg}
               changeMaterial={this.handleChangeMaterial}
             />
-            <Player
-              material={this.state.material}
-              maxFrame={this.state.maxFrame}
-              setMaxFrame={this.setMaxFrame}
-              globalFrame={this.state.globalFrame}
-              setGlobalFrame={this.setGlobalFrame}
-              celConfigList={this.state.celConfigList}
-              ref={this.playerRef}
-            />
+            <div className="player" css={styles.player}>
+              <Export
+                maxFrame={this.state.maxFrame}
+                configList={this.state.celConfigList}
+                title={this.state.title}
+                setTitle={this.setTitle}
+                materialName={this.state.materialName}
+                setMaterialName={this.setMaterialName}
+              />
+              <Player
+                material={this.state.material}
+                maxFrame={this.state.maxFrame}
+                setMaxFrame={this.setMaxFrame}
+                globalFrame={this.state.globalFrame}
+                setGlobalFrame={this.setGlobalFrame}
+                celConfigList={this.state.celConfigList}
+                ref={this.playerRef}
+              />
+            </div>
             <Configs
               config={this.state.celConfigList[this.state.selectedCelId]}
               celId={this.state.selectedCelId}
@@ -261,6 +283,10 @@ const styles = {
     overflow-y: hidden;
     overflow-x: hidden;
     // border: 1px solid gray;
+  `,
+  player: css`
+    flex-basis: 640px;
+    flex-grow: 0;
   `,
   global: css`
     h1 {

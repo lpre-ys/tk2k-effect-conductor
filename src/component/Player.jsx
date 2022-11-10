@@ -12,7 +12,6 @@ import { Layer, Line, Stage } from "react-konva";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
 import Controller from "./player/Controller";
-import Export from "./player/Export";
 import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
@@ -110,8 +109,7 @@ function Player(
   });
 
   return (
-    <div className="player" css={styles.container}>
-      <Export maxFrame={maxFrame} configList={celConfigList} />
+    <>
       <ViewSettings
         background={bgColor}
         isShowCelBorder={isShowCelBorder}
@@ -152,9 +150,8 @@ function Player(
         playAnimation={playAnimation}
         stopAnimation={stopAnimation}
       />
-
       <Info msg={msg} setMsg={setMsg} />
-    </div>
+    </>
   );
 }
 
@@ -176,10 +173,6 @@ function Grid() {
 }
 
 const styles = {
-  container: css`
-    flex-basis: 640px;
-    flex-grow: 0;
-  `,
   canvasArea: css`
     margin-top: 8px;
     image-rendering: -moz-crisp-edges;

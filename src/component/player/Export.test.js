@@ -2,40 +2,42 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Export from "./Export";
 
-describe("name", () => {
-  test("INIT name is empty", () => {
-    render(<Export />);
+describe("Title", () => {
+  test("INIT title is props.title", () => {
+    render(<Export title="初期表示" />);
 
     const target = screen.getByLabelText("名前:");
     expect(target).toBeInTheDocument();
-    expect(target).not.toHaveValue();
+    expect(target).toHaveValue('初期表示');
   });
 
-  test("change, then update value", () => {
-    render(<Export />);
+  test("change, then call setTitle value", () => {
+    const mockFn = jest.fn();
+    render(<Export setTitle={mockFn} />);
 
     const target = screen.getByLabelText("名前:");
     userEvent.type(target, "テストネーム");
 
-    expect(target).toHaveValue("テストネーム");
+    expect(mockFn).toBeCalledWith('テストネーム');
   });
 });
 
 describe("material name", () => {
-  test("INIT material name is empty", () => {
-    render(<Export />);
+  test("INIT material name is props.materialName", () => {
+    render(<Export materialName="素材初期表示" />);
 
     const target = screen.getByLabelText("素材ファイル:");
     expect(target).toBeInTheDocument();
-    expect(target).not.toHaveValue();
+    expect(target).toHaveValue('素材初期表示');
   });
-  test("change, then update value", () => {
-    render(<Export />);
+  test("change, then call setMaterialName", () => {
+    const mockFn = jest.fn();
+    render(<Export setMaterialName={mockFn} />);
 
     const target = screen.getByLabelText("素材ファイル:");
     userEvent.type(target, "テスト素材名");
 
-    expect(target).toHaveValue("テスト素材名");
+    expect(mockFn).toBeCalledWith('テスト素材名');
   });
 });
 

@@ -21,36 +21,6 @@ jest.mock("react-konva", () => {
   };
 });
 
-jest.mock("./player/Export", () => ({ maxFrame, configList }) => {
-  return (
-    <div data-testid="mock-export">
-      <p>maxFrame: {maxFrame}</p>
-      <p data-testid="export-config-list">{JSON.stringify(configList)}</p>
-    </div>
-  );
-});
-describe("Export", () => {
-  test("maxFrame is props.frameConfig.maxFrame", () => {
-    render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
-
-    const target = screen.getByText("maxFrame: 12");
-    expect(target).toBeInTheDocument();
-  });
-  test("configList is props.celConfigList", () => {
-    render(
-      <Player
-        maxFrame={10}
-        globalFrame={0}
-        celConfigList={[defaultCelConfig, defaultCelConfig]}
-        material={defaultMaterial}
-      />
-    );
-
-    const target = screen.getByTestId("export-config-list");
-    expect(JSON.parse(target.textContent)).toHaveLength(2);
-  });
-});
-
 describe("ViewSettings", () => {
   test("INIT bgColor is transparent", () => {
     render(<Player maxFrame={12} globalFrame={34} celConfigList={[]} />);
