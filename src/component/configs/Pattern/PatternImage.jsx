@@ -5,7 +5,6 @@ import useImage from "use-image";
 import { Layer, Rect, Sprite, Stage } from "react-konva";
 import TrImage from "../../../tr2x.png";
 import { css } from "@emotion/react";
-import { config } from "@fortawesome/fontawesome-svg-core";
 
 export default function PatternImage({ image, config, bgColor }) {
   const spriteRef = useRef();
