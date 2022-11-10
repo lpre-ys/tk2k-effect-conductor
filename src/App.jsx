@@ -15,7 +15,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      msg: "",
+      materialMsg: "",
       material: {
         originalImage: null,
         transparentImage: null,
@@ -148,15 +148,19 @@ export default class App extends React.Component {
             transparentColor: trColor,
             bgColor: "transparent",
           },
-          msg: "",
+          materialMsg: "",
         });
       })
       .catch((error) => {
         if (error.message === "width") {
-          this.setState({ msg: "素材画像の横幅が正しくないようです。" });
+          this.setState({
+            materialMsg: "素材画像の横幅が正しくないようです。",
+          });
         }
         if (error.message === "height") {
-          this.setState({ msg: "素材画像の縦幅が正しくないようです。" });
+          this.setState({
+            materialMsg: "素材画像の縦幅が正しくないようです。",
+          });
         }
       });
   };
@@ -171,7 +175,7 @@ export default class App extends React.Component {
             transparentColor: trColor,
             bgColor: this.state.material.bgColor,
           },
-          msg: "",
+          materialMsg: "",
         });
       }
     );
@@ -213,7 +217,7 @@ export default class App extends React.Component {
               material={this.state.material}
               loadImage={this.handleLoadImage}
               changeTrColor={this.handleChangeTrColor}
-              msg={this.state.msg}
+              msg={this.state.materialMsg}
               changeMaterial={this.handleChangeMaterial}
             />
             <Player
