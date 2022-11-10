@@ -37,11 +37,25 @@ test('Loader loaded multi png file, then noop', async () => {
   });
 });
 
-test('Loader loaded bmp, then noop', async () => {
+test('Loader loaded bmp, then call loadImage', async () => {
   const mockFn = jest.fn();
   render(<Loader loadImage={mockFn} />);
 
   const file = new File(['testUpBmp'], 'testUp.bmp', { type: 'image/bmp' });
+  const input = screen.getByTestId('drop-input');
+
+  userEvent.upload(input, file);
+
+  await waitFor(() => {
+    expect(mockFn).toBeCalled();
+  });
+});
+
+test('Loader loaded gif, then noop', async () => {
+  const mockFn = jest.fn();
+  render(<Loader loadImage={mockFn} />);
+
+  const file = new File(['testUpGif'], 'testUp.gif', { type: 'image/gif' });
   const input = screen.getByTestId('drop-input');
 
   userEvent.upload(input, file);

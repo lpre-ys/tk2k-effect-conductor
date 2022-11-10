@@ -19,7 +19,8 @@ export default function Loader(props) {
   );
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
-      "image/png": [],
+      "image/png": [".png"],
+      "image/bmp": [".bmp"],
     },
     maxFiles: 1,
     onDrop,
