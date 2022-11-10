@@ -58,7 +58,7 @@ jest.mock(
             type="button"
             data-testid="material-load-image"
             onClick={() => {
-              loadImage("test.png");
+              loadImage("data", "test.png");
             }}
           />
           <input
@@ -129,13 +129,17 @@ describe("<Material />", () => {
       await waitFor(() => {
         const targetMaterial = screen.getByTestId("material-material-json");
         const expectData = {
-          originalImage: "test.png",
+          originalImage: "data",
           transparentImage: "transparent-image",
           maxPage: 42,
           transparentColor: "test-trcolor",
           bgColor: "transparent",
         };
         expect(JSON.parse(targetMaterial.textContent)).toEqual(expectData);
+      });
+      await waitFor(() => {
+        const targetName = screen.getByLabelText("素材ファイル:");
+        expect(targetName).toHaveValue("test.png");
       });
     });
     test("rejected width, then show message", async () => {
@@ -201,7 +205,18 @@ jest.mock("./component/Player", () => {
   return {
     __esModule: true,
     default: forwardRef(
-      ({ material, maxFrame, setMaxFrame, globalFrame, setGlobalFrame, celConfigList, changeConfig }, ref) => {
+      (
+        {
+          material,
+          maxFrame,
+          setMaxFrame,
+          globalFrame,
+          setGlobalFrame,
+          celConfigList,
+          changeConfig,
+        },
+        ref
+      ) => {
         ref.current = { pause: mockPause, playpause: mockPlaypause };
         return (
           <div data-testid="player">
@@ -215,14 +230,14 @@ jest.mock("./component/Player", () => {
               type="text"
               data-testid="player-set-global-frame"
               onChange={({ target }) => {
-                setGlobalFrame(target.value)
+                setGlobalFrame(target.value);
               }}
             />
             <input
               type="text"
               data-testid="player-set-max-frame"
               onChange={({ target }) => {
-                setMaxFrame(target.value)
+                setMaxFrame(target.value);
               }}
             />
           </div>
@@ -268,7 +283,6 @@ describe("<Player />", () => {
   });
 
   describe("changeConfig", () => {
-
     test("type: globalFrame, value: 0 then update globalFrame", () => {
       render(<App />);
       // 初期値が0なので、1回7に変えてから0に戻して、変わった事を確認する

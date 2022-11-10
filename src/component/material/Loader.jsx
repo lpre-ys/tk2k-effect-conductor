@@ -4,18 +4,19 @@ import { css } from "@emotion/react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function Loader(props) {
+export default function Loader({ loadImage }) {
   const onDrop = useCallback(
     (acceptedFiles) => {
       if (acceptedFiles.length === 1) {
         const reader = new FileReader();
         reader.readAsDataURL(acceptedFiles[0]);
         reader.addEventListener("load", () => {
-          props.loadImage(reader.result);
+          const name = acceptedFiles[0].name.replace(/\.[^/.]+$/, "");
+          loadImage(reader.result, name);
         });
       }
     },
-    [props]
+    [loadImage]
   );
   const { getRootProps, getInputProps } = useDropzone({
     accept: {

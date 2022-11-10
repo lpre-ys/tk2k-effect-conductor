@@ -140,7 +140,7 @@ export default class App extends React.Component {
       return preConfig;
     });
   };
-  handleLoadImage = (dataUrl) => {
+  loadImage = (dataUrl, name) => {
     makeTransparentImage(dataUrl)
       .then(({ transparent, maxPage, trColor }) => {
         this.setState({
@@ -152,6 +152,7 @@ export default class App extends React.Component {
             bgColor: "transparent",
           },
           materialMsg: "",
+          materialName: name,
         });
       })
       .catch((error) => {
@@ -227,7 +228,7 @@ export default class App extends React.Component {
           <div className="effect">
             <Material
               material={this.state.material}
-              loadImage={this.handleLoadImage}
+              loadImage={this.loadImage}
               changeTrColor={this.handleChangeTrColor}
               msg={this.state.materialMsg}
               changeMaterial={this.handleChangeMaterial}
