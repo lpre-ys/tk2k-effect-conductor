@@ -32,7 +32,7 @@ export default function Options({ type, config, update, visible }) {
             onChange={handleChangeCycle}
           />
         </label>
-        <label css={styles.label}>
+        <label css={[styles.label, styles.checkbox]}>
           <input
             name="round-trip"
             data-testid="from-to-options-round-trip"
@@ -58,5 +58,8 @@ const styles = {
   `,
   container: css`
     margin-top: 0.3em;
+  `,
+  checkbox: css`
+    cursor: pointer;
   `,
 };

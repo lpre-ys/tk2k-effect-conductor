@@ -71,7 +71,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
         <PatternImage image={image} config={config} bgColor={bgColor} />
         <div css={styles.wrapper}>
           <div>
-            <label>
+            <label css={[styles.label, styles.checkbox]}>
               <input
                 name="round-trip"
                 data-testid="from-to-options-round-trip"
@@ -88,7 +88,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
             </label>
           </div>
           <div>
-            <label>
+            <label css={styles.label}>
               開始:&nbsp;
               <input
                 type="number"
@@ -99,7 +99,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
               />
             </label>
             <br />
-            <label>
+            <label css={styles.label}>
               終了:&nbsp;
               <input
                 type="number"
@@ -144,6 +144,12 @@ const styles = {
       font-size: 1.1em;
       color: #e53935;
     }
+  `,
+  label: css`
+    user-select: none;
+  `,
+  checkbox: css`
+    cursor: pointer;
   `,
 };
 
