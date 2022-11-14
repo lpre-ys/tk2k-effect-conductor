@@ -72,8 +72,6 @@ describe("pattern", () => {
       config.pattern.end = 5;
       config.pattern.isRoundTrip = true;
 
-      console.log('pageNum', config.pattern.end - config.pattern.start + 1);
-
       expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
       expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 1 });
       expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 2 });
