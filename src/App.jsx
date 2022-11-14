@@ -47,10 +47,12 @@ class App extends React.Component {
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
+        // TODO データ色々もってくる
         window.appMenu.saveData(this.state);
       });
       // 読み込み
       window.appMenu.onReceiveLoad((data) => {
+        // TODO データ色々書き戻す
         this.setState(JSON.parse(data));
       });
     }

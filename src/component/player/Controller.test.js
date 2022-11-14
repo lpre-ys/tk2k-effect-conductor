@@ -1,30 +1,28 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useDispatch } from "react-redux";
+import { setFrame } from "../../slice/frameSlice";
+import { renderWithProviders } from "../../util/renderWithProviders";
 import Controller from "./Controller";
 
 describe("Play / Pause", () => {
   describe("Play", () => {
     test("if not is runnning, then show play button", () => {
-      render(<Controller isRunning={false} maxFrame={10} globalFrame={0} />);
+      renderWithProviders(<Controller isRunning={false} />);
 
       const target = screen.queryByTitle("play");
       expect(target).toBeInTheDocument();
     });
     test("if runnning, then hide play button", () => {
-      render(<Controller isRunning={true} maxFrame={10} globalFrame={0} />);
+      renderWithProviders(<Controller isRunning={true} />);
 
       const target = screen.queryByTitle("play");
       expect(target).not.toBeInTheDocument();
     });
     test("click, then call playAnimation", () => {
       const mockFn = jest.fn();
-      render(
-        <Controller
-          isRunning={false}
-          maxFrame={10}
-          globalFrame={0}
-          playAnimation={mockFn}
-        />
+      renderWithProviders(
+        <Controller isRunning={false} playAnimation={mockFn} />
       );
 
       const target = screen.getByTitle("play");
@@ -35,26 +33,21 @@ describe("Play / Pause", () => {
   });
   describe("Pause", () => {
     test("if not is runnning, then hide pause button", () => {
-      render(<Controller isRunning={false} maxFrame={10} globalFrame={0} />);
+      renderWithProviders(<Controller isRunning={false} />);
 
       const target = screen.queryByTitle("pause");
       expect(target).not.toBeInTheDocument();
     });
     test("if runnning, then show pause button", () => {
-      render(<Controller isRunning={true} maxFrame={10} globalFrame={0} />);
+      renderWithProviders(<Controller isRunning={true} />);
 
       const target = screen.queryByTitle("pause");
       expect(target).toBeInTheDocument();
     });
     test("click, then call stopAnimation", () => {
       const mockFn = jest.fn();
-      render(
-        <Controller
-          isRunning={true}
-          maxFrame={10}
-          globalFrame={0}
-          stopAnimation={mockFn}
-        />
+      renderWithProviders(
+        <Controller isRunning={true} stopAnimation={mockFn} />
       );
 
       const target = screen.getByTitle("pause");
@@ -66,14 +59,14 @@ describe("Play / Pause", () => {
 });
 describe("repeat", () => {
   test("is repeat, then style is On", () => {
-    render(<Controller isRepeat={true} maxFrame={10} globalFrame={0} />);
+    renderWithProviders(<Controller isRepeat={true} />);
 
     const target = screen.queryByTitle("repeat");
     expect(target).toBeInTheDocument();
     expect(target).toHaveStyle({ color: "#fafafa" });
   });
   test("is not repeat, then style is Off", () => {
-    render(<Controller isRepeat={false} maxFrame={10} globalFrame={0} />);
+    renderWithProviders(<Controller isRepeat={false} />);
 
     const target = screen.queryByTitle("repeat");
     expect(target).toBeInTheDocument();
@@ -82,11 +75,9 @@ describe("repeat", () => {
   test("click, then call setIsRepeat and stopAnimation", () => {
     const mockSet = jest.fn();
     const mockStop = jest.fn();
-    render(
+    renderWithProviders(
       <Controller
         isRepeat={false}
-        maxFrame={10}
-        globalFrame={0}
         setIsRepeat={mockSet}
         stopAnimation={mockStop}
       />
@@ -101,52 +92,50 @@ describe("repeat", () => {
 });
 
 describe("Prev / Next", () => {
-  test("click prev, then call setGlobalFrame with globalFrame -1", () => {
-    const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={3} setGlobalFrame={mockFn} />);
+  test("click prev, then frame -1", () => {
+    renderWithProviders(<Controller />);
+
+    // 一旦3にしておく
+    const input = screen.getByTestId("controller-frame");
+    fireEvent.change(input, { target: { value: "3" } });
 
     const target = screen.getByTitle("prev");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith(2);
+    expect(input).toHaveValue(2);
   });
-  test("click next, then call setGlobalFrame with globalFrame +1", () => {
-    const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={3} setGlobalFrame={mockFn} />);
+  test("click next, then frame +1", () => {
+    renderWithProviders(<Controller />);
+
+    // 一旦3にしておく
+    const input = screen.getByTestId("controller-frame");
+    fireEvent.change(input, { target: { value: "3" } });
 
     const target = screen.getByTitle("next");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith(4);
+    expect(input).toHaveValue(4);
   });
 });
 
 describe("frame", () => {
-  test("change, then call setGlobalFrame with globalFrame value - 1", () => {
-    const mockFn = jest.fn();
-    render(<Controller maxFrame={10} globalFrame={0} setGlobalFrame={mockFn} />);
+  test("change, then set Value", () => {
+    renderWithProviders(<Controller />);
 
     const target = screen.getByTestId("controller-frame");
     fireEvent.change(target, { target: { value: "7" } });
 
-    expect(mockFn).toBeCalledWith(6);
+    expect(target).toHaveValue(7);
   });
 });
 
 describe("maxFrame", () => {
-  test("change, then call changeConfig with maxFrame and value", () => {
-    const mockFn = jest.fn();
-    render(
-      <Controller
-        maxFrame={10}
-        globalFrame={0}
-        setMaxFrame={mockFn}
-      />
-    );
+  test("change, then set value", () => {
+    renderWithProviders(<Controller />);
 
     const target = screen.getByTestId("controller-max-frame");
     fireEvent.change(target, { target: { value: "30" } });
 
-    expect(mockFn).toBeCalledWith("30");
+    expect(target).toHaveValue(30);
   });
 });

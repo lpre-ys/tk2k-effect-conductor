@@ -1,60 +1,33 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { renderWithProviders } from "../util/renderWithProviders";
 import Timeline from "./Timeline";
 
 describe("Buttons", () => {
   test("add,　then Call props.handleAdd", () => {
     const mockFn = jest.fn();
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[]}
-        handleAdd={mockFn}
-      />
-    );
+    renderWithProviders(<Timeline configList={[]} handleAdd={mockFn} />);
 
     userEvent.click(screen.getByText("追加"));
     expect(mockFn).toBeCalled();
   });
   test("copy,　then Call props.handleCopy", () => {
     const mockFn = jest.fn();
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[]}
-        handleCopy={mockFn}
-      />
-    );
+    renderWithProviders(<Timeline configList={[]} handleCopy={mockFn} />);
 
     userEvent.click(screen.getByText("コピー"));
     expect(mockFn).toBeCalled();
   });
   test("delete　configList.length = 1,then not Call props.handleDelete", () => {
     const mockFn = jest.fn();
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[1]}
-        handleDelete={mockFn}
-      />
-    );
+    renderWithProviders(<Timeline configList={[1]} handleDelete={mockFn} />);
 
     userEvent.click(screen.getByText("削除"));
     expect(mockFn).not.toBeCalled();
   });
   test("delete　configList.length = 2,then Call props.handleDelete", () => {
     const mockFn = jest.fn();
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[1, 2]}
-        handleDelete={mockFn}
-      />
-    );
+    renderWithProviders(<Timeline configList={[1, 2]} handleDelete={mockFn} />);
 
     userEvent.click(screen.getByText("削除"));
     expect(mockFn).toBeCalled();
@@ -88,22 +61,20 @@ jest.mock(
 describe("TimeCelView", () => {
   test("configList.length = 1, then has 1 TimeCelView", () => {
     // 1回
-    render(<Timeline maxFrame={10} globalFrame={0} configList={[1]} />);
+    renderWithProviders(<Timeline configList={[1]} />);
 
     const target = screen.queryAllByTestId("time-cel-view");
     expect(target).toHaveLength(1);
   });
   test("configList.length = 4, then has 4 TimeCelView", () => {
     // 複数回
-    render(
-      <Timeline maxFrame={10} globalFrame={0} configList={[1, 2, 3, 4]} />
-    );
+    renderWithProviders(<Timeline configList={[1, 2, 3, 4]} />);
 
     const targets = screen.queryAllByTestId("time-cel-view");
     expect(targets).toHaveLength(4);
   });
   test("index is configList index", () => {
-    render(<Timeline maxFrame={10} globalFrame={0} configList={[1, 2, 3]} />);
+    renderWithProviders(<Timeline configList={[1, 2, 3]} />);
 
     const targets = screen.queryAllByTestId("time-cel-view-index");
     expect(targets[0]).toHaveTextContent("index: 0");
@@ -111,12 +82,8 @@ describe("TimeCelView", () => {
     expect(targets[2]).toHaveTextContent("index: 2");
   });
   test("config is configList", () => {
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={["testconfig1", "testconfig2"]}
-      />
+    renderWithProviders(
+      <Timeline configList={["testconfig1", "testconfig2"]} />
     );
 
     const targets = screen.queryAllByTestId("time-cel-view-config");
@@ -125,28 +92,14 @@ describe("TimeCelView", () => {
   });
   test("handler is props.handler", () => {
     const mockFn = jest.fn();
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[1]}
-        handler={mockFn}
-      />
-    );
+    renderWithProviders(<Timeline configList={[1]} handler={mockFn} />);
 
     userEvent.click(screen.getByTestId("time-cel-view-handler"));
 
     expect(mockFn).toBeCalled();
   });
   test("isSelected is only selected cel", () => {
-    render(
-      <Timeline
-        maxFrame={10}
-        globalFrame={0}
-        configList={[1, 2, 3, 4, 5]}
-        selected={3}
-      />
-    );
+    renderWithProviders(<Timeline configList={[1, 2, 3, 4, 5]} selected={3} />);
 
     const targets = screen.queryAllByTestId("time-cel-view-is-selected");
     expect(targets[0]).toHaveTextContent("false");
@@ -158,7 +111,7 @@ describe("TimeCelView", () => {
 });
 
 test("has spacer", () => {
-  render(<Timeline maxFrame={10} globalFrame={0} configList={[1]} />);
+  renderWithProviders(<Timeline configList={[1]} />);
 
   const target = screen.getByTestId("timeline-spacer");
   expect(target).toBeInTheDocument();

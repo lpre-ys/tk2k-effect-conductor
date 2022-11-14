@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const INIT_MAX_FRAME = 22;
+const INIT_MAX_FRAME = 20;
 
 export const frameSlice = createSlice({
   name: 'frame',
