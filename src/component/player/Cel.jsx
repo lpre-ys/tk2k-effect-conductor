@@ -4,18 +4,13 @@
 import { useCallback } from "react";
 
 import { Group, Rect, Sprite, Text } from "react-konva";
+import { useSelector } from "react-redux";
 import useImage from "use-image";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
-const Cel = ({
-  image,
-  maxPage,
-  config,
-  globalFrame,
-  isShowCelBorder,
-  id,
-  setMsg,
-}) => {
+const Cel = ({ image, maxPage, config, isShowCelBorder, id, setMsg }) => {
+  const frame = useSelector((state) => state.frame.frame);
+
   const [imgElement] = useImage(image);
 
   const makePatterns = useCallback(() => {
@@ -48,7 +43,7 @@ const Cel = ({
 
   let visible = false;
 
-  const localFrame = globalFrame - (config.frame.start - 1);
+  const localFrame = frame - (config.frame.start - 1);
   if (localFrame >= 0 && localFrame < config.frame.volume) {
     visible = true;
     data = getDataByLocalFrame(localFrame, config);
@@ -67,7 +62,7 @@ const Cel = ({
       onClick={() => {
         setMsg(
           [
-            `セル:${id}[${globalFrame + 1}]`,
+            `セル:${id}[${frame + 1}]`,
             `パターン:${data.pageIndex + 1}`,
             `x: ${data.x}`,
             `y: ${data.y}`,

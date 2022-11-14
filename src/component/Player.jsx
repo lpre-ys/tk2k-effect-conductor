@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import { Layer, Line, Stage } from "react-konva";
+import { useDispatch, useSelector } from "react-redux";
+import { setFrame } from "../slice/frameSlice";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
 import Controller from "./player/Controller";
@@ -17,17 +19,10 @@ import ViewSettings from "./player/ViewSettings";
 
 const FRAME_SEC = 33; // 30 fps
 
-function Player(
-  {
-    material,
-    maxFrame,
-    globalFrame,
-    setGlobalFrame,
-    setMaxFrame,
-    celConfigList,
-  },
-  ref
-) {
+function Player({ material, celConfigList }, ref) {
+  const { frame, maxFrame } = useSelector((state) => state.frame);
+  const dispatch = useDispatch();
+
   const [isRepeat, setIsRepeat] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [bgColor, setBgColor] = useState("transparent");
@@ -38,7 +33,7 @@ function Player(
   const animeRef = useRef();
 
   let timeCounter = 0.0;
-  let globalFrameCounter = globalFrame;
+  let frameCounter = frame;
   let prevTimeStamp;
 
   const animation = (timestamp) => {
@@ -51,22 +46,22 @@ function Player(
     let isNext = true;
     while (timeCounter > FRAME_SEC) {
       // 現在のフレームの計算
-      globalFrameCounter += 1;
+      frameCounter += 1;
       timeCounter -= FRAME_SEC;
       isChange = true;
     }
     if (isChange) {
-      if (globalFrameCounter > maxFrame - 1) {
+      if (frameCounter > maxFrame - 1) {
         if (isRepeat) {
-          globalFrameCounter = 0;
+          frameCounter = 0;
         } else {
           //リピート無しの時はアニメを止める;
           isNext = false;
           setIsRunning(false);
-          globalFrameCounter = maxFrame - 1; //はみ出したとき用
+          frameCounter = maxFrame - 1; //はみ出したとき用
         }
       }
-      setGlobalFrame(globalFrameCounter);
+      dispatch(setFrame(frameCounter));
     }
     if (isNext) {
       animeRef.current = window.requestAnimationFrame(animation);
@@ -75,8 +70,8 @@ function Player(
   };
 
   function playAnimation() {
-    if (globalFrame >= maxFrame - 1) {
-      globalFrameCounter = 0;
+    if (frame >= maxFrame - 1) {
+      frameCounter = 0;
     }
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
@@ -130,7 +125,6 @@ function Player(
                   image={material.transparentImage}
                   maxPage={material.maxPage}
                   config={celConfig}
-                  globalFrame={globalFrame}
                   isShowCelBorder={isShowCelBorder}
                   setMsg={setMsg}
                 />
@@ -140,10 +134,6 @@ function Player(
         </Stage>
       </div>
       <Controller
-        globalFrame={globalFrame}
-        setGlobalFrame={setGlobalFrame}
-        maxFrame={maxFrame}
-        setMaxFrame={setMaxFrame}
         isRepeat={isRepeat}
         setIsRepeat={setIsRepeat}
         isRunning={isRunning}

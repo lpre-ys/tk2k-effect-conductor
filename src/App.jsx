@@ -9,10 +9,12 @@ import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
 import Export from "./component/player/Export";
+import { connect } from "react-redux";
+import { resetFrameConfig, setFrame } from "./slice/frameSlice";
 
 const INIT_MAX_FRAME = 20;
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,8 +26,6 @@ export default class App extends React.Component {
         transparentColor: null,
         bgColor: "transparent",
       },
-      maxFrame: INIT_MAX_FRAME,
-      globalFrame: 0,
       celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
       selectedCelId: 0,
       title: "",
@@ -40,11 +40,10 @@ export default class App extends React.Component {
       window.appMenu.onReceiveNew(() => {
         // configとCelConfigのリセット
         this.setState({
-          maxFrame: INIT_MAX_FRAME,
-          globalFrame: 0,
           celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
           selectedCelId: 0,
         });
+        this.props.resetFrameConfig();
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
@@ -73,8 +72,8 @@ export default class App extends React.Component {
     });
   };
   handleAddCelConfig = () => {
-    const volume = this.state.maxFrame - this.state.globalFrame;
-    const start = this.state.globalFrame + 1;
+    const volume = this.props.maxFrame - this.props.frame;
+    const start = this.props.frame + 1;
     const newList = [...this.state.celConfigList, initCelConfig(start, volume)];
 
     // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
@@ -120,19 +119,6 @@ export default class App extends React.Component {
     this.setState({
       selectedCelId: parseInt(value),
     });
-  };
-  setGlobalFrame = (value) => {
-    // バリデーションここでやる???
-    if (value < 0) {
-      return;
-    }
-    if (value >= this.state.maxFrame) {
-      return;
-    }
-    this.setState({ globalFrame: parseInt(value) });
-  };
-  setMaxFrame = (value) => {
-    this.setState({ maxFrame: value });
   };
   handleChangeMaterial = (type, value) => {
     this.setState((preConfig) => {
@@ -192,13 +178,13 @@ export default class App extends React.Component {
       if (this.playerRef.current.pause !== null) {
         this.playerRef.current.pause();
       }
-      this.setGlobalFrame(this.state.globalFrame - 1);
+      this.props.setFrame(this.props.frame - 1);
     }
     if (event.key === "ArrowRight") {
       if (this.playerRef.current.pause !== null) {
         this.playerRef.current.pause();
       }
-      this.setGlobalFrame(this.state.globalFrame + 1);
+      this.props.setFrame(this.props.frame + 1);
     }
     if (event.key === " ") {
       if (event.target.tagName === "BUTTON") {
@@ -235,7 +221,6 @@ export default class App extends React.Component {
             />
             <div className="player" css={styles.player}>
               <Export
-                maxFrame={this.state.maxFrame}
                 configList={this.state.celConfigList}
                 title={this.state.title}
                 setTitle={this.setTitle}
@@ -244,10 +229,6 @@ export default class App extends React.Component {
               />
               <Player
                 material={this.state.material}
-                maxFrame={this.state.maxFrame}
-                setMaxFrame={this.setMaxFrame}
-                globalFrame={this.state.globalFrame}
-                setGlobalFrame={this.setGlobalFrame}
                 celConfigList={this.state.celConfigList}
                 ref={this.playerRef}
               />
@@ -262,9 +243,6 @@ export default class App extends React.Component {
           <Timeline
             selected={this.state.selectedCelId}
             handler={this.handleChangeSelectedCel}
-            maxFrame={this.state.maxFrame}
-            globalFrame={this.state.globalFrame}
-            setGlobalFrame={this.setGlobalFrame}
             configList={this.state.celConfigList}
             handleAdd={this.handleAddCelConfig}
             handleDelete={this.handleDeleteCelConfig}
@@ -306,6 +284,24 @@ const styles = {
     }
   `,
 };
+
+const mapStateToProps = (state) => {
+  return {
+    frame: state.frame.frame,
+    maxFrame: state.frame.maxFrame,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setFrame: (value) => {
+      dispatch(setFrame(value));
+    },
+    resetFrameConfig: dispatch(resetFrameConfig()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
 
 function initCelConfig(start, volume) {
   return {

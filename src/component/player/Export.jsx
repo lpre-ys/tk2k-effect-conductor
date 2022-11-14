@@ -4,16 +4,18 @@ import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
 export default function Export({
   configList,
-  maxFrame,
   title,
   setTitle,
   materialName,
   setMaterialName,
 }) {
+  const maxFrame = useSelector((state) => state.frame.max);
+
   const [disabled, setDisabled] = useState(false);
 
   const handleExport = useCallback(() => {

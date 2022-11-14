@@ -10,18 +10,18 @@ import {
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from "react-redux";
+import { setFrame, setMaxFrame } from "../../slice/frameSlice";
 
 export default function Controller({
-  globalFrame,
-  setGlobalFrame,
-  maxFrame,
-  setMaxFrame,
   isRepeat,
   setIsRepeat,
   isRunning,
   playAnimation,
   stopAnimation,
 }) {
+  const { frame, maxFrame } = useSelector((state) => state.frame);
+  const dispatch = useDispatch();
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;
     if (type === "play") {
@@ -32,7 +32,7 @@ export default function Controller({
     }
     if (type === "stop") {
       stopAnimation();
-      setGlobalFrame(0);
+      dispatch(setFrame(0));
     }
     if (type === "repeat") {
       setIsRepeat(!isRepeat);
@@ -42,23 +42,23 @@ export default function Controller({
     if (type === "frame") {
       const value = parseInt(currentTarget.value) - 1; // 表示だけ1大きいので、ここで吸収しておく
       if (value < maxFrame && value > -1) {
-        setGlobalFrame(value);
+        dispatch(setFrame(value));
       }
     }
     if (type === "next") {
       // 最大からもう1個→押したとき、0に戻す
-      let value = globalFrame + 1;
+      let value = frame + 1;
       if (value >= maxFrame) {
         value = 0;
       }
-      setGlobalFrame(value);
+      dispatch(setFrame(value));
     }
     if (type === "prev") {
-      let value = globalFrame - 1;
+      let value = frame - 1;
       if (value <= 0) {
         value = maxFrame - 1;
       }
-      setGlobalFrame(value);
+      dispatch(setFrame(value));
     }
   };
   return (
@@ -118,7 +118,7 @@ export default function Controller({
           <label>
             <input
               type="number"
-              value={globalFrame + 1}
+              value={frame + 1}
               onChange={control}
               data-type="frame"
               data-testid="controller-frame"
@@ -143,7 +143,7 @@ export default function Controller({
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {
-                setMaxFrame(target.value);
+                dispatch(setMaxFrame(target.value));
               }}
               css={styles.maxFrame}
             />

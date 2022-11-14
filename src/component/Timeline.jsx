@@ -5,23 +5,26 @@ import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
 
 const FRAME_SIZE = 20;
 const TIMELINE_HEIGHT = 28;
 
 export default function Timeline({
-  maxFrame,
-  globalFrame,
   configList,
   handler,
   selected,
   handleAdd,
   handleDelete,
   handleCopy,
-  setGlobalFrame,
 }) {
+  const { frame, maxFrame } = useSelector((state) => state.frame);
+  const dispatch = useDispatch();
+
   const scrollRef = useRef(null);
+
   const baseList = [];
   for (let i = 0; i < maxFrame; i++) {
     baseList.push(
@@ -29,7 +32,7 @@ export default function Timeline({
         <p
           css={styles.frameText}
           onClick={() => {
-            setGlobalFrame(i);
+            dispatch(setFrame(i));
           }}
         >
           {i + 1}
@@ -40,7 +43,7 @@ export default function Timeline({
 
   useLayoutEffect(() => {
     if (maxFrame > 60) {
-      let position = globalFrame - 59;
+      let position = frame - 59;
       if (position < 0) {
         position = 0;
       }
@@ -89,7 +92,7 @@ export default function Timeline({
             css={styles.cursor}
             style={{
               top: `-8px`,
-              left: `${4 + FRAME_SIZE * globalFrame}px`,
+              left: `${4 + FRAME_SIZE * frame}px`,
             }}
           ></div>
           <div
