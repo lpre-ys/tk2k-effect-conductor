@@ -4,12 +4,16 @@ import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { memo, useCallback, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setImage, setTitle } from "../../slice/infoSlice";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
-function Export({ title, setTitle, materialName, setMaterialName }) {
+function Export() {
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const configList = useSelector((state) => state.celList.list);
+  const title = useSelector((state) => state.info.title);
+  const imageName = useSelector((state) => state.info.image);
+  const dispatch = useDispatch();
 
   const [disabled, setDisabled] = useState(false);
 
@@ -42,10 +46,12 @@ function Export({ title, setTitle, materialName, setMaterialName }) {
 
       frameList.push(result);
     }
-    window.tk2k.writeData({ frameList, title, materialName }).then(() => {
-      setDisabled(false);
-    });
-  }, [configList, maxFrame, title, materialName]);
+    window.tk2k
+      .writeData({ frameList, title, materialName: imageName })
+      .then(() => {
+        setDisabled(false);
+      });
+  }, [configList, maxFrame, title, imageName]);
   return (
     <div css={styles.container}>
       <label>
@@ -55,7 +61,7 @@ function Export({ title, setTitle, materialName, setMaterialName }) {
           value={title}
           css={styles.input}
           onChange={({ currentTarget }) => {
-            setTitle(currentTarget.value);
+            dispatch(setTitle(currentTarget.value));
           }}
         />
       </label>
@@ -63,10 +69,10 @@ function Export({ title, setTitle, materialName, setMaterialName }) {
         素材ファイル:&nbsp;
         <input
           type="text"
-          value={materialName}
+          value={imageName}
           css={styles.input}
           onChange={({ currentTarget }) => {
-            setMaterialName(currentTarget.value);
+            dispatch(setImage(currentTarget.value));
           }}
         />
       </label>

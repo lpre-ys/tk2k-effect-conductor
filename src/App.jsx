@@ -10,15 +10,12 @@ import Configs from "./component/Configs";
 import Export from "./component/player/Export";
 import { connect } from "react-redux";
 import { resetFrameConfig, setFrame } from "./slice/frameSlice";
-import { resetCelList } from "./slice/celListSlice";
+import { loadCelList, resetCelList } from "./slice/celListSlice";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      title: "",
-      materialName: "",
-    };
+    this.state = {};
     this.playerRef = createRef();
   }
   componentDidMount() {
@@ -32,14 +29,10 @@ class App extends React.Component {
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
-        // TODO データ色々もってくる
-        window.appMenu.saveData(this.state);
+        window.appMenu.saveData(this.props.data);
       });
       // 読み込み
-      window.appMenu.onReceiveLoad((data) => {
-        // TODO データ色々書き戻す
-        this.setState(JSON.parse(data));
-      });
+      window.appMenu.onReceiveLoad((data) => {});
     }
   }
 
@@ -52,12 +45,14 @@ class App extends React.Component {
         this.playerRef.current.pause();
       }
       this.props.setFrame(this.props.frame - 1);
+      event.preventDefault();
     }
     if (event.key === "ArrowRight") {
       if (this.playerRef.current.pause !== null) {
         this.playerRef.current.pause();
       }
       this.props.setFrame(this.props.frame + 1);
+      event.preventDefault();
     }
     if (event.key === " ") {
       if (event.target.tagName === "BUTTON") {
@@ -66,16 +61,9 @@ class App extends React.Component {
       if (this.playerRef.current.playpause !== null) {
         this.playerRef.current.playpause();
       }
+      event.preventDefault();
     }
-    event.preventDefault();
-  };
-
-  // for Export
-  setTitle = (value) => {
-    this.setState({ title: value });
-  };
-  setMaterialName = (value) => {
-    this.setState({ materialName: value });
+    console.log(this.props.data);
   };
 
   render() {
@@ -85,20 +73,12 @@ class App extends React.Component {
         <Global styles={styles.global}></Global>
         <div className="App" css={styles.container}>
           <div className="effect">
-            <Material setMaterialName={this.setMaterialName} />
+            <Material />
             <div className="player" css={styles.player}>
-              <Export
-                title={this.state.title}
-                setTitle={this.setTitle}
-                materialName={this.state.materialName}
-                setMaterialName={this.setMaterialName}
-              />
+              <Export />
               <Player ref={this.playerRef} />
             </div>
-            <Configs
-              update={this.handleChangeCelConfigs}
-              key={this.props.celIndex}
-            />
+            <Configs key={this.props.celIndex} />
           </div>
           <Timeline />
         </div>
@@ -151,7 +131,7 @@ const mapDispatchToProps = (dispatch) => {
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
-    resetFrameConfig: dispatch(resetFrameConfig()),
+    resestFrameConfig: dispatch(resetFrameConfig()),
     resetCelList: dispatch(resetCelList()),
   };
 };

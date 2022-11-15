@@ -10,8 +10,9 @@ import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import makeTransparentImage from "../util/makeTransparentImage";
 import { loadOriginalImage } from "../slice/materialSlice";
+import { setImage } from "../slice/infoSlice";
 
-function Material({ setMaterialName }) {
+function Material(props) {
   const originalImage = useSelector((state) => state.material.originalImage);
   const trImage = useSelector((state) => state.material.trImage);
   const dispatch = useDispatch();
@@ -23,8 +24,8 @@ function Material({ setMaterialName }) {
     makeTransparentImage(dataUrl)
       .then(({ transparent, maxPage, trColor }) => {
         dispatch(loadOriginalImage({ dataUrl, transparent, maxPage, trColor }));
+        dispatch(setImage(name));
         setMsg("");
-        setMaterialName(name);
       })
       .catch((error) => {
         if (error.message === "width") {
