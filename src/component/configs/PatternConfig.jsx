@@ -4,9 +4,16 @@ import { css } from "@emotion/react";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updatePattern } from "../../slice/celListSlice";
 import PatternImage from "./Pattern/PatternImage";
 
-export default function PatternConfig({ config, update }) {
+export default function PatternConfig() {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex].pattern
+  );
+  const dispatch = useDispatch();
+
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
 
@@ -15,7 +22,7 @@ export default function PatternConfig({ config, update }) {
     if (validateStart(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.start = parseInt(target.value);
-      update("pattern", newConfig);
+      dispatch(updatePattern(newConfig));
     }
   };
   const handleChangeEnd = ({ target }) => {
@@ -23,7 +30,7 @@ export default function PatternConfig({ config, update }) {
     if (validateEnd(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.end = parseInt(target.value);
-      update("pattern", newConfig);
+      dispatch(updatePattern(newConfig));
     }
   };
 
@@ -81,7 +88,7 @@ export default function PatternConfig({ config, update }) {
                 onChange={({ target }) => {
                   const newConfig = Object.assign({}, config);
                   newConfig.isRoundTrip = target.checked;
-                  update("pattern", newConfig);
+                  dispatch(updatePattern(newConfig));
                 }}
               />
               :&nbsp;往復

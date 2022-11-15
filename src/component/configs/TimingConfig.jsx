@@ -4,8 +4,15 @@ import { css } from "@emotion/react";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFrame } from "../../slice/celListSlice";
 
-export default function TimingConfig({ config, update }) {
+export default function TimingConfig() {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex].frame
+  );
+  const dispatch = useDispatch();
+
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
   const [end, setEnd] = useState(config.start + config.volume - 1);
@@ -33,7 +40,7 @@ export default function TimingConfig({ config, update }) {
       // configの更新
       const newConfig = Object.assign({}, config);
       newConfig.start = parseInt(target.value);
-      update("frame", newConfig);
+      dispatch(updateFrame(newConfig));
       setEnd(newConfig.start + newConfig.volume - 1); // endも連動して更新する
     }
   };
@@ -45,7 +52,7 @@ export default function TimingConfig({ config, update }) {
       const newConfig = Object.assign({}, config);
       // Endを動かす場合、頭を動かし、volumeはそのまま。
       newConfig.start = parseInt(target.value) + 1 - newConfig.volume;
-      update("frame", newConfig);
+      dispatch(updateFrame(newConfig));
 
       setStart(newConfig.start); // startも連動して更新する
     }
@@ -57,7 +64,7 @@ export default function TimingConfig({ config, update }) {
     if (validateVolume(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.volume = parseInt(target.value);
-      update("frame", newConfig);
+      dispatch(updateFrame(newConfig));
     }
   };
 

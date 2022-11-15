@@ -6,19 +6,16 @@ import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { addCel, copyCel, deleteCel } from "../slice/celListSlice";
 import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
 
 const FRAME_SIZE = 20;
 const TIMELINE_HEIGHT = 28;
 
-export default function Timeline({
-  configList,
-  handleAdd,
-  handleDelete,
-  handleCopy,
-}) {
+export default function Timeline() {
   const { frame, maxFrame } = useSelector((state) => state.frame);
+  const celList = useSelector((state) => state.celList.list);
   const dispatch = useDispatch();
 
   const scrollRef = useRef(null);
@@ -55,11 +52,25 @@ export default function Timeline({
     <div className="timeline" css={styles.container} data-testid="timeline">
       <h1 css={styles.header}>タイムライン</h1>
       <div>
-        <button css={styles.button} type="button" onClick={handleAdd}>
+        <button
+          css={styles.button}
+          type="button"
+          onClick={() => {
+            const volume = maxFrame - frame;
+            const start = frame + 1;
+            dispatch(addCel({ volume, start }));
+          }}
+        >
           <FontAwesomeIcon icon={faPlus} css={styles.icon} />
           追加
         </button>
-        <button css={styles.button} type="button" onClick={handleCopy}>
+        <button
+          css={styles.button}
+          type="button"
+          onClick={() => {
+            dispatch(copyCel());
+          }}
+        >
           <FontAwesomeIcon icon={faCopy} css={styles.icon} />
           コピー
         </button>
@@ -67,11 +78,13 @@ export default function Timeline({
           css={[
             styles.button,
             styles.deleteButton,
-            configList.length < 2 && styles.disabled,
+            celList.length < 2 && styles.disabled,
           ]}
           type="button"
-          onClick={handleDelete}
-          disabled={configList.length < 2}
+          onClick={() => {
+            dispatch(deleteCel());
+          }}
+          disabled={celList.length < 2}
         >
           <FontAwesomeIcon icon={faTrashAlt} css={styles.icon} />
           削除
@@ -98,9 +111,9 @@ export default function Timeline({
               width: `${maxFrame * FRAME_SIZE}px`,
               gridTemplateColumns: `${FRAME_SIZE}px `.repeat(maxFrame),
               gridTemplateRows: `${
-                configList.length > 6
+                celList.length > 6
                   ? 201
-                  : FRAME_SIZE + TIMELINE_HEIGHT * configList.length
+                  : FRAME_SIZE + TIMELINE_HEIGHT * celList.length
               }px`,
             }}
           >
@@ -111,14 +124,12 @@ export default function Timeline({
             style={{
               width: `${maxFrame * FRAME_SIZE + 18}px`,
               height: `${
-                configList.length > 6
-                  ? 180
-                  : TIMELINE_HEIGHT * configList.length
+                celList.length > 6 ? 180 : TIMELINE_HEIGHT * celList.length
               }px`,
-              overflowY: configList.length > 6 ? "scroll" : "visible",
+              overflowY: celList.length > 6 ? "scroll" : "visible",
             }}
           >
-            {configList.map((config, index) => {
+            {celList.map((config, index) => {
               return (
                 <TimeCelView
                   key={`timeline_${index}`}
@@ -130,7 +141,7 @@ export default function Timeline({
             <div
               css={styles.spacer}
               style={{
-                top: `${configList.length * TIMELINE_HEIGHT}px`,
+                top: `${celList.length * TIMELINE_HEIGHT}px`,
               }}
               data-testid="timeline-spacer"
             />

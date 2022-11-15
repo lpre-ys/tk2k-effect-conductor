@@ -8,10 +8,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateByType } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 
-export default function FromToConfig({ type, name, config, update }) {
+export default function FromToConfig({ type, name }) {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex][type]
+  );
+  const dispatch = useDispatch();
+
   const [isOption, setIsOption] = useState(false);
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
@@ -21,7 +28,7 @@ export default function FromToConfig({ type, name, config, update }) {
     if (validate(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.from = parseInt(target.value);
-      update(type, newConfig);
+      dispatch(updateByType({ type, data: newConfig }));
     }
   };
   const handleChangeTo = ({ target }) => {
@@ -29,7 +36,7 @@ export default function FromToConfig({ type, name, config, update }) {
     if (validate(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.to = parseInt(target.value);
-      update(type, newConfig);
+      dispatch(updateByType({ type, data: newConfig }));
     }
   };
 
@@ -105,13 +112,8 @@ export default function FromToConfig({ type, name, config, update }) {
             onChange={handleChangeTo}
           />
         </label>
-        <EasingConfig config={config} type={type} update={update} />
-        <Options
-          config={config}
-          type={type}
-          update={update}
-          visible={isOption}
-        />
+        <EasingConfig config={config} type={type} />
+        <Options config={config} type={type} visible={isOption} />
       </div>
     </div>
   );

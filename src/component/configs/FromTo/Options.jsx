@@ -1,8 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateByType } from "../../../slice/celListSlice";
 
-export default function Options({ type, config, update, visible }) {
+export default function Options({ type, visible }) {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex][type]
+  );
+  const dispatch = useDispatch();
   const handleChangeCycle = ({ target }) => {
     let value = target.value;
     if (value === "" || parseInt(value) < 0) {
@@ -11,12 +17,12 @@ export default function Options({ type, config, update, visible }) {
     }
     const newConfig = Object.assign({}, config);
     newConfig.cycle = parseInt(value);
-    update(type, newConfig);
+    dispatch(updateByType({ type, data: newConfig }));
   };
   const handleChangeRoundTrip = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.isRoundTrip = !!target.checked;
-    update(type, newConfig);
+    dispatch(updateByType({ type, data: newConfig }));
   };
 
   if (visible) {

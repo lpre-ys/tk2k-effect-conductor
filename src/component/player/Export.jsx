@@ -7,14 +7,9 @@ import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
-function Export({
-  configList,
-  title,
-  setTitle,
-  materialName,
-  setMaterialName,
-}) {
+function Export({ title, setTitle, materialName, setMaterialName }) {
   const maxFrame = useSelector((state) => state.frame.maxFrame);
+  const configList = useSelector((state) => state.celList.list);
 
   const [disabled, setDisabled] = useState(false);
 

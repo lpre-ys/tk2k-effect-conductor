@@ -10,15 +10,12 @@ import Configs from "./component/Configs";
 import Export from "./component/player/Export";
 import { connect } from "react-redux";
 import { resetFrameConfig, setFrame } from "./slice/frameSlice";
-import { resetCelIndex, setCelIndex } from "./slice/celListSlice";
-
-const INIT_MAX_FRAME = 20;
+import { resetCelList } from "./slice/celListSlice";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
       title: "",
       materialName: "",
     };
@@ -30,11 +27,8 @@ class App extends React.Component {
       // 新規
       window.appMenu.onReceiveNew(() => {
         // configとCelConfigのリセット
-        this.setState({
-          celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
-        });
         this.props.resetFrameConfig();
-        this.props.resetCelIndex();
+        this.props.resetCelList();
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
@@ -48,66 +42,6 @@ class App extends React.Component {
       });
     }
   }
-  handleChangeCelConfigs = (type, config) => {
-    const id = this.props.celIndex;
-    this.setState((preConfig) => {
-      preConfig.celConfigList = preConfig.celConfigList.map(
-        (celConfig, index) => {
-          if (index === parseInt(id)) {
-            if (type in celConfig) {
-              celConfig[type] = config;
-            }
-          }
-          return celConfig;
-        }
-      );
-      return preConfig;
-    });
-  };
-  handleAddCelConfig = () => {
-    const volume = this.props.maxFrame - this.props.frame;
-    const start = this.props.frame + 1;
-    const newList = [...this.state.celConfigList, initCelConfig(start, volume)];
-
-    // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
-    this.setState({
-      celConfigList: newList,
-    });
-    // 追加したセルを選択する
-    this.props.setCelIndex(newList.length - 1);
-  };
-  handleDeleteCelConfig = () => {
-    if (this.state.celConfigList.length < 2) {
-      return;
-    }
-    const newList = this.state.celConfigList.filter((config, index) => {
-      return index !== this.props.celIndex;
-    });
-    this.setState({
-      celConfigList: newList,
-    });
-    // 1個前のセルを選択する
-    this.props.setCelIndex(
-      this.props.celIndex === 0 ? 0 : this.props.celIndex - 1
-    );
-  };
-  handleCopyCelConfig = () => {
-    // 有り得ない値だった場合、処理をしない
-    if (this.props.celIndex >= this.state.celConfigList.length) {
-      return;
-    }
-    if (this.props.celIndex < 0) {
-      return;
-    }
-    const copyList = [...this.state.celConfigList];
-    const target = JSON.parse(
-      JSON.stringify(this.state.celConfigList[this.props.celIndex])
-    );
-    copyList.splice(this.props.celIndex, 0, target);
-    this.setState({
-      celConfigList: copyList,
-    });
-  };
 
   handleKeyDown = (event) => {
     if (event.target.tagName === "INPUT") {
@@ -154,28 +88,19 @@ class App extends React.Component {
             <Material setMaterialName={this.setMaterialName} />
             <div className="player" css={styles.player}>
               <Export
-                configList={this.state.celConfigList}
                 title={this.state.title}
                 setTitle={this.setTitle}
                 materialName={this.state.materialName}
                 setMaterialName={this.setMaterialName}
               />
-              <Player
-                celConfigList={this.state.celConfigList}
-                ref={this.playerRef}
-              />
+              <Player ref={this.playerRef} />
             </div>
             <Configs
-              config={this.state.celConfigList[this.props.celIndex]}
               update={this.handleChangeCelConfigs}
+              key={this.props.celIndex}
             />
           </div>
-          <Timeline
-            configList={this.state.celConfigList}
-            handleAdd={this.handleAddCelConfig}
-            handleDelete={this.handleDeleteCelConfig}
-            handleCopy={this.handleCopyCelConfig}
-          />
+          <Timeline />
         </div>
       </>
     );
@@ -226,55 +151,9 @@ const mapDispatchToProps = (dispatch) => {
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
-    setCelIndex: (value) => {
-      dispatch(setCelIndex(value));
-    },
     resetFrameConfig: dispatch(resetFrameConfig()),
-    resetCelIndex: dispatch(resetCelIndex()),
+    resetCelList: dispatch(resetCelList()),
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
-function initCelConfig(start, volume) {
-  return {
-    x: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    y: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    scale: {
-      from: 100,
-      to: 100,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    opacity: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    frame: { start: start, volume: volume },
-    pattern: {
-      start: 1,
-      end: 1,
-      isRoundTrip: false,
-    },
-  };
-}

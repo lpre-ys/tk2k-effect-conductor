@@ -1,15 +1,23 @@
-export default function EasingConfig({ config, type, update }) {
+import { useDispatch, useSelector } from "react-redux";
+import { updateByType } from "../../../slice/celListSlice";
+
+export default function EasingConfig({ type }) {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex][type]
+  );
+  const dispatch = useDispatch();
+
   const changeEasing = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.easing = target.value;
     // addの初期値はInが良い
     newConfig.easingAdd = "In";
-    update(type, newConfig);
+    dispatch(updateByType({ type, data: newConfig }));
   };
   const changeAdd = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.easingAdd = target.value;
-    update(type, newConfig);
+    dispatch(updateByType({ type, data: newConfig }));
   };
   let add = <></>;
   if (config.easing !== "easeLinear") {

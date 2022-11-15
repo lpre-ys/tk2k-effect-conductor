@@ -19,8 +19,9 @@ import ViewSettings from "./player/ViewSettings";
 
 const FRAME_SEC = 33; // 30 fps
 
-function Player({ celConfigList }, ref) {
+function Player(props, ref) {
   const { frame, maxFrame } = useSelector((state) => state.frame);
+  const celList = useSelector((state) => state.celList.list);
   const dispatch = useDispatch();
 
   const [isRepeat, setIsRepeat] = useState(false);
@@ -117,12 +118,12 @@ function Player({ celConfigList }, ref) {
           <Layer imageSmoothingEnabled={false}>
             <Background color={bgColor} image={bgImage} />
             <Grid />
-            {celConfigList.map((celConfig, id) => {
+            {celList.map((cel, id) => {
               return (
                 <Cel
                   key={id}
                   id={id + 1}
-                  config={celConfig}
+                  config={cel}
                   isShowCelBorder={isShowCelBorder}
                   setMsg={setMsg}
                 />

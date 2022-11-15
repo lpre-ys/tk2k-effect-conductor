@@ -11,10 +11,6 @@ export default function TimeCelView({ index, config }) {
 
   const isSelected = index === celIndex;
 
-  const handleClick = ({ currentTarget }) => {
-    dispatch(setCelIndex(currentTarget.dataset.id));
-    // handler(currentTarget.dataset.id);
-  };
   return (
     <div
       css={[styles.timeline, isSelected ? styles.timelineSelected : null]}
@@ -24,7 +20,9 @@ export default function TimeCelView({ index, config }) {
         width: `${FRAME_SIZE * config.frame.volume - 8}px`,
         height: `${TIMELINE_HEIGHT - 6}px`,
       }}
-      onClick={handleClick}
+      onClick={({ currentTarget }) => {
+        dispatch(setCelIndex(currentTarget.dataset.id));
+      }}
       data-id={index}
       data-testid="time-cel-view"
     >
