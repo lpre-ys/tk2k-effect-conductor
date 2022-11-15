@@ -7,21 +7,40 @@ import Patterns from "./material/Patterns";
 import MaterialImage from "./material/MaterialImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import makeTransparentImage from "../util/makeTransparentImage";
+import { loadOriginalImage } from "../slice/materialSlice";
 
-export default function Material({
-  material,
-  loadImage,
-  msg,
-  changeMaterial,
-  changeTrColor,
-}) {
+export default function Material({ setMaterialName }) {
+  const originalImage = useSelector((state) => state.material.originalImage);
+  const trImage = useSelector((state) => state.material.trImage);
+  const dispatch = useDispatch();
+
   const [isShowImage, setIsShowImage] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const loadImage = (dataUrl, name) => {
+    makeTransparentImage(dataUrl)
+      .then(({ transparent, maxPage, trColor }) => {
+        dispatch(loadOriginalImage({ dataUrl, transparent, maxPage, trColor }));
+        setMsg("");
+        setMaterialName(name);
+      })
+      .catch((error) => {
+        if (error.message === "width") {
+          setMsg("素材画像の横幅が正しくないようです。");
+        }
+        if (error.message === "height") {
+          setMsg("素材画像の縦幅が正しくないようです。");
+        }
+      });
+  };
   return (
     <div className="material" css={styles.component}>
       <h1 css={styles.header}>素材データ</h1>
       <section css={styles.loader} className="loader">
         <Loader loadImage={loadImage} />
-        {material.originalImage && (
+        {originalImage && (
           <>
             <button
               type="button"
@@ -35,25 +54,18 @@ export default function Material({
               プレビュー
             </button>
             <MaterialImage
-              src={material.originalImage}
+              src={originalImage}
               isShow={isShowImage}
             ></MaterialImage>
           </>
         )}
       </section>
       {msg && <p data-testid="material-msg">{msg}</p>}
-      {material.transparentImage && (
+      {trImage && (
         <>
           <section className="patterns">
             <h2>パターン</h2>
-            <Patterns
-              image={material.transparentImage}
-              max={material.maxPage}
-              trColor={material.transparentColor}
-              bgColor={material.bgColor}
-              changeMaterial={changeMaterial}
-              changeTrColor={changeTrColor}
-            ></Patterns>
+            <Patterns />
           </section>
         </>
       )}

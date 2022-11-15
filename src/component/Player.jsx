@@ -19,7 +19,7 @@ import ViewSettings from "./player/ViewSettings";
 
 const FRAME_SEC = 33; // 30 fps
 
-function Player({ material, celConfigList }, ref) {
+function Player({ celConfigList }, ref) {
   const { frame, maxFrame } = useSelector((state) => state.frame);
   const dispatch = useDispatch();
 
@@ -122,8 +122,6 @@ function Player({ material, celConfigList }, ref) {
                 <Cel
                   key={id}
                   id={id + 1}
-                  image={material.transparentImage}
-                  maxPage={material.maxPage}
                   config={celConfig}
                   isShowCelBorder={isShowCelBorder}
                   setMsg={setMsg}

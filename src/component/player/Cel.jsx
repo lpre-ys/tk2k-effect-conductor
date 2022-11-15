@@ -8,10 +8,12 @@ import { useSelector } from "react-redux";
 import useImage from "use-image";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
-const Cel = ({ image, maxPage, config, isShowCelBorder, id, setMsg }) => {
+const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
+  const { trImage, maxPage } = useSelector((state) => state.material);
+
   const frame = useSelector((state) => state.frame.frame);
 
-  const [imgElement] = useImage(image);
+  const [imgElement] = useImage(trImage);
 
   const makePatterns = useCallback(() => {
     const width = 5;
@@ -51,7 +53,7 @@ const Cel = ({ image, maxPage, config, isShowCelBorder, id, setMsg }) => {
     visible = false;
     data = resetData;
   }
-  if (!image) {
+  if (!trImage) {
     return <></>;
   }
 

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import PatternImage from "./Pattern/PatternImage";
 
-export default function PatternConfig({ config, update, image, bgColor }) {
+export default function PatternConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
 
@@ -68,7 +68,7 @@ export default function PatternConfig({ config, update, image, bgColor }) {
         )}
       </h2>
       <div css={styles.container}>
-        <PatternImage image={image} config={config} bgColor={bgColor} />
+        <PatternImage config={config} />
         <div css={styles.wrapper}>
           <div>
             <label css={[styles.label, styles.checkbox]}>

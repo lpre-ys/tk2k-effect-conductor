@@ -3,15 +3,18 @@
 import { useRef } from "react";
 import useImage from "use-image";
 import { Layer, Rect, Sprite, Stage } from "react-konva";
-import TrImage from "../../../tr2x.png";
+import TrBg from "../../../tr2x.png";
 import { css } from "@emotion/react";
+import { useSelector } from "react-redux";
 
-export default function PatternImage({ image, config, bgColor }) {
+export default function PatternImage({ config }) {
+  const { trImage, bgColor } = useSelector((state) => state.material);
+
   const spriteRef = useRef();
-  const [trImage] = useImage(TrImage);
-  const [imgElement] = useImage(image);
+  const [trBgImage] = useImage(TrBg);
+  const [imgElement] = useImage(trImage);
 
-  if (image) {
+  if (trImage) {
     return (
       <div data-testid="pattern-image-canvas" css={styles.pattern}>
         <Stage
@@ -32,7 +35,7 @@ export default function PatternImage({ image, config, bgColor }) {
               y={0}
               width={320}
               height={240}
-              fillPatternImage={trImage}
+              fillPatternImage={trBgImage}
             ></Rect>
             <Rect x={0} y={0} width={320} height={240} fill={bgColor}></Rect>
             <Sprite

@@ -1,19 +1,17 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
+import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
-export default function Patterns({
-  max,
-  image,
-  trColor,
-  bgColor,
-  handle,
-  changeTrColor,
-}) {
+export default function Patterns() {
+  const { maxPage, trImage, bgColor } = useSelector((state) => state.material);
+  const dispatch = useDispatch();
+
   const patterns = [];
-  for (let i = 0; i < max; i++) {
+  for (let i = 0; i < maxPage; i++) {
     const x = (i % 5) * 96;
     const y = parseInt(i / 5) * 96;
     patterns.push(
@@ -27,7 +25,7 @@ export default function Patterns({
           <div
             css={styles.sprite}
             style={{
-              backgroundImage: `url(${image})`,
+              backgroundImage: `url(${trImage})`,
               backgroundPosition: `-${x}px -${y}px`,
             }}
             data-testid="patterns-pattern-sprite"
@@ -38,9 +36,6 @@ export default function Patterns({
       </li>
     );
   }
-  const handleChange = ({ target }) => {
-    handle("bgColor", target.value);
-  };
 
   return (
     <>
@@ -50,11 +45,13 @@ export default function Patterns({
           type="text"
           css={styles.input}
           value={bgColor}
-          onChange={handleChange}
+          onChange={({ target }) => {
+            dispatch(changeBgColor(target.value));
+          }}
           data-testid="patterns-input-bgcolor"
         />
       </label>
-      <TrColorView trColor={trColor} changeTrColor={changeTrColor} />
+      <TrColorView />
       <ul css={styles.ul}>{patterns}</ul>
     </>
   );

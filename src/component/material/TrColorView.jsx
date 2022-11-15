@@ -2,17 +2,30 @@
 
 import { css } from "@emotion/react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { changeTrColor } from "../../slice/materialSlice";
+import makeTransparentImage from "../../util/makeTransparentImage";
 
-export default function TrColorView({ trColor, changeTrColor }) {
+export default function TrColorView() {
+  const { originalImage, trColor } = useSelector((state) => state.material);
+  const dispatch = useDispatch();
+
   const [isShowTrInput, setIsShowTrInput] = useState(false);
   const handleChangeTrColor = ({ target }) => {
     const value = parseInt(target.value);
     if (value < 0 || value > 255) {
       return;
     }
-    trColor[target.dataset.color] = value;
-    changeTrColor(trColor.r, trColor.g, trColor.b);
+    const newColor = Object.assign({}, trColor);
+    newColor[target.dataset.color] = value;
+
+    makeTransparentImage(originalImage, newColor).then(
+      ({ transparent, trColor }) => {
+        dispatch(changeTrColor({ transparent, trColor }));
+      }
+    );
   };
+
   return (
     <div css={styles.trColorWrapper}>
       <span

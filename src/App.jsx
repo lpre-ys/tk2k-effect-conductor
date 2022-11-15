@@ -4,7 +4,6 @@ import { css, Global } from "@emotion/react";
 import React, { createRef } from "react";
 import Material from "./component/Material";
 import normalize from "normalize.css";
-import makeTransparentImage from "./util/makeTransparentImage";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
@@ -18,14 +17,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      materialMsg: "",
-      material: {
-        originalImage: null,
-        transparentImage: null,
-        maxPage: 0,
-        transparentColor: null,
-        bgColor: "transparent",
-      },
       celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
       selectedCelId: 0,
       title: "",
@@ -122,56 +113,7 @@ class App extends React.Component {
       selectedCelId: parseInt(value),
     });
   };
-  handleChangeMaterial = (type, value) => {
-    this.setState((preConfig) => {
-      preConfig.material[type] = value;
-      return preConfig;
-    });
-  };
-  loadImage = (dataUrl, name) => {
-    makeTransparentImage(dataUrl)
-      .then(({ transparent, maxPage, trColor }) => {
-        this.setState({
-          material: {
-            originalImage: dataUrl,
-            transparentImage: transparent,
-            maxPage: maxPage,
-            transparentColor: trColor,
-            bgColor: "transparent",
-          },
-          materialMsg: "",
-          materialName: name,
-        });
-      })
-      .catch((error) => {
-        if (error.message === "width") {
-          this.setState({
-            materialMsg: "素材画像の横幅が正しくないようです。",
-          });
-        }
-        if (error.message === "height") {
-          this.setState({
-            materialMsg: "素材画像の縦幅が正しくないようです。",
-          });
-        }
-      });
-  };
-  handleChangeTrColor = (r, g, b) => {
-    makeTransparentImage(this.state.material.originalImage, { r, g, b }).then(
-      ({ transparent, maxPage, trColor }) => {
-        this.setState({
-          material: {
-            originalImage: this.state.material.originalImage,
-            transparentImage: transparent,
-            maxPage: maxPage,
-            transparentColor: trColor,
-            bgColor: this.state.material.bgColor,
-          },
-          materialMsg: "",
-        });
-      }
-    );
-  };
+
   handleKeyDown = (event) => {
     if (event.target.tagName === "INPUT") {
       return;
@@ -214,13 +156,7 @@ class App extends React.Component {
         <Global styles={styles.global}></Global>
         <div className="App" css={styles.container}>
           <div className="effect">
-            <Material
-              material={this.state.material}
-              loadImage={this.loadImage}
-              changeTrColor={this.handleChangeTrColor}
-              msg={this.state.materialMsg}
-              changeMaterial={this.handleChangeMaterial}
-            />
+            <Material setMaterialName={this.setMaterialName} />
             <div className="player" css={styles.player}>
               <Export
                 configList={this.state.celConfigList}
@@ -230,7 +166,6 @@ class App extends React.Component {
                 setMaterialName={this.setMaterialName}
               />
               <Player
-                material={this.state.material}
                 celConfigList={this.state.celConfigList}
                 ref={this.playerRef}
               />
@@ -239,7 +174,6 @@ class App extends React.Component {
               config={this.state.celConfigList[this.state.selectedCelId]}
               celId={this.state.selectedCelId}
               update={this.handleChangeCelConfigs}
-              material={this.state.material}
             />
           </div>
           <Timeline
