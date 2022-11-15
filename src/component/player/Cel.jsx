@@ -51,7 +51,6 @@ const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
     data = getDataByLocalFrame(localFrame, config);
   } else {
     visible = false;
-    data = resetData;
   }
   if (!trImage) {
     return <></>;

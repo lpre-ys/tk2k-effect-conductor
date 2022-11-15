@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import Loader from "./material/Loader";
 import Patterns from "./material/Patterns";
 import MaterialImage from "./material/MaterialImage";
@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import makeTransparentImage from "../util/makeTransparentImage";
 import { loadOriginalImage } from "../slice/materialSlice";
 
-export default function Material({ setMaterialName }) {
+function Material({ setMaterialName }) {
   const originalImage = useSelector((state) => state.material.originalImage);
   const trImage = useSelector((state) => state.material.trImage);
   const dispatch = useDispatch();
@@ -53,10 +53,7 @@ export default function Material({ setMaterialName }) {
               <FontAwesomeIcon icon={faImage} css={styles.icon} />
               プレビュー
             </button>
-            <MaterialImage
-              src={originalImage}
-              isShow={isShowImage}
-            ></MaterialImage>
+            <MaterialImage isShow={isShowImage}></MaterialImage>
           </>
         )}
       </section>
@@ -72,6 +69,8 @@ export default function Material({ setMaterialName }) {
     </div>
   );
 }
+
+export default memo(Material);
 
 const styles = {
   component: css`

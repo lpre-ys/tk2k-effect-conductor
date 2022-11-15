@@ -1,13 +1,15 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
-export default function Patterns() {
+function Patterns() {
   const { maxPage, trImage, bgColor } = useSelector((state) => state.material);
+
   const dispatch = useDispatch();
 
   const patterns = [];
@@ -56,6 +58,8 @@ export default function Patterns() {
     </>
   );
 }
+
+export default memo(Patterns);
 
 const styles = {
   ul: css`
