@@ -9,8 +9,14 @@ import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
 import Export from "./component/player/Export";
 import { connect } from "react-redux";
-import { resetFrameConfig, setFrame } from "./slice/frameSlice";
+import {
+  loadFrameConfig,
+  resetFrameConfig,
+  setFrame,
+} from "./slice/frameSlice";
 import { loadCelList, resetCelList } from "./slice/celListSlice";
+import { loadInfo } from "./slice/infoSlice";
+import { loadMaterial } from "./slice/materialSlice";
 
 class App extends React.Component {
   constructor(props) {
@@ -32,7 +38,9 @@ class App extends React.Component {
         window.appMenu.saveData(this.props.data);
       });
       // 読み込み
-      window.appMenu.onReceiveLoad((data) => {});
+      window.appMenu.onReceiveLoad((data) => {
+        this.props.loadData(JSON.parse(data));
+      });
     }
   }
 
@@ -123,6 +131,7 @@ const mapStateToProps = (state) => {
     frame: state.frame.frame,
     maxFrame: state.frame.maxFrame,
     celIndex: state.celList.celIndex,
+    data: state,
   };
 };
 
@@ -131,7 +140,13 @@ const mapDispatchToProps = (dispatch) => {
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
-    resestFrameConfig: dispatch(resetFrameConfig()),
+    loadData: (value) => {
+      dispatch(loadCelList(value.celList));
+      dispatch(loadFrameConfig(value.frame));
+      dispatch(loadInfo(value.info));
+      dispatch(loadMaterial(value.material));
+    },
+    resetFrameConfig: dispatch(resetFrameConfig()),
     resetCelList: dispatch(resetCelList()),
   };
 };

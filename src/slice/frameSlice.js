@@ -3,12 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 const INIT_MAX_FRAME = 20;
 
 export const frameSlice = createSlice({
-  name: 'frame',
+  name: "frame",
   initialState: {
     frame: 0,
-    maxFrame: INIT_MAX_FRAME
+    maxFrame: INIT_MAX_FRAME,
   },
   reducers: {
+    resetFrameConfig: (state) => {
+      state.frame = 0;
+      state.maxFrame = INIT_MAX_FRAME;
+    },
+    loadFrameConfig: (state, action) => {
+      Object.assign(state, action.payload);
+    },
     setFrame: (state, action) => {
       if (action.payload < 0) {
         return;
@@ -21,13 +28,9 @@ export const frameSlice = createSlice({
     setMaxFrame: (state, action) => {
       state.maxFrame = action.payload;
     },
-    resetFrameConfig: (state) => {
-      state.frame = 0;
-      state.maxFrame = INIT_MAX_FRAME;
-    }
-  }
+  },
 });
 
-export const { setFrame, setMaxFrame, resetFrameConfig } = frameSlice.actions;
+export const { loadFrameConfig, setFrame, setMaxFrame, resetFrameConfig } =
+  frameSlice.actions;
 export default frameSlice.reducer;
-

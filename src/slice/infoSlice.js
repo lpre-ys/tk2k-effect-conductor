@@ -16,9 +16,12 @@ export const infoSlice = createSlice({
     resetInfo: (state) => {
       state.title = "";
       state.image = "";
+    },
+    loadInfo: (state, action) => {
+      Object.assign(state, action.payload);
     }
   }
 });
 
-export const { setTitle, setImage, resetInfo } = infoSlice.actions;
+export const { setTitle, setImage, resetInfo, loadInfo } = infoSlice.actions;
 export default infoSlice.reducer;

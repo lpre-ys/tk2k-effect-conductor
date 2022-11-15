@@ -8,12 +8,15 @@ export const celListSlice = createSlice({
     list: [initCel(1, INIT_MAX_FRAME)],
   },
   reducers: {
-    setCelIndex: (state, action) => {
-      state.celIndex = parseInt(action.payload);
-    },
     resetCelList: (state) => {
       state.celIndex = 0;
       state.list = [initCel(1, INIT_MAX_FRAME)];
+    },
+    loadCelList: (state, action) => {
+      Object.assign(state, action.payload);
+    },
+    setCelIndex: (state, action) => {
+      state.celIndex = parseInt(action.payload);
     },
     addCel: (state, action) => {
       const { volume, start } = action.payload;
@@ -77,8 +80,9 @@ export const celListSlice = createSlice({
 });
 
 export const {
-  setCelIndex,
   resetCelList,
+  loadCelList,
+  setCelIndex,
   addCel,
   deleteCel,
   copyCel,

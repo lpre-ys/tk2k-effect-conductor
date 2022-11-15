@@ -24,9 +24,12 @@ export const materialSlice = createSlice({
     },
     changeBgColor: (state, action) => {
       state.bgColor = action.payload;
+    },
+    loadMaterial: (state, action) => {
+      Object.assign(state, action.payload);
     }
   },
 });
 
-export const { loadOriginalImage, changeTrColor, changeBgColor } = materialSlice.actions;
+export const { loadOriginalImage, changeTrColor, changeBgColor, loadMaterial } = materialSlice.actions;
 export default materialSlice.reducer;
