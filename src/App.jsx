@@ -10,6 +10,7 @@ import Configs from "./component/Configs";
 import Export from "./component/player/Export";
 import { connect } from "react-redux";
 import { resetFrameConfig, setFrame } from "./slice/frameSlice";
+import { resetCelIndex, setCelIndex } from "./slice/celListSlice";
 
 const INIT_MAX_FRAME = 20;
 
@@ -18,7 +19,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
-      selectedCelId: 0,
       title: "",
       materialName: "",
     };
@@ -32,9 +32,9 @@ class App extends React.Component {
         // configとCelConfigのリセット
         this.setState({
           celConfigList: [initCelConfig(1, INIT_MAX_FRAME)],
-          selectedCelId: 0,
         });
         this.props.resetFrameConfig();
+        this.props.resetCelIndex();
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
@@ -49,7 +49,7 @@ class App extends React.Component {
     }
   }
   handleChangeCelConfigs = (type, config) => {
-    const id = this.state.selectedCelId;
+    const id = this.props.celIndex;
     this.setState((preConfig) => {
       preConfig.celConfigList = preConfig.celConfigList.map(
         (celConfig, index) => {
@@ -72,45 +72,40 @@ class App extends React.Component {
     // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
     this.setState({
       celConfigList: newList,
-      // 追加したセルを選択する
-      selectedCelId: newList.length - 1,
     });
+    // 追加したセルを選択する
+    this.props.setCelIndex(newList.length - 1);
   };
   handleDeleteCelConfig = () => {
     if (this.state.celConfigList.length < 2) {
       return;
     }
     const newList = this.state.celConfigList.filter((config, index) => {
-      return index !== this.state.selectedCelId;
+      return index !== this.props.celIndex;
     });
     this.setState({
       celConfigList: newList,
-      // 1個前のセルを選択する
-      selectedCelId:
-        this.state.selectedCelId === 0 ? 0 : this.state.selectedCelId - 1,
     });
+    // 1個前のセルを選択する
+    this.props.setCelIndex(
+      this.props.celIndex === 0 ? 0 : this.props.celIndex - 1
+    );
   };
   handleCopyCelConfig = () => {
     // 有り得ない値だった場合、処理をしない
-    if (this.state.selectedCelId >= this.state.celConfigList.length) {
+    if (this.props.celIndex >= this.state.celConfigList.length) {
       return;
     }
-    if (this.state.selectedCelId < 0) {
+    if (this.props.celIndex < 0) {
       return;
     }
     const copyList = [...this.state.celConfigList];
     const target = JSON.parse(
-      JSON.stringify(this.state.celConfigList[this.state.selectedCelId])
+      JSON.stringify(this.state.celConfigList[this.props.celIndex])
     );
-    copyList.splice(this.state.selectedCelId, 0, target);
+    copyList.splice(this.props.celIndex, 0, target);
     this.setState({
       celConfigList: copyList,
-    });
-  };
-
-  handleChangeSelectedCel = (value) => {
-    this.setState({
-      selectedCelId: parseInt(value),
     });
   };
 
@@ -171,14 +166,11 @@ class App extends React.Component {
               />
             </div>
             <Configs
-              config={this.state.celConfigList[this.state.selectedCelId]}
-              celId={this.state.selectedCelId}
+              config={this.state.celConfigList[this.props.celIndex]}
               update={this.handleChangeCelConfigs}
             />
           </div>
           <Timeline
-            selected={this.state.selectedCelId}
-            handler={this.handleChangeSelectedCel}
             configList={this.state.celConfigList}
             handleAdd={this.handleAddCelConfig}
             handleDelete={this.handleDeleteCelConfig}
@@ -225,6 +217,7 @@ const mapStateToProps = (state) => {
   return {
     frame: state.frame.frame,
     maxFrame: state.frame.maxFrame,
+    celIndex: state.celList.celIndex,
   };
 };
 
@@ -233,7 +226,11 @@ const mapDispatchToProps = (dispatch) => {
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
+    setCelIndex: (value) => {
+      dispatch(setCelIndex(value));
+    },
     resetFrameConfig: dispatch(resetFrameConfig()),
+    resetCelIndex: dispatch(resetCelIndex()),
   };
 };
 

@@ -1,11 +1,19 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCelIndex } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
 
-export default function TimeCelView({ index, isSelected, config, handler }) {
+export default function TimeCelView({ index, config }) {
+  const celIndex = useSelector((state) => state.celList.celIndex);
+  const dispatch = useDispatch();
+
+  const isSelected = index === celIndex;
+
   const handleClick = ({ currentTarget }) => {
-    handler(currentTarget.dataset.id);
+    dispatch(setCelIndex(currentTarget.dataset.id));
+    // handler(currentTarget.dataset.id);
   };
   return (
     <div

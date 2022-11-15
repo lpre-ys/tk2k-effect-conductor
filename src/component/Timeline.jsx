@@ -14,8 +14,6 @@ const TIMELINE_HEIGHT = 28;
 
 export default function Timeline({
   configList,
-  handler,
-  selected,
   handleAdd,
   handleDelete,
   handleCopy,
@@ -63,7 +61,6 @@ export default function Timeline({
         </button>
         <button css={styles.button} type="button" onClick={handleCopy}>
           <FontAwesomeIcon icon={faCopy} css={styles.icon} />
-          {/* <FaRegCopy css={styles.icon} /> */}
           コピー
         </button>
         <button
@@ -127,8 +124,6 @@ export default function Timeline({
                   key={`timeline_${index}`}
                   index={index}
                   config={config}
-                  isSelected={index === selected}
-                  handler={handler}
                 />
               );
             })}

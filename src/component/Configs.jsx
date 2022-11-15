@@ -1,15 +1,17 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useSelector } from "react-redux";
 
 import FromToConfig from "./configs/FromToConfig";
 import PatternConfig from "./configs/PatternConfig";
 import TimingConfig from "./configs/TimingConfig";
 
-export default function Configs({ config, update, celId }) {
+export default function Configs({ config, update }) {
+  const celIndex = useSelector((state) => state.celList.celIndex);
   return (
     <div css={styles.container}>
-      <h1>セル: {celId + 1}</h1>
+      <h1>セル: {celIndex + 1}</h1>
       <TimingConfig config={config.frame} update={update} />
       <PatternConfig config={config.pattern} update={update} />
       <FromToConfig type="x" name="X座標" config={config.x} update={update} />
