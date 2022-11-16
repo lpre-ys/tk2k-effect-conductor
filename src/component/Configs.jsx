@@ -7,9 +7,7 @@ import FromToConfig from "./configs/FromToConfig";
 import PatternConfig from "./configs/PatternConfig";
 import TimingConfig from "./configs/TimingConfig";
 
-export default function Configs({ update }) {
-  const celIndex = useSelector((state) => state.celList.celIndex);
-
+export function Configs({ celIndex }) {
   return (
     <div css={styles.container}>
       <h1>セル: {celIndex + 1}</h1>
@@ -22,6 +20,17 @@ export default function Configs({ update }) {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const celIndex = useSelector((state) => state.celList.celIndex);
+  const _props = {
+    celIndex,
+    ...props,
+  };
+
+  return <Configs {..._props} />;
+};
 
 const styles = {
   container: css`

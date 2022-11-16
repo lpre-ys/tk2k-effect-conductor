@@ -5,10 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCelIndex } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
 
-export default function TimeCelView({ index, config }) {
-  const celIndex = useSelector((state) => state.celList.celIndex);
-  const dispatch = useDispatch();
-
+export function TimeCelView({ index, config, celIndex, setCelIndex }) {
   const isSelected = index === celIndex;
 
   return (
@@ -21,7 +18,7 @@ export default function TimeCelView({ index, config }) {
         height: `${TIMELINE_HEIGHT - 6}px`,
       }}
       onClick={({ currentTarget }) => {
-        dispatch(setCelIndex(currentTarget.dataset.id));
+        setCelIndex(currentTarget.dataset.id);
       }}
       data-id={index}
       data-testid="time-cel-view"
@@ -30,6 +27,21 @@ export default function TimeCelView({ index, config }) {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const celIndex = useSelector((state) => state.celList.celIndex);
+  const dispatch = useDispatch();
+  const _props = {
+    celIndex,
+    setCelIndex: (value) => {
+      dispatch(setCelIndex(value));
+    },
+    ...props,
+  };
+
+  return <TimeCelView {..._props} />;
+};
 
 const styles = {
   timeline: css`

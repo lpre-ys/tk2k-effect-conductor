@@ -7,12 +7,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFrame } from "../../slice/celListSlice";
 
-export default function TimingConfig() {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex].frame
-  );
-  const dispatch = useDispatch();
-
+export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
   const [end, setEnd] = useState(config.start + config.volume - 1);
@@ -40,7 +35,7 @@ export default function TimingConfig() {
       // configの更新
       const newConfig = Object.assign({}, config);
       newConfig.start = parseInt(target.value);
-      dispatch(updateFrame(newConfig));
+      update(newConfig);
       setEnd(newConfig.start + newConfig.volume - 1); // endも連動して更新する
     }
   };
@@ -52,7 +47,7 @@ export default function TimingConfig() {
       const newConfig = Object.assign({}, config);
       // Endを動かす場合、頭を動かし、volumeはそのまま。
       newConfig.start = parseInt(target.value) + 1 - newConfig.volume;
-      dispatch(updateFrame(newConfig));
+      update(newConfig);
 
       setStart(newConfig.start); // startも連動して更新する
     }
@@ -64,7 +59,7 @@ export default function TimingConfig() {
     if (validateVolume(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.volume = parseInt(target.value);
-      dispatch(updateFrame(newConfig));
+      update(newConfig);
     }
   };
 
@@ -117,6 +112,22 @@ export default function TimingConfig() {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex].frame
+  );
+  const dispatch = useDispatch();
+  const _props = {
+    config,
+    update: (newConfig) => {
+      dispatch(updateFrame(newConfig));
+    },
+    ...props,
+  };
+  return <TimingConfig {..._props} />;
+};
 
 const styles = {
   number: css`

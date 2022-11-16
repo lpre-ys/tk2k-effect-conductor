@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import TrColorView from "./TrColorView";
+import makeTransparentImage from "../../util/makeTransparentImage";
+import { TrColorView } from "./TrColorView";
 
 const defaultColor = { r: 0, g: 0, b: 0 };
 
@@ -44,6 +45,8 @@ test("textView is rgb(trColor)", () => {
   expect(target).toHaveTextContent("rgb(205, 39, 71)");
 });
 
+jest.mock("../../util/makeTransparentImage");
+
 describe("trColorInput", () => {
   describe("value", () => {
     test("R value is trColor.r", () => {
@@ -72,32 +75,92 @@ describe("trColorInput", () => {
     });
   });
   describe("change", () => {
-    test("R change to trColor.r", () => {
+    const mockMake = makeTransparentImage;
+    beforeEach(() => {
+      mockMake.mockReset();
+      mockMake.mockResolvedValue({
+        transparent: "transparent-image",
+        maxPage: 42,
+        trColor: "test-trcolor",
+      });
+    });
+    test("R change to trColor.r", async () => {
       const mockFn = jest.fn();
       render(
-        <TrColorView trColor={{ r: 11, g: 22, b: 33 }} changeTrColor={mockFn} />
+        <TrColorView
+          image="testimage.png"
+          trColor={{ r: 11, g: 22, b: 33 }}
+          changeTrColor={mockFn}
+        />
       );
 
       userEvent.click(screen.getByTestId("trcv-label-wrapper"));
       const target = screen.getByTestId("trcv-input-r");
 
-      userEvent.type(target, "{selectall}4");
+      fireEvent.change(target, { target: { value: 4 } });
 
-      expect(mockFn).toBeCalledWith(4, 22, 33);
+      await waitFor(() => {
+        expect(mockMake).toBeCalledWith("testimage.png", {
+          r: 4,
+          g: 22,
+          b: 33,
+        });
+      });
+      await waitFor(() => {
+        expect(mockFn).toBeCalledWith("transparent-image", "test-trcolor");
+      });
     });
-    // * GとBは上手く動かないので保留...(userEventがあやしい)
-    // test("G change to trColor.g", () => {
-    //   const mockFn = jest.fn();
-    //   render(
-    //     <TrColorView trColor={{ r: 11, g: 22, b: 33 }} changeTrColor={mockFn} />
-    //   );
+    test("G change to trColor.g", async () => {
+      const mockFn = jest.fn();
+      render(
+        <TrColorView
+          image="testimage.png"
+          trColor={{ r: 11, g: 22, b: 33 }}
+          changeTrColor={mockFn}
+        />
+      );
 
-    //   userEvent.click(screen.getByTestId("trcv-label-wrapper"));
-    //   const input = screen.getByTestId("trcv-input-ggg");
+      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      const target = screen.getByTestId("trcv-input-g");
 
-    //   userEvent.type(input, "{selectall}5");
+      fireEvent.change(target, { target: { value: 6 } });
 
-    //   expect(mockFn).toBeCalledWith(11, 5, 33);
-    // });
+      await waitFor(() => {
+        expect(mockMake).toBeCalledWith("testimage.png", {
+          r: 11,
+          g: 6,
+          b: 33,
+        });
+      });
+      await waitFor(() => {
+        expect(mockFn).toBeCalledWith("transparent-image", "test-trcolor");
+      });
+    });
+    test("B change to trColor.g", async () => {
+      const mockFn = jest.fn();
+      render(
+        <TrColorView
+          image="testimage.png"
+          trColor={{ r: 11, g: 22, b: 33 }}
+          changeTrColor={mockFn}
+        />
+      );
+
+      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      const target = screen.getByTestId("trcv-input-b");
+
+      fireEvent.change(target, { target: { value: 8 } });
+
+      await waitFor(() => {
+        expect(mockMake).toBeCalledWith("testimage.png", {
+          r: 11,
+          g: 22,
+          b: 8,
+        });
+      });
+      await waitFor(() => {
+        expect(mockFn).toBeCalledWith("transparent-image", "test-trcolor");
+      });
+    });
   });
 });

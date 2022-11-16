@@ -4,18 +4,23 @@ import { css } from "@emotion/react";
 import { memo } from "react";
 import { useSelector } from "react-redux";
 
-function MaterialImage({ isShow }) {
-  const originalImage = useSelector((state) => state.material.originalImage);
-
+export function MaterialImage({ image, isShow }) {
   if (isShow) {
     return (
       <div css={styles.image} data-testid="material-image">
-        <img src={originalImage} alt="original"></img>
+        <img src={image} alt="original"></img>
       </div>
     );
   }
 }
-export default memo(MaterialImage);
+export default memo((props) => {
+  const originalImage = useSelector((state) => state.material.originalImage);
+  const _props = {
+    image: originalImage,
+    ...props,
+  };
+  return <MaterialImage {..._props} />;
+});
 
 const styles = {
   image: css`

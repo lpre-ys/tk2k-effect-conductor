@@ -6,7 +6,7 @@ export const materialSlice = createSlice({
     originalImage: null,
     trImage: null,
     maxPage: 0,
-    trColor: null,
+    trColor: { r: 0, g: 0, b: 0 },
     bgColor: "transparent",
   },
   reducers: {

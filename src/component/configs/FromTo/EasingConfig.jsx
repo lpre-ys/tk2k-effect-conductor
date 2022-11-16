@@ -1,23 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
 import { updateByType } from "../../../slice/celListSlice";
 
-export default function EasingConfig({ type }) {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex][type]
-  );
-  const dispatch = useDispatch();
-
+export function EasingConfig({ type, config, update }) {
   const changeEasing = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.easing = target.value;
     // addの初期値はInが良い
     newConfig.easingAdd = "In";
-    dispatch(updateByType({ type, data: newConfig }));
+    update(type, newConfig);
   };
   const changeAdd = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.easingAdd = target.value;
-    dispatch(updateByType({ type, data: newConfig }));
+    update(type, newConfig);
   };
   let add = <></>;
   if (config.easing !== "easeLinear") {
@@ -58,6 +53,22 @@ export default function EasingConfig({ type }) {
     </label>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex][props.type]
+  );
+  const dispatch = useDispatch();
+  const _props = {
+    config,
+    update: (type, newConfig) => {
+      dispatch(updateByType({ type, data: newConfig }));
+    },
+    ...props,
+  };
+  return <EasingConfig {..._props} />;
+};
 
 const easingList = [
   "easeLinear",

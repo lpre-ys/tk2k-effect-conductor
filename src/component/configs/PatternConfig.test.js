@@ -1,14 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import PatternConfig from "./PatternConfig";
+import { PatternConfig } from "./PatternConfig";
 // import userEvent from "@testing-library/user-event";
 
-jest.mock("./Pattern/PatternImage", () => ({ image, config, bgColor }) => {
+jest.mock("./Pattern/PatternImage", () => ({ config, bgColor }) => {
   return (
     <div data-testid="mock-pattern-image">
-      <p data-testid="pattern-image-image">{image}</p>
       <p data-testid="pattern-image-start">{config.start}</p>
       <p data-testid="pattern-image-end">{config.end}</p>
-      <p data-testid="pattern-image-bgColor">{bgColor}</p>
     </div>
   );
 });
@@ -19,14 +17,6 @@ describe("PatternImage", () => {
     const target = screen.getByTestId("mock-pattern-image");
     expect(target).toBeInTheDocument();
   });
-  test("image is props.image", () => {
-    render(
-      <PatternConfig config={{ start: 1, end: 1 }} image="testimage.png" />
-    );
-
-    const target = screen.getByTestId("pattern-image-image");
-    expect(target).toHaveTextContent("testimage.png");
-  });
   test("config is props.config", () => {
     render(<PatternConfig config={{ start: 4, end: 7 }} />);
 
@@ -34,14 +24,6 @@ describe("PatternImage", () => {
     expect(start).toHaveTextContent(4);
     const end = screen.getByTestId("pattern-image-end");
     expect(end).toHaveTextContent(7);
-  });
-  test("bgColor is props.bgColor", () => {
-    render(
-      <PatternConfig config={{ start: 1, end: 1 }} bgColor="testbackground" />
-    );
-
-    const target = screen.getByTestId("pattern-image-bgColor");
-    expect(target).toHaveTextContent("testbackground");
   });
 });
 
@@ -59,7 +41,7 @@ describe("Start", () => {
     const start = screen.getByTestId("pattern-config-start");
     fireEvent.change(start, { target: { value: 7 } });
 
-    expect(mockFn).toBeCalledWith("pattern", { start: 7, end: 25 });
+    expect(mockFn).toBeCalledWith({ start: 7, end: 25 });
     expect(start).toHaveValue(7);
   });
   describe("Validation", () => {
@@ -140,7 +122,7 @@ describe("End", () => {
     const end = screen.getByTestId("pattern-config-end");
     fireEvent.change(end, { target: { value: 14 } });
 
-    expect(mockFn).toBeCalledWith("pattern", { start: 1, end: 14 });
+    expect(mockFn).toBeCalledWith({ start: 1, end: 14 });
     expect(end).toHaveValue(14);
   });
   describe("Validation", () => {

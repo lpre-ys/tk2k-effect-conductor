@@ -13,15 +13,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 import { setFrame, setMaxFrame } from "../../slice/frameSlice";
 
-export default function Controller({
+export function Controller({
   isRepeat,
   setIsRepeat,
   isRunning,
   playAnimation,
   stopAnimation,
+  frame,
+  maxFrame,
+  setFrame,
+  setMaxFrame,
 }) {
-  const { frame, maxFrame } = useSelector((state) => state.frame);
-  const dispatch = useDispatch();
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;
     if (type === "play") {
@@ -32,7 +34,7 @@ export default function Controller({
     }
     if (type === "stop") {
       stopAnimation();
-      dispatch(setFrame(0));
+      setFrame(0);
     }
     if (type === "repeat") {
       setIsRepeat(!isRepeat);
@@ -42,7 +44,7 @@ export default function Controller({
     if (type === "frame") {
       const value = parseInt(currentTarget.value) - 1; // 表示だけ1大きいので、ここで吸収しておく
       if (value < maxFrame && value > -1) {
-        dispatch(setFrame(value));
+        setFrame(value);
       }
     }
     if (type === "next") {
@@ -51,14 +53,14 @@ export default function Controller({
       if (value >= maxFrame) {
         value = 0;
       }
-      dispatch(setFrame(value));
+      setFrame(value);
     }
     if (type === "prev") {
       let value = frame - 1;
       if (value <= 0) {
         value = maxFrame - 1;
       }
-      dispatch(setFrame(value));
+      setFrame(value);
     }
   };
   return (
@@ -143,7 +145,7 @@ export default function Controller({
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {
-                dispatch(setMaxFrame(target.value));
+                setMaxFrame(target.value);
               }}
               css={styles.maxFrame}
             />
@@ -153,6 +155,25 @@ export default function Controller({
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const { frame, maxFrame } = useSelector((state) => state.frame);
+  const dispatch = useDispatch();
+  const _props = {
+    frame,
+    maxFrame,
+    setFrame: (value) => {
+      dispatch(setFrame(value));
+    },
+    setMaxFrame: (value) => {
+      dispatch(setMaxFrame(value));
+    },
+    ...props,
+  };
+
+  return <Controller {..._props} />;
+};
 
 const styles = {
   container: css`

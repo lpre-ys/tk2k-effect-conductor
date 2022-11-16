@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../util/renderWithProviders";
-import Player from "./Player";
+import { Player } from "./Player";
 
 jest.mock("react-konva", () => {
   return {
@@ -15,18 +15,43 @@ jest.mock("react-konva", () => {
     Line: () => {
       return <div data-testid="mock-line"></div>;
     },
+    Rect: ({ fillPatternImage, fill }) => {
+      return (
+        <div data-testid="mock-rect">
+          {fillPatternImage}
+          <p>{fill}</p>
+        </div>
+      );
+    },
+    Image: ({ image }) => {
+      return <div data-testid="mock-image">{image}</div>;
+    },
+  };
+});
+
+jest.mock("use-image", () => {
+  return {
+    __esModule: true.valueOf,
+    default: (src) => {
+      const { createElement } = jest.requireActual("react");
+      const elem = createElement("img", {
+        src: src,
+        alt: `mock-use-image-${src}`,
+      });
+      return [elem];
+    },
   };
 });
 
 describe("ViewSettings", () => {
   test("INIT bgColor is transparent", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("背景色:");
     expect(target).toHaveValue("transparent");
   });
   test("change bgColor, then update bgColor", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("背景色:");
 
@@ -34,20 +59,20 @@ describe("ViewSettings", () => {
     expect(target).toHaveValue("red");
   });
   test("INIT isShowCelBorder is false", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     expect(target).not.toBeChecked();
   });
   test("click once checkbox, then isShowCelBorder is true", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     userEvent.click(target);
     expect(target).toBeChecked();
   });
   test("click twice checkbox, then isShowCelBorder is false", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
     userEvent.click(target);
@@ -56,33 +81,24 @@ describe("ViewSettings", () => {
   });
 });
 
-jest.mock("./player/Background", () => ({ color, image }) => {
-  return (
-    <div data-testid="mock-background">
-      <p>color: {color}</p>
-      <p>image: {JSON.stringify(image)}</p>
-    </div>
-  );
-});
-
 describe("background", () => {
   test("has component", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
-    const target = screen.getByTestId("mock-background");
+    const target = screen.getByAltText("mock-use-image-tr.png");
     expect(target).toBeInTheDocument();
   });
   test("init color is transparent", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
-    const target = screen.getByText("color: transparent");
+    const target = screen.getByText("transparent");
     expect(target).toBeInTheDocument();
   });
   test("init image is null", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
-    const target = screen.getByText("image: null");
-    expect(target).toBeInTheDocument();
+    const target = screen.queryByAltText("mock-use-image-null");
+    expect(target).toBeNull();
   });
 });
 
@@ -101,24 +117,24 @@ jest.mock("./player/Cel", () => ({ id, setMsg }) => {
   );
 });
 describe("Cel", () => {
-  test("celConfigList is empty, then no Cel component", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+  test("celList is empty, then no Cel component", () => {
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.queryAllByTestId("mock-cel");
     expect(target).toHaveLength(0);
   });
-  test("celConfigList length is 1, then 1 Cel component", () => {
+  test("celList length is 1, then 1 Cel component", () => {
     renderWithProviders(
-      <Player celConfigList={[defaultCelConfig]} material={defaultMaterial} />
+      <Player celList={[defaultCelConfig]} material={defaultMaterial} />
     );
 
     const target = screen.queryAllByTestId("mock-cel");
     expect(target).toHaveLength(1);
   });
-  test("celConfigList length is 3, then 3 Cel component", () => {
+  test("celList length is 3, then 3 Cel component", () => {
     renderWithProviders(
       <Player
-        celConfigList={[defaultCelConfig, defaultCelConfig, defaultCelConfig]}
+        celList={[defaultCelConfig, defaultCelConfig, defaultCelConfig]}
         material={defaultMaterial}
       />
     );
@@ -130,19 +146,19 @@ describe("Cel", () => {
 
 describe("Controller", () => {
   test("has component", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.queryByTestId("controller");
     expect(target).toBeInTheDocument();
   });
   test("INIT then show Play button", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByTitle("play");
     expect(target).toBeInTheDocument();
   });
   test("start, then show Pause button", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const play = screen.getByTitle("play");
     userEvent.click(play);
@@ -151,7 +167,7 @@ describe("Controller", () => {
     expect(target).toBeInTheDocument();
   });
   test("pause, then show Play button", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const play = screen.getByTitle("play");
     userEvent.click(play);
@@ -162,7 +178,7 @@ describe("Controller", () => {
     expect(screen.getByTitle("play")).toBeInTheDocument();
   });
   test("repeat, then set Repeat ON", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const repeat = screen.getByTitle("repeat");
     userEvent.click(repeat);
@@ -171,7 +187,7 @@ describe("Controller", () => {
   });
 
   test("change frame, then call setGlobalFrame", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByTestId("controller-frame");
     fireEvent.change(target, { target: { value: "5" } });
@@ -179,7 +195,7 @@ describe("Controller", () => {
     expect(target).toHaveValue(5);
   });
   test("next, then call setGlobalFrame +1", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
     // 一旦5にする
     const frame = screen.getByTestId("controller-frame");
     fireEvent.change(frame, { target: { value: "5" } });
@@ -190,7 +206,7 @@ describe("Controller", () => {
     expect(frame).toHaveValue(6);
   });
   test("prev, then call setGlobalFrame -1", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     // 一旦5にする
     const frame = screen.getByTestId("controller-frame");
@@ -205,14 +221,14 @@ describe("Controller", () => {
 
 describe("Info", () => {
   test("INIT, then no component", () => {
-    renderWithProviders(<Player celConfigList={[]} />);
+    renderWithProviders(<Player celList={[]} />);
 
     const target = screen.queryByText("INFO");
     expect(target).not.toBeInTheDocument();
   });
   test("click Cel, then show message", () => {
     renderWithProviders(
-      <Player celConfigList={[defaultCelConfig]} material={defaultMaterial} />
+      <Player celList={[defaultCelConfig]} material={defaultMaterial} />
     );
 
     const target = screen.getByTitle("mock-set-msg");

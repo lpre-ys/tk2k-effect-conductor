@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Options from "./Options";
+import { Options } from "./Options";
 // import userEvent from "@testing-library/user-event";
 const defaultConfig = {
   cycle: 0,

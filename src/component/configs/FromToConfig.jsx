@@ -13,12 +13,7 @@ import { updateByType } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 
-export default function FromToConfig({ type, name }) {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex][type]
-  );
-  const dispatch = useDispatch();
-
+export function FromToConfig({ type, name, config, update }) {
   const [isOption, setIsOption] = useState(false);
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
@@ -28,7 +23,7 @@ export default function FromToConfig({ type, name }) {
     if (validate(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.from = parseInt(target.value);
-      dispatch(updateByType({ type, data: newConfig }));
+      update(type, newConfig);
     }
   };
   const handleChangeTo = ({ target }) => {
@@ -36,7 +31,7 @@ export default function FromToConfig({ type, name }) {
     if (validate(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.to = parseInt(target.value);
-      dispatch(updateByType({ type, data: newConfig }));
+      update(type, newConfig);
     }
   };
 
@@ -112,12 +107,29 @@ export default function FromToConfig({ type, name }) {
             onChange={handleChangeTo}
           />
         </label>
-        <EasingConfig config={config} type={type} />
-        <Options config={config} type={type} visible={isOption} />
+        <EasingConfig type={type} />
+        <Options type={type} visible={isOption} />
       </div>
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex][props.type]
+  );
+  const dispatch = useDispatch();
+  const _props = {
+    config,
+    update: (type, newConfig) => {
+      dispatch(updateByType({ type, data: newConfig }));
+    },
+    ...props,
+  };
+
+  return <FromToConfig {..._props} />;
+};
 
 const styles = {
   header: css`

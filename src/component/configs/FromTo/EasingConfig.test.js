@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import EasingConfig from "./EasingConfig";
+import { EasingConfig } from "./EasingConfig";
 import userEvent from "@testing-library/user-event";
 
 test("Option list is const easingList", () => {

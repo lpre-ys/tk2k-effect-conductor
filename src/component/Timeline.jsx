@@ -13,11 +13,15 @@ import TimeCelView from "./timeline/TimeCelView";
 const FRAME_SIZE = 20;
 const TIMELINE_HEIGHT = 28;
 
-export default function Timeline() {
-  const { frame, maxFrame } = useSelector((state) => state.frame);
-  const celList = useSelector((state) => state.celList.list);
-  const dispatch = useDispatch();
-
+export function Timeline({
+  frame,
+  maxFrame,
+  celList,
+  setFrame,
+  addCel,
+  copyCel,
+  deleteCel,
+}) {
   const scrollRef = useRef(null);
 
   const baseList = [];
@@ -27,7 +31,7 @@ export default function Timeline() {
         <p
           css={styles.frameText}
           onClick={() => {
-            dispatch(setFrame(i));
+            setFrame(i);
           }}
         >
           {i + 1}
@@ -58,7 +62,7 @@ export default function Timeline() {
           onClick={() => {
             const volume = maxFrame - frame;
             const start = frame + 1;
-            dispatch(addCel({ volume, start }));
+            addCel(volume, start);
           }}
         >
           <FontAwesomeIcon icon={faPlus} css={styles.icon} />
@@ -68,7 +72,7 @@ export default function Timeline() {
           css={styles.button}
           type="button"
           onClick={() => {
-            dispatch(copyCel());
+            copyCel();
           }}
         >
           <FontAwesomeIcon icon={faCopy} css={styles.icon} />
@@ -82,7 +86,7 @@ export default function Timeline() {
           ]}
           type="button"
           onClick={() => {
-            dispatch(deleteCel());
+            deleteCel();
           }}
           disabled={celList.length < 2}
         >
@@ -151,6 +155,34 @@ export default function Timeline() {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const frame = useSelector((state) => state.frame.frame);
+  const maxFrame = useSelector((state) => state.frame.maxFrame);
+  const celList = useSelector((state) => state.celList.list);
+  const dispatch = useDispatch();
+  const _props = {
+    frame,
+    maxFrame,
+    celList,
+    setFrame: (value) => {
+      dispatch(setFrame(value));
+    },
+    addCel: (volume, start) => {
+      addCel({ volume, start });
+    },
+    copyCel: () => {
+      dispatch(copyCel());
+    },
+    deleteCel: () => {
+      dispatch(deleteCel());
+    },
+    ...props,
+  };
+
+  return <Timeline {..._props} />;
+};
 
 const styles = {
   container: css`

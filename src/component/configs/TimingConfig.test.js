@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 // import userEvent from "@testing-library/user-event";
-import TimingConfig from "./TimingConfig";
+import { TimingConfig } from "./TimingConfig";
 
 const update = jest.fn();
 
@@ -104,7 +104,7 @@ describe("Start", () => {
         target: { value: 0 },
       });
 
-      expect(mockFn).toBeCalledWith("frame", { start: 0, volume: 10 });
+      expect(mockFn).toBeCalledWith({ start: 0, volume: 10 });
     });
     test("changeTo 1, then call update", () => {
       const mockFn = jest.fn();
@@ -116,7 +116,7 @@ describe("Start", () => {
         target: { value: 1 },
       });
 
-      expect(mockFn).toBeCalledWith("frame", { start: 1, volume: 10 });
+      expect(mockFn).toBeCalledWith({ start: 1, volume: 10 });
     });
     test("changeTo NaN, then noop", () => {
       const mockFn = jest.fn();
@@ -232,7 +232,7 @@ describe("End", () => {
         target: { value: 9 },
       });
 
-      expect(mockFn).toBeCalledWith("frame", { start: 0, volume: 10 });
+      expect(mockFn).toBeCalledWith({ start: 0, volume: 10 });
     });
     test("changeTo 10, then call update", () => {
       const mockFn = jest.fn();
@@ -244,7 +244,7 @@ describe("End", () => {
         target: { value: 10 },
       });
 
-      expect(mockFn).toBeCalledWith("frame", { start: 1, volume: 10 });
+      expect(mockFn).toBeCalledWith({ start: 1, volume: 10 });
     });
     test("changeTo NaN, then noop", () => {
       const mockFn = jest.fn();
@@ -317,9 +317,7 @@ describe("Volume", () => {
     });
   });
   test("set valid value, then no reset Other error.", () => {
-    render(
-      <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-    );
+    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
     fireEvent.change(screen.getByTestId("timing-start"), {
       target: { value: "a" },
@@ -361,7 +359,7 @@ describe("Volume", () => {
         target: { value: 1 },
       });
 
-      expect(mockFn).toBeCalledWith("frame", { start: 1, volume: 1 });
+      expect(mockFn).toBeCalledWith({ start: 1, volume: 1 });
     });
     test("changeTo NaN, then noop", () => {
       const mockFn = jest.fn();
@@ -377,49 +375,41 @@ describe("Volume", () => {
     });
   });
 });
-describe('Header icon', () => {
-  test('if Start is invalid, then show Icon', () => {
-    render(
-      <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-    );
+describe("Header icon", () => {
+  test("if Start is invalid, then show Icon", () => {
+    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
     fireEvent.change(screen.getByTestId("timing-start"), {
       target: { value: "a" },
     });
 
-    const target = screen.getByTestId('timing-config-icon');
+    const target = screen.getByTestId("timing-config-icon");
     expect(target).toBeInTheDocument();
   });
-  test('if End is invalid, then show Icon', () => {
-    render(
-      <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-    );
+  test("if End is invalid, then show Icon", () => {
+    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
     fireEvent.change(screen.getByTestId("timing-end"), {
       target: { value: "a" },
     });
 
-    const target = screen.getByTestId('timing-config-icon');
+    const target = screen.getByTestId("timing-config-icon");
     expect(target).toBeInTheDocument();
   });
-  test('if Volume is invalid, then show Icon', () => {
-    render(
-      <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-    );
+  test("if Volume is invalid, then show Icon", () => {
+    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
     fireEvent.change(screen.getByTestId("timing-volume"), {
       target: { value: "a" },
     });
 
-    const target = screen.getByTestId('timing-config-icon');
+    const target = screen.getByTestId("timing-config-icon");
     expect(target).toBeInTheDocument();
   });
-  test('if All valid, then not show Icon', () => {
-    render(
-      <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-    );
+  test("if All valid, then not show Icon", () => {
+    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
-    const target = screen.queryByTestId('timing-config-icon');
+    const target = screen.queryByTestId("timing-config-icon");
     expect(target).toBeNull();
   });
 });

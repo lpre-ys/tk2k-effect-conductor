@@ -4,11 +4,7 @@ import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateByType } from "../../../slice/celListSlice";
 
-export default function Options({ type, visible }) {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex][type]
-  );
-  const dispatch = useDispatch();
+export function Options({ type, visible, config, update }) {
   const handleChangeCycle = ({ target }) => {
     let value = target.value;
     if (value === "" || parseInt(value) < 0) {
@@ -17,12 +13,12 @@ export default function Options({ type, visible }) {
     }
     const newConfig = Object.assign({}, config);
     newConfig.cycle = parseInt(value);
-    dispatch(updateByType({ type, data: newConfig }));
+    update(type, newConfig);
   };
   const handleChangeRoundTrip = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.isRoundTrip = !!target.checked;
-    dispatch(updateByType({ type, data: newConfig }));
+    update(type, newConfig);
   };
 
   if (visible) {
@@ -53,6 +49,23 @@ export default function Options({ type, visible }) {
     );
   }
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector((state) => {
+    return state.celList.list[state.celList.celIndex][props.type];
+  });
+  const dispatch = useDispatch();
+  const _props = {
+    config,
+    update: (type, newConfig) => {
+      dispatch(updateByType({ type, data: newConfig }));
+    },
+    ...props,
+  };
+
+  return <Options {..._props} />;
+};
 
 const styles = {
   label: css`

@@ -3,6 +3,9 @@ import { render } from '@testing-library/react'
 import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import frameSlice from '../slice/frameSlice'
+import materialSlice from '../slice/materialSlice'
+import celListSlice from '../slice/celListSlice'
+import infoSlice from '../slice/infoSlice'
 // As a basic setup, import your same slice reducers
 
 export function renderWithProviders(
@@ -10,7 +13,14 @@ export function renderWithProviders(
   {
     preloadedState = {},
     // Automatically create a store instance if no store was passed in
-    store = configureStore({ reducer: { frame: frameSlice }, preloadedState }),
+    store = configureStore({
+      reducer: {
+        frame: frameSlice,
+        material: materialSlice,
+        celList: celListSlice,
+        info: infoSlice
+      }, preloadedState
+    }),
     ...renderOptions
   } = {}
 ) {

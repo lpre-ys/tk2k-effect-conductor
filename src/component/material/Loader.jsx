@@ -28,7 +28,11 @@ export default function Loader({ loadImage }) {
   });
 
   return (
-    <div className="container" css={styles.loader}>
+    <div
+      className="container"
+      css={styles.loader}
+      data-testid="material-loader"
+    >
       <div {...getRootProps()}>
         <input data-testid="drop-input" {...getInputProps()} />
         <p css={styles.p}>Drag & Drop or Click</p>

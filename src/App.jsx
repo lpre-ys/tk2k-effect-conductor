@@ -2,12 +2,12 @@
 
 import { css, Global } from "@emotion/react";
 import React, { createRef } from "react";
-import Material from "./component/Material";
 import normalize from "normalize.css";
+import Material from "./component/Material";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import Configs from "./component/Configs";
-import Export from "./component/player/Export";
+import Export from "./component/Export";
 import { connect } from "react-redux";
 import {
   loadFrameConfig,
@@ -49,14 +49,14 @@ class App extends React.Component {
       return;
     }
     if (event.key === "ArrowLeft") {
-      if (this.playerRef.current.pause !== null) {
+      if (this.playerRef.current !== null) {
         this.playerRef.current.pause();
       }
       this.props.setFrame(this.props.frame - 1);
       event.preventDefault();
     }
     if (event.key === "ArrowRight") {
-      if (this.playerRef.current.pause !== null) {
+      if (this.playerRef.current !== null) {
         this.playerRef.current.pause();
       }
       this.props.setFrame(this.props.frame + 1);
@@ -66,12 +66,11 @@ class App extends React.Component {
       if (event.target.tagName === "BUTTON") {
         return;
       }
-      if (this.playerRef.current.playpause !== null) {
+      if (this.playerRef.current !== null) {
         this.playerRef.current.playpause();
       }
       event.preventDefault();
     }
-    console.log(this.props.data);
   };
 
   render() {
@@ -146,8 +145,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
     },
-    resetFrameConfig: dispatch(resetFrameConfig()),
-    resetCelList: dispatch(resetCelList()),
+    resetFrameConfig,
+    resetCelList,
   };
 };
 

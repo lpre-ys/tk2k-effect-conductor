@@ -12,19 +12,20 @@ import makeTransparentImage from "../util/makeTransparentImage";
 import { loadOriginalImage } from "../slice/materialSlice";
 import { setImage } from "../slice/infoSlice";
 
-function Material(props) {
-  const originalImage = useSelector((state) => state.material.originalImage);
-  const trImage = useSelector((state) => state.material.trImage);
-  const dispatch = useDispatch();
-
+export function Material({
+  originalImage,
+  trImage,
+  loadOriginalImage,
+  setImageName,
+}) {
   const [isShowImage, setIsShowImage] = useState(false);
   const [msg, setMsg] = useState("");
 
   const loadImage = (dataUrl, name) => {
     makeTransparentImage(dataUrl)
       .then(({ transparent, maxPage, trColor }) => {
-        dispatch(loadOriginalImage({ dataUrl, transparent, maxPage, trColor }));
-        dispatch(setImage(name));
+        loadOriginalImage({ dataUrl, transparent, maxPage, trColor });
+        setImageName(name);
         setMsg("");
       })
       .catch((error) => {
@@ -71,7 +72,24 @@ function Material(props) {
   );
 }
 
-export default memo(Material);
+export default memo((props) => {
+  const originalImage = useSelector((state) => state.material.originalImage);
+  const trImage = useSelector((state) => state.material.trImage);
+  const dispatch = useDispatch();
+  const _props = {
+    originalImage,
+    trImage,
+    loadOriginalImage: (params) => {
+      dispatch(loadOriginalImage(params));
+    },
+    setImageName: (name) => {
+      dispatch(setImage(name));
+    },
+    ...props,
+  };
+
+  return <Material {..._props} />;
+});
 
 const styles = {
   component: css`

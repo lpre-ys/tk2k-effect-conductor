@@ -6,11 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { changeTrColor } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
 
-export default function TrColorView() {
-  const { originalImage, trColor } = useSelector((state) => state.material);
-  const dispatch = useDispatch();
-
+export function TrColorView({ image, trColor, changeTrColor }) {
   const [isShowTrInput, setIsShowTrInput] = useState(false);
+
   const handleChangeTrColor = ({ target }) => {
     const value = parseInt(target.value);
     if (value < 0 || value > 255) {
@@ -19,15 +17,13 @@ export default function TrColorView() {
     const newColor = Object.assign({}, trColor);
     newColor[target.dataset.color] = value;
 
-    makeTransparentImage(originalImage, newColor).then(
-      ({ transparent, trColor }) => {
-        dispatch(changeTrColor({ transparent, trColor }));
-      }
-    );
+    makeTransparentImage(image, newColor).then(({ transparent, trColor }) => {
+      changeTrColor(transparent, trColor);
+    });
   };
 
   return (
-    <div css={styles.trColorWrapper}>
+    <div css={styles.trColorWrapper} data-testid="tr-color-view">
       <span
         onClick={() => {
           setIsShowTrInput(!isShowTrInput);
@@ -86,6 +82,22 @@ export default function TrColorView() {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const { originalImage, trColor } = useSelector((state) => state.material);
+  const dispatch = useDispatch();
+  const _props = {
+    image: originalImage,
+    trColor,
+    changeTrColor: (transparent, trColor) => {
+      dispatch(changeTrColor({ transparent, trColor }));
+    },
+    ...props,
+  };
+
+  return <TrColorView {..._props} />;
+};
 
 const styles = {
   trColorWrapper: css`

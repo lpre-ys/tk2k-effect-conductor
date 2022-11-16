@@ -7,13 +7,9 @@ import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
-function Patterns() {
-  const { maxPage, trImage, bgColor } = useSelector((state) => state.material);
-
-  const dispatch = useDispatch();
-
+export function Patterns({ max, image, bgColor, changeBgColor }) {
   const patterns = [];
-  for (let i = 0; i < maxPage; i++) {
+  for (let i = 0; i < max; i++) {
     const x = (i % 5) * 96;
     const y = parseInt(i / 5) * 96;
     patterns.push(
@@ -27,7 +23,7 @@ function Patterns() {
           <div
             css={styles.sprite}
             style={{
-              backgroundImage: `url(${trImage})`,
+              backgroundImage: `url(${image})`,
               backgroundPosition: `-${x}px -${y}px`,
             }}
             data-testid="patterns-pattern-sprite"
@@ -48,7 +44,7 @@ function Patterns() {
           css={styles.input}
           value={bgColor}
           onChange={({ target }) => {
-            dispatch(changeBgColor(target.value));
+            changeBgColor(target.value);
           }}
           data-testid="patterns-input-bgcolor"
         />
@@ -59,7 +55,21 @@ function Patterns() {
   );
 }
 
-export default memo(Patterns);
+export default memo((props) => {
+  const { maxPage, trImage, bgColor } = useSelector((state) => state.material);
+
+  const dispatch = useDispatch();
+  const _props = {
+    max: maxPage,
+    image: trImage,
+    bgColor,
+    changeBgColor: (value) => {
+      dispatch(changeBgColor(value));
+    },
+    ...props,
+  };
+  return <Patterns {..._props} />;
+});
 
 const styles = {
   ul: css`

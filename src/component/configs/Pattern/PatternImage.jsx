@@ -7,9 +7,7 @@ import TrBg from "../../../tr2x.png";
 import { css } from "@emotion/react";
 import { useSelector } from "react-redux";
 
-export default function PatternImage({ config }) {
-  const { trImage, bgColor } = useSelector((state) => state.material);
-
+export function PatternImage({ config, trImage, bgColor }) {
   const spriteRef = useRef();
   const [trBgImage] = useImage(TrBg);
   const [imgElement] = useImage(trImage);
@@ -90,6 +88,17 @@ function makePatterns({ start, end, isRoundTrip }) {
 
   return patterns;
 }
+
+/* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
+export default (props) => {
+  const { trImage, bgColor } = useSelector((state) => state.material);
+  const _props = {
+    trImage,
+    bgColor,
+    ...props,
+  };
+  return <PatternImage {..._props} />;
+};
 
 const styles = {
   emptyPattern: css`

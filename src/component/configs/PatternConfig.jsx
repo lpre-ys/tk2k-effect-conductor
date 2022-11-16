@@ -8,12 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updatePattern } from "../../slice/celListSlice";
 import PatternImage from "./Pattern/PatternImage";
 
-export default function PatternConfig() {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex].pattern
-  );
-  const dispatch = useDispatch();
-
+export function PatternConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
 
@@ -22,7 +17,7 @@ export default function PatternConfig() {
     if (validateStart(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.start = parseInt(target.value);
-      dispatch(updatePattern(newConfig));
+      update(newConfig);
     }
   };
   const handleChangeEnd = ({ target }) => {
@@ -30,7 +25,7 @@ export default function PatternConfig() {
     if (validateEnd(target.value)) {
       const newConfig = Object.assign({}, config);
       newConfig.end = parseInt(target.value);
-      dispatch(updatePattern(newConfig));
+      update(newConfig);
     }
   };
 
@@ -88,7 +83,7 @@ export default function PatternConfig() {
                 onChange={({ target }) => {
                   const newConfig = Object.assign({}, config);
                   newConfig.isRoundTrip = target.checked;
-                  dispatch(updatePattern(newConfig));
+                  update(newConfig);
                 }}
               />
               :&nbsp;往復
@@ -122,6 +117,23 @@ export default function PatternConfig() {
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector(
+    (state) => state.celList.list[state.celList.celIndex].pattern
+  );
+  const dispatch = useDispatch();
+  const _props = {
+    config,
+    update: (newConfig) => {
+      dispatch(updatePattern(newConfig));
+    },
+    ...props,
+  };
+
+  return <PatternConfig {..._props} />;
+};
 
 const styles = {
   container: css`

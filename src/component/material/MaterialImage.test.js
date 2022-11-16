@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import MaterialImage from "./MaterialImage";
+import { MaterialImage } from "./MaterialImage";
 
 test("isShow is false, then no return", () => {
   render(<MaterialImage isShow={false} />);
@@ -15,8 +15,8 @@ test("isShow is true then has MaterialImage", () => {
   expect(target).toBeInTheDocument();
 });
 
-test("isShow, then src is props.src", () => {
-  render(<MaterialImage isShow={true} src="test4412.png" />);
+test("isShow, then src is props.image", () => {
+  render(<MaterialImage isShow={true} image="test4412.png" />);
 
   const target = screen.getByAltText('original')
   expect(target.src).toContain('test4412.png');

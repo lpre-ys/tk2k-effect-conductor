@@ -1,11 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithProviders } from "../../util/renderWithProviders";
-import Export from "./Export";
+import { Export } from "./Export";
 
 describe("Title", () => {
   test("INIT title is props.title", () => {
-    renderWithProviders(<Export title="初期表示" />);
+    render(<Export title="初期表示" />);
 
     const target = screen.getByLabelText("名前:");
     expect(target).toBeInTheDocument();
@@ -14,7 +13,7 @@ describe("Title", () => {
 
   test("change, then call setTitle value", () => {
     const mockFn = jest.fn();
-    renderWithProviders(<Export setTitle={mockFn} />);
+    render(<Export setTitle={mockFn} />);
 
     const target = screen.getByLabelText("名前:");
     userEvent.type(target, "テストネーム");
@@ -23,17 +22,17 @@ describe("Title", () => {
   });
 });
 
-describe("material name", () => {
-  test("INIT material name is props.materialName", () => {
-    renderWithProviders(<Export materialName="素材初期表示" />);
+describe("image name", () => {
+  test("INIT image name is props.imageName", () => {
+    render(<Export imageName="素材初期表示" />);
 
     const target = screen.getByLabelText("素材ファイル:");
     expect(target).toBeInTheDocument();
     expect(target).toHaveValue('素材初期表示');
   });
-  test("change, then call setMaterialName", () => {
+  test("change, then call setImage", () => {
     const mockFn = jest.fn();
-    renderWithProviders(<Export setMaterialName={mockFn} />);
+    render(<Export setImage={mockFn} />);
 
     const target = screen.getByLabelText("素材ファイル:");
     userEvent.type(target, "テスト素材名");
@@ -44,7 +43,7 @@ describe("material name", () => {
 
 describe("COPY button", () => {
   test("writeData is not function, then noop", () => {
-    renderWithProviders(<Export />);
+    render(<Export />);
 
     const target = screen.getByText("COPY!!");
     expect(target).toBeInTheDocument();
@@ -58,7 +57,7 @@ describe("COPY button", () => {
     mockFn.mockResolvedValue(true);
     window.tk2k = { writeData: mockFn };
 
-    renderWithProviders(<Export />);
+    render(<Export />);
 
     const target = screen.getByText("COPY!!");
 
@@ -73,7 +72,7 @@ describe("COPY button", () => {
     mockFn.mockResolvedValue(true);
     window.tk2k = { writeData: mockFn };
 
-    renderWithProviders(<Export />);
+    render(<Export />);
 
     const target = screen.getByText("COPY!!");
 

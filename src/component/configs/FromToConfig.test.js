@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import FromToConfig from "./FromToConfig";
+import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { renderWithProviders } from "../../util/renderWithProviders";
+import { FromToConfig } from "./FromToConfig";
 
 const defaultConfig = {
   from: 0,
@@ -12,7 +13,7 @@ const defaultConfig = {
 };
 
 test("has EasingConfig component", () => {
-  render(<FromToConfig config={defaultConfig} />);
+  renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
   const target = screen.getByTestId("from-to-easing");
   expect(target).toBeInTheDocument();
@@ -20,13 +21,13 @@ test("has EasingConfig component", () => {
 
 describe("Options", () => {
   test("INIT, then no component", () => {
-    render(<FromToConfig config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
   test("click header once, then has component", () => {
-    render(<FromToConfig config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -35,7 +36,7 @@ describe("Options", () => {
     expect(target).toBeInTheDocument();
   });
   test("click header twice, then no component", () => {
-    render(<FromToConfig config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -49,30 +50,30 @@ describe("Options", () => {
 
 describe("From", () => {
   test("init value is config.from", () => {
-    render(<FromToConfig config={{ from: 3, to: 6 }} />);
+    renderWithProviders(<FromToConfig type="x" config={{ from: 3, to: 6 }} />);
 
     const target = screen.getByTestId("from-to-config-from");
     expect(target).toHaveValue(3);
   });
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
-    render(
-      <FromToConfig config={{ from: 3, to: 6 }} type="ffff" update={mockFn} />
+    renderWithProviders(
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-from");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
-    expect(mockFn).toBeCalledWith("ffff", { from: 8, to: 6 });
+    expect(mockFn).toBeCalledWith("x", { from: 8, to: 6 });
     // マイナスもOK
     fireEvent.change(target, { target: { value: -111 } });
     expect(target).toHaveValue(-111);
-    expect(mockFn).toBeCalledWith("ffff", { from: -111, to: 6 });
+    expect(mockFn).toBeCalledWith("x", { from: -111, to: 6 });
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
-    render(
-      <FromToConfig config={{ from: 3, to: 6 }} type="gggg" update={mockFn} />
+    renderWithProviders(
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-from");
 
@@ -84,30 +85,30 @@ describe("From", () => {
 
 describe("To", () => {
   test("init value is config.to", () => {
-    render(<FromToConfig config={{ from: 3, to: 6 }} />);
+    renderWithProviders(<FromToConfig type="x" config={{ from: 3, to: 6 }} />);
 
     const target = screen.getByTestId("from-to-config-to");
     expect(target).toHaveValue(6);
   });
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
-    render(
-      <FromToConfig config={{ from: 3, to: 6 }} type="hhhh" update={mockFn} />
+    renderWithProviders(
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-to");
 
     fireEvent.change(target, { target: { value: 2 } });
     expect(target).toHaveValue(2);
-    expect(mockFn).toBeCalledWith("hhhh", { from: 3, to: 2 });
+    expect(mockFn).toBeCalledWith("x", { from: 3, to: 2 });
     // マイナスもOK
     fireEvent.change(target, { target: { value: -29 } });
     expect(target).toHaveValue(-29);
-    expect(mockFn).toBeCalledWith("hhhh", { from: 3, to: -29 });
+    expect(mockFn).toBeCalledWith("x", { from: 3, to: -29 });
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
-    render(
-      <FromToConfig config={{ from: 3, to: 6 }} type="gggg" update={mockFn} />
+    renderWithProviders(
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-to");
 
@@ -119,14 +120,14 @@ describe("To", () => {
 
 describe("Header", () => {
   test("Text is props.name", () => {
-    render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
     const target = screen.getByRole("heading");
     expect(target).toHaveTextContent("テストネーム");
   });
   describe('Angle icon', () => {
     test('No Cycle and No RoundTrip, then header icon is gray', () => {
-      render(<FromToConfig config={defaultConfig} />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
       const target = screen.getByTestId('from-to-config-icon-right');
       expect(target).toHaveStyle({ color: '#9e9e9e' });
@@ -134,7 +135,7 @@ describe("Header", () => {
     test('has Cycle, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.cycle = 3;
-      render(<FromToConfig config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} />);
 
       const target = screen.getByTestId('from-to-config-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
@@ -142,19 +143,19 @@ describe("Header", () => {
     test('on RoundTrip, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.isRoundTrip = true;
-      render(<FromToConfig config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} />);
 
       const target = screen.getByTestId('from-to-config-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
     });
     test("not show Option, then show Rignt icon", () => {
-      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       const target = screen.getByTestId("from-to-config-icon-right");
       expect(target).toBeInTheDocument();
     });
     test("show Option, then show Down icon", () => {
-      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       userEvent.click(screen.getByRole("heading"));
 
@@ -164,13 +165,13 @@ describe("Header", () => {
   });
   describe("Error icon", () => {
     test("no Error, then not show Error icon", () => {
-      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       const target = screen.queryByTestId("from-to-config-icon-error");
       expect(target).not.toBeInTheDocument();
     });
     test("from Error, then show Error icon", () => {
-      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       fireEvent.change(screen.getByTestId("from-to-config-from"), {
         target: { value: "" },
@@ -180,7 +181,7 @@ describe("Header", () => {
       expect(target).toBeInTheDocument();
     });
     test("to Error, then show Error icon", () => {
-      render(<FromToConfig config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       fireEvent.change(screen.getByTestId("from-to-config-to"), {
         target: { value: "" },
@@ -190,8 +191,8 @@ describe("Header", () => {
       expect(target).toBeInTheDocument();
     });
     test("ckick Icon, then reset value to config", () => {
-      render(
-        <FromToConfig config={{ from: 12, to: 34 }} name="テストネーム" />
+      renderWithProviders(
+        <FromToConfig type="x" config={{ from: 12, to: 34 }} name="テストネーム" />
       );
 
       const from = screen.getByTestId("from-to-config-from");
@@ -207,8 +208,8 @@ describe("Header", () => {
       expect(to).toHaveValue(34);
     });
     test("ckick Icon, then not change isOption", () => {
-      render(
-        <FromToConfig config={defaultConfig} name="テストネーム" />
+      renderWithProviders(
+        <FromToConfig type="x" config={defaultConfig} name="テストネーム" />
       );
 
       const from = screen.getByTestId("from-to-config-from");
