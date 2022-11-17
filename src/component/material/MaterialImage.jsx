@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { memo } from "react";
 import { useSelector } from "react-redux";
 
 export function MaterialImage({ image, isShow }) {

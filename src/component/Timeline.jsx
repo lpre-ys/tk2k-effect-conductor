@@ -4,7 +4,6 @@ import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { memo } from "react";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCel, copyCel, deleteCel } from "../slice/celListSlice";
