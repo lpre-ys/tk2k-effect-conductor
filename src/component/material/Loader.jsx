@@ -1,26 +1,43 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import React, { useCallback } from "react";
 import { memo } from "react";
 import { useDropzone } from "react-dropzone";
+import { useDispatch } from "react-redux";
+import { setImage } from "../../slice/infoSlice";
+import { loadOriginalImage } from "../../slice/materialSlice";
+import makeTransparentImage from "../../util/makeTransparentImage";
 
-function Loader({ loadImage }) {
+function Loader({ setMsg, loadOriginalImage, setImageName }) {
   console.log("RENDER: Loader");
 
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      if (acceptedFiles.length === 1) {
-        const reader = new FileReader();
-        reader.readAsDataURL(acceptedFiles[0]);
-        reader.addEventListener("load", () => {
-          const name = acceptedFiles[0].name.replace(/\.[^/.]+$/, "");
-          loadImage(reader.result, name);
-        });
-      }
-    },
-    [loadImage]
-  );
+  const loadImage = (dataUrl, name) => {
+    makeTransparentImage(dataUrl)
+      .then(({ transparent, maxPage, trColor }) => {
+        loadOriginalImage({ dataUrl, transparent, maxPage, trColor });
+        setImageName(name);
+        setMsg("");
+      })
+      .catch((error) => {
+        if (error.message === "width") {
+          setMsg("素材画像の横幅が正しくないようです。");
+        }
+        if (error.message === "height") {
+          setMsg("素材画像の縦幅が正しくないようです。");
+        }
+      });
+  };
+
+  const onDrop = (acceptedFiles) => {
+    if (acceptedFiles.length === 1) {
+      const reader = new FileReader();
+      reader.readAsDataURL(acceptedFiles[0]);
+      reader.addEventListener("load", () => {
+        const name = acceptedFiles[0].name.replace(/\.[^/.]+$/, "");
+        loadImage(reader.result, name);
+      });
+    }
+  };
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/png": [".png"],
@@ -44,7 +61,20 @@ function Loader({ loadImage }) {
   );
 }
 
-export default memo(Loader);
+export default memo((props) => {
+  const dispatch = useDispatch();
+
+  const _props = {
+    loadOriginalImage: (params) => {
+      dispatch(loadOriginalImage(params));
+    },
+    setImageName: (name) => {
+      dispatch(setImage(name));
+    },
+    ...props,
+  };
+  return <Loader {..._props} />;
+});
 
 const styles = {
   loader: css`

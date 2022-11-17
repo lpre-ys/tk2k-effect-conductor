@@ -7,43 +7,19 @@ import Patterns from "./material/Patterns";
 import MaterialImage from "./material/MaterialImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
-import { useDispatch, useSelector } from "react-redux";
-import makeTransparentImage from "../util/makeTransparentImage";
-import { loadOriginalImage } from "../slice/materialSlice";
-import { setImage } from "../slice/infoSlice";
+import { useSelector } from "react-redux";
 
-export function Material({
-  originalImage,
-  trImage,
-  loadOriginalImage,
-  setImageName,
-}) {
+export function Material({ originalImage, trImage }) {
   console.log("RENDER: material");
 
   const [isShowImage, setIsShowImage] = useState(false);
   const [msg, setMsg] = useState("");
 
-  const loadImage = (dataUrl, name) => {
-    makeTransparentImage(dataUrl)
-      .then(({ transparent, maxPage, trColor }) => {
-        loadOriginalImage({ dataUrl, transparent, maxPage, trColor });
-        setImageName(name);
-        setMsg("");
-      })
-      .catch((error) => {
-        if (error.message === "width") {
-          setMsg("素材画像の横幅が正しくないようです。");
-        }
-        if (error.message === "height") {
-          setMsg("素材画像の縦幅が正しくないようです。");
-        }
-      });
-  };
   return (
     <div className="material" css={styles.component}>
       <h1 css={styles.header}>素材データ</h1>
       <section css={styles.loader} className="loader">
-        <Loader loadImage={loadImage} />
+        <Loader setMsg={setMsg} />
         {originalImage && (
           <>
             <button
@@ -77,16 +53,9 @@ export function Material({
 export default memo((props) => {
   const originalImage = useSelector((state) => state.material.originalImage);
   const trImage = useSelector((state) => state.material.trImage);
-  const dispatch = useDispatch();
   const _props = {
     originalImage,
     trImage,
-    loadOriginalImage: (params) => {
-      dispatch(loadOriginalImage(params));
-    },
-    setImageName: (name) => {
-      dispatch(setImage(name));
-    },
     ...props,
   };
 
