@@ -1,11 +1,13 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCelIndex } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
 
 export function TimeCelView({ index, config, celIndex, setCelIndex }) {
+  console.log("RENDER: TimeCelView");
   const isSelected = index === celIndex;
 
   return (
@@ -28,8 +30,7 @@ export function TimeCelView({ index, config, celIndex, setCelIndex }) {
   );
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+export default memo((props) => {
   const celIndex = useSelector((state) => state.celList.celIndex);
   const dispatch = useDispatch();
   const _props = {
@@ -41,7 +42,7 @@ export default (props) => {
   };
 
   return <TimeCelView {..._props} />;
-};
+});
 
 const styles = {
   timeline: css`
