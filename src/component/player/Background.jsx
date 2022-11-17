@@ -3,8 +3,6 @@ import useImage from "use-image";
 import TrImage from "../../tr.png";
 
 export default function Background({ color, image }) {
-  console.log("RENDER: Background");
-
   const [trImage] = useImage(TrImage);
   const [bgImage] = useImage(image);
   return (

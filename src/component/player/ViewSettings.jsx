@@ -11,8 +11,6 @@ export default function ViewSettings({
   isShowCelBorder,
   setIsShowCelBorder,
 }) {
-  console.log("RENDER: ViewSettings");
-
   return (
     <div css={styles.container}>
       <div css={styles.wrapper}>

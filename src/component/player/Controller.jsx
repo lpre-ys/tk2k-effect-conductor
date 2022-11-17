@@ -28,8 +28,6 @@ export function Controller({
   prevFrame,
   setMaxFrame,
 }) {
-  console.log("RENDER: Controller");
-
   const [isRunning, setIsRunning] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
 
@@ -78,7 +76,6 @@ export function Controller({
     }
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
-    console.log(animeRef.current);
   }
 
   function stopAnimation() {

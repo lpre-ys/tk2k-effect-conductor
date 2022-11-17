@@ -11,8 +11,6 @@ import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
 export const Player = ({ celList }) => {
-  console.log("RENDER: Player");
-
   const [bgColor, setBgColor] = useState("transparent");
   const [bgImage, setBgImage] = useState(null);
   const [isShowCelBorder, setIsShowCelBorder] = useState(false);
