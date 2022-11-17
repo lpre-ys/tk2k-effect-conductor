@@ -10,8 +10,6 @@ import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useSelector } from "react-redux";
 
 export function Material({ originalImage, trImage }) {
-  console.log("RENDER: material");
-
   const [isShowImage, setIsShowImage] = useState(false);
   const [msg, setMsg] = useState("");
 

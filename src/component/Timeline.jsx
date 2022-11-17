@@ -22,8 +22,6 @@ export function Timeline({
   copyCel,
   deleteCel,
 }) {
-  console.log("RENDER: Timeline");
-
   const scrollRef = useRef(null);
 
   const baseList = [];

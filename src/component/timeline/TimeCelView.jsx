@@ -6,7 +6,6 @@ import { setCelIndex } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
 
 export function TimeCelView({ index, config, celIndex, setCelIndex }) {
-  console.log("RENDER: TimeCelView");
   const isSelected = index === celIndex;
 
   return (

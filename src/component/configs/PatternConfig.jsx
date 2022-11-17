@@ -3,6 +3,7 @@
 import { css } from "@emotion/react";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { memo } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePattern } from "../../slice/celListSlice";
@@ -118,8 +119,7 @@ export function PatternConfig({ config, update }) {
   );
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+export default memo((props) => {
   const config = useSelector(
     (state) => state.celList.list[state.celList.celIndex].pattern
   );
@@ -133,7 +133,7 @@ export default (props) => {
   };
 
   return <PatternConfig {..._props} />;
-};
+});
 
 const styles = {
   container: css`

@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { memo } from "react";
 import { useSelector } from "react-redux";
 
 import FromToConfig from "./configs/FromToConfig";
@@ -9,7 +8,6 @@ import PatternConfig from "./configs/PatternConfig";
 import TimingConfig from "./configs/TimingConfig";
 
 export function Configs({ celIndex }) {
-  console.log("RENDER: Configs");
   return (
     <div css={styles.container}>
       <h1>セル: {celIndex + 1}</h1>
@@ -23,7 +21,8 @@ export function Configs({ celIndex }) {
   );
 }
 
-export default memo((props) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
   const celIndex = useSelector((state) => state.celList.celIndex);
   const _props = {
     celIndex,
@@ -31,7 +30,7 @@ export default memo((props) => {
   };
 
   return <Configs {..._props} />;
-});
+};
 
 const styles = {
   container: css`

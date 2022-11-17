@@ -7,7 +7,6 @@ import { changeTrColor } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
 
 export function TrColorView({ image, trColor, changeTrColor }) {
-  console.log("RENDER: TrColorView");
   const [isShowTrInput, setIsShowTrInput] = useState(false);
 
   const handleChangeTrColor = ({ target }) => {

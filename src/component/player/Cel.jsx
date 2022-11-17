@@ -9,6 +9,8 @@ import useImage from "use-image";
 import getDataByLocalFrame from "../../util/calcFrameValue";
 
 const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
+  console.log("RENDER: Cel");
+
   const { trImage, maxPage } = useSelector((state) => state.material);
 
   const frame = useSelector((state) => state.frame.frame);

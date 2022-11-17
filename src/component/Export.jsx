@@ -16,7 +16,6 @@ export const Export = ({
   setTitle,
   setImage,
 }) => {
-  console.log("RENDER: Export");
   const [disabled, setDisabled] = useState(false);
 
   const handleExport = useCallback(() => {

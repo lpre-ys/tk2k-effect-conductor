@@ -4,8 +4,6 @@ import { css } from "@emotion/react";
 import { useSelector } from "react-redux";
 
 export function MaterialImage({ image, isShow }) {
-  console.log("RENDER: MaterialImage");
-
   if (isShow) {
     return (
       <div css={styles.image} data-testid="material-image">
