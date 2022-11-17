@@ -34,6 +34,41 @@ export function Controller({
 }) {
   console.log("RENDER: Controller");
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  const handleKeyDown = (event) => {
+    if (event.target.tagName === "INPUT") {
+      return;
+    }
+    if (event.key === "ArrowLeft") {
+      stopAnimation();
+      prevFrame();
+      event.preventDefault();
+    }
+    if (event.key === "ArrowRight") {
+      stopAnimation();
+      nextFrame();
+      event.preventDefault();
+    }
+    if (event.key === " ") {
+      if (event.target.tagName === "BUTTON") {
+        return;
+      }
+      if (isRunning) {
+        stopAnimation();
+      } else {
+        playAnimation();
+      }
+      event.preventDefault();
+    }
+  };
+
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;
     if (type === "play") {
@@ -58,9 +93,11 @@ export function Controller({
       }
     }
     if (type === "next") {
+      stopAnimation();
       nextFrame();
     }
     if (type === "prev") {
+      stopAnimation();
       prevFrame();
     }
   };

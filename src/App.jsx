@@ -1,21 +1,16 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, Global } from "@emotion/react";
-import React, { createRef } from "react";
 import normalize from "normalize.css";
+import React, { createRef } from "react";
+import { connect } from "react-redux";
+import Configs from "./component/Configs";
+import Export from "./component/Export";
 import Material from "./component/Material";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
-import Configs from "./component/Configs";
-import Export from "./component/Export";
-import { connect } from "react-redux";
-import {
-  loadFrameConfig,
-  resetFrameConfig,
-  nextFrame,
-  prevFrame,
-} from "./slice/frameSlice";
 import { loadCelList, resetCelList } from "./slice/celListSlice";
+import { loadFrameConfig, resetFrameConfig } from "./slice/frameSlice";
 import { loadInfo } from "./slice/infoSlice";
 import { loadMaterial } from "./slice/materialSlice";
 
@@ -26,7 +21,7 @@ class App extends React.Component {
     this.playerRef = createRef();
   }
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
+    // document.addEventListener("keydown", this.handleKeyDown);
     if (!!window.appMenu) {
       // 新規
       window.appMenu.onReceiveNew(() => {
@@ -44,38 +39,6 @@ class App extends React.Component {
       });
     }
   }
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
-
-  handleKeyDown = (event) => {
-    if (event.target.tagName === "INPUT") {
-      return;
-    }
-    if (event.key === "ArrowLeft") {
-      if (this.playerRef.current !== null) {
-        this.playerRef.current.pause();
-      }
-      this.props.prevFrame();
-      event.preventDefault();
-    }
-    if (event.key === "ArrowRight") {
-      if (this.playerRef.current !== null) {
-        this.playerRef.current.pause();
-      }
-      this.props.nextFrame();
-      event.preventDefault();
-    }
-    if (event.key === " ") {
-      if (event.target.tagName === "BUTTON") {
-        return;
-      }
-      if (this.playerRef.current !== null) {
-        this.playerRef.current.playpause();
-      }
-      event.preventDefault();
-    }
-  };
 
   render() {
     console.log("RENDER: App");
@@ -132,8 +95,6 @@ const styles = {
 
 const mapStateToProps = (state) => {
   return {
-    frame: state.frame.frame,
-    maxFrame: state.frame.maxFrame,
     celIndex: state.celList.celIndex,
     data: state,
   };
@@ -146,12 +107,6 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(loadFrameConfig(value.frame));
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
-    },
-    nextFrame: () => {
-      dispatch(nextFrame());
-    },
-    prevFrame: () => {
-      dispatch(prevFrame());
     },
     resetFrameConfig,
     resetCelList,
