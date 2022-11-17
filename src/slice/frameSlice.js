@@ -28,9 +28,27 @@ export const frameSlice = createSlice({
     setMaxFrame: (state, action) => {
       state.maxFrame = action.payload;
     },
+    nextFrame: (state) => {
+      state.frame += 1;
+      if (state.frame >= state.maxFrame) {
+        state.frame = 0;
+      }
+    },
+    prevFrame: (state) => {
+      state.frame -= 1;
+      if (state.frame < 0) {
+        state.frame = state.maxFrame - 1;
+      }
+    },
   },
 });
 
-export const { loadFrameConfig, setFrame, setMaxFrame, resetFrameConfig } =
-  frameSlice.actions;
+export const {
+  loadFrameConfig,
+  setFrame,
+  setMaxFrame,
+  resetFrameConfig,
+  nextFrame,
+  prevFrame,
+} = frameSlice.actions;
 export default frameSlice.reducer;

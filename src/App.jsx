@@ -12,7 +12,8 @@ import { connect } from "react-redux";
 import {
   loadFrameConfig,
   resetFrameConfig,
-  setFrame,
+  nextFrame,
+  prevFrame,
 } from "./slice/frameSlice";
 import { loadCelList, resetCelList } from "./slice/celListSlice";
 import { loadInfo } from "./slice/infoSlice";
@@ -25,7 +26,7 @@ class App extends React.Component {
     this.playerRef = createRef();
   }
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown, false);
+    document.addEventListener("keydown", this.handleKeyDown);
     if (!!window.appMenu) {
       // 新規
       window.appMenu.onReceiveNew(() => {
@@ -43,6 +44,9 @@ class App extends React.Component {
       });
     }
   }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
 
   handleKeyDown = (event) => {
     if (event.target.tagName === "INPUT") {
@@ -52,14 +56,14 @@ class App extends React.Component {
       if (this.playerRef.current !== null) {
         this.playerRef.current.pause();
       }
-      this.props.setFrame(this.props.frame - 1);
+      this.props.prevFrame();
       event.preventDefault();
     }
     if (event.key === "ArrowRight") {
       if (this.playerRef.current !== null) {
         this.playerRef.current.pause();
       }
-      this.props.setFrame(this.props.frame + 1);
+      this.props.nextFrame();
       event.preventDefault();
     }
     if (event.key === " ") {
@@ -136,14 +140,17 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setFrame: (value) => {
-      dispatch(setFrame(value));
-    },
     loadData: (value) => {
       dispatch(loadCelList(value.celList));
       dispatch(loadFrameConfig(value.frame));
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
+    },
+    nextFrame: () => {
+      dispatch(nextFrame());
+    },
+    prevFrame: () => {
+      dispatch(prevFrame());
     },
     resetFrameConfig,
     resetCelList,

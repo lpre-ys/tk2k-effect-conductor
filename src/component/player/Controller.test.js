@@ -101,23 +101,23 @@ describe("repeat", () => {
 });
 
 describe("Prev / Next", () => {
-  test("click prev, then setFrame -1", () => {
+  test("click prev, then call prevFrame", () => {
     const mockFn = jest.fn();
-    render(<Controller frame={3} maxFrame={10} setFrame={mockFn} />);
+    render(<Controller frame={3} maxFrame={10} prevFrame={mockFn} />);
 
     const target = screen.getByTitle("prev");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith(2);
+    expect(mockFn).toBeCalled();
   });
-  test("click next, then setFrame +1", () => {
+  test("click next, then call nextFrame", () => {
     const mockFn = jest.fn();
-    render(<Controller frame={3} maxFrame={10} setFrame={mockFn} />);
+    render(<Controller frame={3} maxFrame={10} nextFrame={mockFn} />);
 
     const target = screen.getByTitle("next");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledWith(4);
+    expect(mockFn).toBeCalled();
   });
 });
 

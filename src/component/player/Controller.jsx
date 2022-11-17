@@ -11,7 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { setFrame, setMaxFrame } from "../../slice/frameSlice";
+import {
+  nextFrame,
+  prevFrame,
+  setFrame,
+  setMaxFrame,
+} from "../../slice/frameSlice";
 
 export function Controller({
   isRepeat,
@@ -22,6 +27,8 @@ export function Controller({
   frame,
   maxFrame,
   setFrame,
+  nextFrame,
+  prevFrame,
   setMaxFrame,
 }) {
   const control = ({ currentTarget }) => {
@@ -48,19 +55,10 @@ export function Controller({
       }
     }
     if (type === "next") {
-      // 最大からもう1個→押したとき、0に戻す
-      let value = frame + 1;
-      if (value >= maxFrame) {
-        value = 0;
-      }
-      setFrame(value);
+      nextFrame();
     }
     if (type === "prev") {
-      let value = frame - 1;
-      if (value <= 0) {
-        value = maxFrame - 1;
-      }
-      setFrame(value);
+      prevFrame();
     }
   };
   return (
@@ -165,6 +163,12 @@ export default (props) => {
     maxFrame,
     setFrame: (value) => {
       dispatch(setFrame(value));
+    },
+    nextFrame: () => {
+      dispatch(nextFrame());
+    },
+    prevFrame: () => {
+      dispatch(prevFrame());
     },
     setMaxFrame: (value) => {
       dispatch(setMaxFrame(value));
