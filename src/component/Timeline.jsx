@@ -159,7 +159,8 @@ export function Timeline({
   );
 }
 
-export default memo((props) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
   const frame = useSelector((state) => state.frame.frame);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const celList = useSelector((state) => state.celList.list);
@@ -184,7 +185,7 @@ export default memo((props) => {
   };
 
   return <Timeline {..._props} />;
-});
+};
 
 const styles = {
   container: css`

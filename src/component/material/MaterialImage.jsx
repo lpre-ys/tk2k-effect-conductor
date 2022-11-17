@@ -15,14 +15,16 @@ export function MaterialImage({ image, isShow }) {
     );
   }
 }
-export default memo((props) => {
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
   const originalImage = useSelector((state) => state.material.originalImage);
   const _props = {
     image: originalImage,
     ...props,
   };
   return <MaterialImage {..._props} />;
-});
+};
 
 const styles = {
   image: css`

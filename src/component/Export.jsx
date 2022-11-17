@@ -91,7 +91,8 @@ export const Export = ({
   );
 };
 
-export default memo((props) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const configList = useSelector((state) => state.celList.list);
   const title = useSelector((state) => state.info.title);
@@ -113,7 +114,7 @@ export default memo((props) => {
   };
 
   return <Export {..._props} />;
-});
+};
 
 const styles = {
   container: css`

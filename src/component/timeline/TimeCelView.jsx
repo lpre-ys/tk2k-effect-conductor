@@ -30,7 +30,8 @@ export function TimeCelView({ index, config, celIndex, setCelIndex }) {
   );
 }
 
-export default memo((props) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
   const celIndex = useSelector((state) => state.celList.celIndex);
   const dispatch = useDispatch();
   const _props = {
@@ -42,7 +43,7 @@ export default memo((props) => {
   };
 
   return <TimeCelView {..._props} />;
-});
+};
 
 const styles = {
   timeline: css`
