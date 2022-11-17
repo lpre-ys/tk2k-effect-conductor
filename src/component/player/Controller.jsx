@@ -83,19 +83,26 @@ export function Controller({
     setIsRunning(false);
   }
 
-  // TODO 処理を後述のcontrolと共通にしたい
+  function prev() {
+    stopAnimation();
+    prevFrame();
+  }
+
+  function next() {
+    stopAnimation();
+    nextFrame();
+  }
+
   const handleKeyDown = (event) => {
     if (event.target.tagName === "INPUT") {
       return;
     }
     if (event.key === "ArrowLeft") {
-      stopAnimation();
-      prevFrame();
+      prev();
       event.preventDefault();
     }
     if (event.key === "ArrowRight") {
-      stopAnimation();
-      nextFrame();
+      next();
       event.preventDefault();
     }
     if (event.key === " ") {
@@ -149,12 +156,10 @@ export function Controller({
       }
     }
     if (type === "next") {
-      stopAnimation();
-      nextFrame();
+      next();
     }
     if (type === "prev") {
-      stopAnimation();
-      prevFrame();
+      prev();
     }
   };
   return (
