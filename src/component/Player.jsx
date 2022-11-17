@@ -1,172 +1,66 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import {
-  forwardRef,
-  memo,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { memo, useState } from "react";
 import { Layer, Line, Stage } from "react-konva";
-import { connect } from "react-redux";
-import { setFrame } from "../slice/frameSlice";
+import { useSelector } from "react-redux";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
 import Controller from "./player/Controller";
 import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
-const FRAME_SEC = 33; // 30 fps
+export const Player = ({ celList }) => {
+  console.log("RENDER: Player");
 
-export const Player = forwardRef(
-  ({ frame, maxFrame, celList, setFrame }, ref) => {
-    console.log("RENDER: Player");
+  const [bgColor, setBgColor] = useState("transparent");
+  const [bgImage, setBgImage] = useState(null);
+  const [isShowCelBorder, setIsShowCelBorder] = useState(false);
+  const [msg, setMsg] = useState("");
 
-    const [isRepeat, setIsRepeat] = useState(false);
-    const [isRunning, setIsRunning] = useState(false);
-    const [bgColor, setBgColor] = useState("transparent");
-    const [bgImage, setBgImage] = useState(null);
-    const [isShowCelBorder, setIsShowCelBorder] = useState(false);
-    const [msg, setMsg] = useState("");
-
-    const animeRef = useRef();
-
-    let timeCounter = 0.0;
-    let frameCounter = frame;
-    let prevTimeStamp;
-
-    const animation = (timestamp) => {
-      if (prevTimeStamp === undefined) {
-        prevTimeStamp = timestamp;
-      }
-      timeCounter += timestamp - prevTimeStamp;
-
-      let isChange = false;
-      let isNext = true;
-      while (timeCounter > FRAME_SEC) {
-        // 現在のフレームの計算
-        frameCounter += 1;
-        timeCounter -= FRAME_SEC;
-        isChange = true;
-      }
-      if (isChange) {
-        if (frameCounter > maxFrame - 1) {
-          if (isRepeat) {
-            frameCounter = 0;
-          } else {
-            //リピート無しの時はアニメを止める;
-            isNext = false;
-            setIsRunning(false);
-            frameCounter = maxFrame - 1; //はみ出したとき用
-          }
-        }
-        setFrame(frameCounter);
-      }
-      if (isNext) {
-        animeRef.current = window.requestAnimationFrame(animation);
-      }
-      prevTimeStamp = timestamp;
-    };
-
-    function playAnimation() {
-      if (frame >= maxFrame - 1) {
-        frameCounter = 0;
-      }
-      setIsRunning(true);
-      animeRef.current = window.requestAnimationFrame(animation);
-    }
-
-    function stopAnimation() {
-      window.cancelAnimationFrame(animeRef.current);
-      setIsRunning(false);
-    }
-
-    useEffect(() => {
-      return () => {
-        window.cancelAnimationFrame(animeRef.current);
-      };
-    }, []);
-
-    useImperativeHandle(ref, () => {
-      return {
-        playpause: () => {
-          if (isRunning) {
-            stopAnimation();
-          } else {
-            playAnimation();
-          }
-        },
-        pause: () => {
-          stopAnimation();
-        },
-      };
-    });
-
-    return (
-      <>
-        <ViewSettings
-          background={bgColor}
-          isShowCelBorder={isShowCelBorder}
-          setBgColor={setBgColor}
-          setBgImage={setBgImage}
-          setIsShowCelBorder={setIsShowCelBorder}
-        />
-        <div css={styles.canvasArea} data-testid="effectCanvas">
-          <Stage width={320 * 2} height={240 * 2} scaleX={2} scaleY={2}>
-            <Layer imageSmoothingEnabled={false}>
-              <Background color={bgColor} image={bgImage} />
-              <Grid />
-              {celList.map((cel, id) => {
-                return (
-                  <Cel
-                    key={id}
-                    id={id + 1}
-                    config={cel}
-                    isShowCelBorder={isShowCelBorder}
-                    setMsg={setMsg}
-                  />
-                );
-              })}
-            </Layer>
-          </Stage>
-        </div>
-        <Controller
-          isRepeat={isRepeat}
-          setIsRepeat={setIsRepeat}
-          isRunning={isRunning}
-          playAnimation={playAnimation}
-          stopAnimation={stopAnimation}
-        />
-        <Info msg={msg} setMsg={setMsg} />
-      </>
-    );
-  }
-);
-
-const mapStateToProps = (state) => {
-  return {
-    frame: state.frame.frame,
-    maxFrame: state.frame.maxFrame,
-    celList: state.celList.list,
-  };
+  return (
+    <>
+      <ViewSettings
+        background={bgColor}
+        isShowCelBorder={isShowCelBorder}
+        setBgColor={setBgColor}
+        setBgImage={setBgImage}
+        setIsShowCelBorder={setIsShowCelBorder}
+      />
+      <div css={styles.canvasArea} data-testid="effectCanvas">
+        <Stage width={320 * 2} height={240 * 2} scaleX={2} scaleY={2}>
+          <Layer imageSmoothingEnabled={false}>
+            <Background color={bgColor} image={bgImage} />
+            <Grid />
+            {celList.map((cel, id) => {
+              return (
+                <Cel
+                  key={id}
+                  id={id + 1}
+                  config={cel}
+                  isShowCelBorder={isShowCelBorder}
+                  setMsg={setMsg}
+                />
+              );
+            })}
+          </Layer>
+        </Stage>
+      </div>
+      <Controller />
+      <Info msg={msg} setMsg={setMsg} />
+    </>
+  );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setFrame: (value) => {
-      dispatch(setFrame(value));
-    },
+export default memo((props) => {
+  const celList = useSelector((state) => state.celList.list);
+  const _props = {
+    celList,
+    ...props,
   };
-};
 
-// * forwardRefを使うため、connectを利用する
-export default memo(
-  connect(mapStateToProps, mapDispatchToProps, null, {
-    forwardRef: true,
-  })(Player)
-);
+  return <Player {..._props} />;
+});
 
 function Grid() {
   return (

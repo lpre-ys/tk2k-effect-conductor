@@ -10,7 +10,7 @@ import {
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   nextFrame,
@@ -18,13 +18,9 @@ import {
   setFrame,
   setMaxFrame,
 } from "../../slice/frameSlice";
+import { FRAME_SEC } from "../../util/const";
 
 export function Controller({
-  isRepeat,
-  setIsRepeat,
-  isRunning,
-  playAnimation,
-  stopAnimation,
   frame,
   maxFrame,
   setFrame,
@@ -34,14 +30,63 @@ export function Controller({
 }) {
   console.log("RENDER: Controller");
 
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
 
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  });
+  const animeRef = useRef();
 
+  let timeCounter = 0.0;
+  let frameCounter = frame;
+  let prevTimeStamp;
+
+  const animation = (timestamp) => {
+    if (prevTimeStamp === undefined) {
+      prevTimeStamp = timestamp;
+    }
+    timeCounter += timestamp - prevTimeStamp;
+
+    let isChange = false;
+    let isNext = true;
+    while (timeCounter > FRAME_SEC) {
+      // 現在のフレームの計算
+      frameCounter += 1;
+      timeCounter -= FRAME_SEC;
+      isChange = true;
+    }
+    if (isChange) {
+      if (frameCounter > maxFrame - 1) {
+        if (isRepeat) {
+          frameCounter = 0;
+        } else {
+          //リピート無しの時はアニメを止める;
+          isNext = false;
+          setIsRunning(false);
+          frameCounter = maxFrame - 1; //はみ出したとき用
+        }
+      }
+      setFrame(frameCounter);
+    }
+    if (isNext) {
+      animeRef.current = window.requestAnimationFrame(animation);
+    }
+    prevTimeStamp = timestamp;
+  };
+
+  function playAnimation() {
+    if (frame >= maxFrame - 1) {
+      frameCounter = 0;
+    }
+    setIsRunning(true);
+    animeRef.current = window.requestAnimationFrame(animation);
+    console.log(animeRef.current);
+  }
+
+  function stopAnimation() {
+    window.cancelAnimationFrame(animeRef.current);
+    setIsRunning(false);
+  }
+
+  // TODO 処理を後述のcontrolと共通にしたい
   const handleKeyDown = (event) => {
     if (event.target.tagName === "INPUT") {
       return;
@@ -68,6 +113,20 @@ export function Controller({
       event.preventDefault();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      window.cancelAnimationFrame(animeRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
 
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;

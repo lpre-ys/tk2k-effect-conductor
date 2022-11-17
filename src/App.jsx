@@ -2,7 +2,7 @@
 
 import { css, Global } from "@emotion/react";
 import normalize from "normalize.css";
-import React, { createRef } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import Configs from "./component/Configs";
 import Export from "./component/Export";
@@ -18,7 +18,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.playerRef = createRef();
   }
   componentDidMount() {
     // document.addEventListener("keydown", this.handleKeyDown);
@@ -51,7 +50,7 @@ class App extends React.Component {
             <Material />
             <div className="player" css={styles.player}>
               <Export />
-              <Player ref={this.playerRef} />
+              <Player />
             </div>
             <Configs key={this.props.celIndex} />
           </div>
