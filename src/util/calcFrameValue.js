@@ -20,7 +20,7 @@ export default function getDataByLocalFrame(localFrame, config) {
 function calcPageIndex(localFrame, { start, end, isRoundTrip }) {
   const pageNum = end - start + 1;
   let pageIndex = 0;
-  if (isRoundTrip) {
+  if (isRoundTrip && pageNum > 3) {
     pageIndex = (localFrame % (pageNum - 1));
     if (Math.floor(localFrame / (pageNum - 1)) % 2 === 1) {
       // 復路は反転
