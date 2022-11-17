@@ -8,7 +8,7 @@ import { setImage } from "../../slice/infoSlice";
 import { loadOriginalImage } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
 
-function Loader({ setMsg, loadOriginalImage, setImageName }) {
+export function Loader({ setMsg, loadOriginalImage, setImageName }) {
   const loadImage = (dataUrl, name) => {
     makeTransparentImage(dataUrl)
       .then(({ transparent, maxPage, trColor }) => {
