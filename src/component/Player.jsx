@@ -3,6 +3,7 @@
 import { css } from "@emotion/react";
 import {
   forwardRef,
+  memo,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -21,6 +22,8 @@ const FRAME_SEC = 33; // 30 fps
 
 export const Player = forwardRef(
   ({ frame, maxFrame, celList, setFrame }, ref) => {
+    console.log("RENDER: Player");
+
     const [isRepeat, setIsRepeat] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [bgColor, setBgColor] = useState("transparent");
@@ -159,9 +162,11 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // * forwardRefを使うため、connectを利用する
-export default connect(mapStateToProps, mapDispatchToProps, null, {
-  forwardRef: true,
-})(Player);
+export default memo(
+  connect(mapStateToProps, mapDispatchToProps, null, {
+    forwardRef: true,
+  })(Player)
+);
 
 function Grid() {
   return (

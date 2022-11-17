@@ -18,6 +18,8 @@ export function Material({
   loadOriginalImage,
   setImageName,
 }) {
+  console.log("RENDER: material");
+
   const [isShowImage, setIsShowImage] = useState(false);
   const [msg, setMsg] = useState("");
 

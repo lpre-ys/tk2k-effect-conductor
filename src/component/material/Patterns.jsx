@@ -8,6 +8,7 @@ import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
 export function Patterns({ max, image, bgColor, changeBgColor }) {
+  console.log("RENDER: Patterns");
   const patterns = [];
   for (let i = 0; i < max; i++) {
     const x = (i % 5) * 96;

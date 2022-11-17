@@ -2,9 +2,12 @@
 
 import { css } from "@emotion/react";
 import React, { useCallback } from "react";
+import { memo } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function Loader({ loadImage }) {
+function Loader({ loadImage }) {
+  console.log("RENDER: Loader");
+
   const onDrop = useCallback(
     (acceptedFiles) => {
       if (acceptedFiles.length === 1) {
@@ -40,6 +43,8 @@ export default function Loader({ loadImage }) {
     </div>
   );
 }
+
+export default memo(Loader);
 
 const styles = {
   loader: css`

@@ -8,85 +8,90 @@ import { useDispatch, useSelector } from "react-redux";
 import { setImage, setTitle } from "../slice/infoSlice";
 import getDataByLocalFrame from "../util/calcFrameValue";
 
-export const Export = memo(
-  ({ maxFrame, configList, title, imageName, setTitle, setImage }) => {
-    const [disabled, setDisabled] = useState(false);
+export const Export = ({
+  maxFrame,
+  configList,
+  title,
+  imageName,
+  setTitle,
+  setImage,
+}) => {
+  console.log("RENDER: Export");
+  const [disabled, setDisabled] = useState(false);
 
-    const handleExport = useCallback(() => {
-      if (
-        window.tk2k === undefined ||
-        typeof window.tk2k.writeData !== "function"
-      ) {
-        return;
-      }
-      setDisabled(true);
-      const frameList = [];
-      for (let i = 0; i < maxFrame; i++) {
-        // 基本データ作成
-        const result = configList
-          .map((celConfig) => {
-            const end = celConfig.frame.start + celConfig.frame.volume;
-            if (celConfig.frame.start - 1 <= i && end - 1 > i) {
-              const localFrame = i - celConfig.frame.start + 1;
-              const cel = getDataByLocalFrame(localFrame, celConfig);
-              cel.pageIndex += 1;
-              return cel;
-            } else {
-              return null;
-            }
-          })
-          .filter((value) => {
-            return !!value;
-          });
-
-        frameList.push(result);
-      }
-      window.tk2k
-        .writeData({ frameList, title, materialName: imageName })
-        .then(() => {
-          setDisabled(false);
+  const handleExport = useCallback(() => {
+    if (
+      window.tk2k === undefined ||
+      typeof window.tk2k.writeData !== "function"
+    ) {
+      return;
+    }
+    setDisabled(true);
+    const frameList = [];
+    for (let i = 0; i < maxFrame; i++) {
+      // 基本データ作成
+      const result = configList
+        .map((celConfig) => {
+          const end = celConfig.frame.start + celConfig.frame.volume;
+          if (celConfig.frame.start - 1 <= i && end - 1 > i) {
+            const localFrame = i - celConfig.frame.start + 1;
+            const cel = getDataByLocalFrame(localFrame, celConfig);
+            cel.pageIndex += 1;
+            return cel;
+          } else {
+            return null;
+          }
+        })
+        .filter((value) => {
+          return !!value;
         });
-    }, [configList, maxFrame, title, imageName]);
-    return (
-      <div css={styles.container}>
-        <label>
-          名前:&nbsp;
-          <input
-            type="text"
-            value={title}
-            css={styles.input}
-            onChange={({ currentTarget }) => {
-              setTitle(currentTarget.value);
-            }}
-          />
-        </label>
-        <label>
-          素材ファイル:&nbsp;
-          <input
-            type="text"
-            value={imageName}
-            css={styles.input}
-            onChange={({ currentTarget }) => {
-              setImage(currentTarget.value);
-            }}
-          />
-        </label>
-        <button
-          css={[styles.exportButton, disabled && styles.disabled]}
-          type="button"
-          onClick={handleExport}
-          disabled={disabled}
-        >
-          <FontAwesomeIcon icon={faCopy} css={styles.icon} />
-          COPY!!
-        </button>
-      </div>
-    );
-  }
-);
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+      frameList.push(result);
+    }
+    window.tk2k
+      .writeData({ frameList, title, materialName: imageName })
+      .then(() => {
+        setDisabled(false);
+      });
+  }, [configList, maxFrame, title, imageName]);
+  return (
+    <div css={styles.container}>
+      <label>
+        名前:&nbsp;
+        <input
+          type="text"
+          value={title}
+          css={styles.input}
+          onChange={({ currentTarget }) => {
+            setTitle(currentTarget.value);
+          }}
+        />
+      </label>
+      <label>
+        素材ファイル:&nbsp;
+        <input
+          type="text"
+          value={imageName}
+          css={styles.input}
+          onChange={({ currentTarget }) => {
+            setImage(currentTarget.value);
+          }}
+        />
+      </label>
+      <button
+        css={[styles.exportButton, disabled && styles.disabled]}
+        type="button"
+        onClick={handleExport}
+        disabled={disabled}
+      >
+        <FontAwesomeIcon icon={faCopy} css={styles.icon} />
+        COPY!!
+      </button>
+    </div>
+  );
+};
+
+export default memo((props) => {
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const configList = useSelector((state) => state.celList.list);
   const title = useSelector((state) => state.info.title);
@@ -108,7 +113,7 @@ export default (props) => {
   };
 
   return <Export {..._props} />;
-};
+});
 
 const styles = {
   container: css`

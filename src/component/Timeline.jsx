@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { memo } from "react";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCel, copyCel, deleteCel } from "../slice/celListSlice";
@@ -22,6 +23,8 @@ export function Timeline({
   copyCel,
   deleteCel,
 }) {
+  console.log("RENDER: Timeline");
+
   const scrollRef = useRef(null);
 
   const baseList = [];
@@ -156,8 +159,7 @@ export function Timeline({
   );
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
+export default memo((props) => {
   const frame = useSelector((state) => state.frame.frame);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const celList = useSelector((state) => state.celList.list);
@@ -170,7 +172,7 @@ export default (props) => {
       dispatch(setFrame(value));
     },
     addCel: (volume, start) => {
-      addCel({ volume, start });
+      dispatch(addCel({ volume, start }));
     },
     copyCel: () => {
       dispatch(copyCel());
@@ -182,7 +184,7 @@ export default (props) => {
   };
 
   return <Timeline {..._props} />;
-};
+});
 
 const styles = {
   container: css`
