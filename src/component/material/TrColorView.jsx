@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useCallback } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTrColor } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
