@@ -102,6 +102,71 @@ describe("pattern", () => {
   });
 });
 
+describe("only 1 Frame", () => {
+  const FROM_TO_CEL_CONFIG = {
+    x: {
+      from: 10,
+      to: 20,
+      cycle: 0,
+      isRoundTrip: false,
+      easing: "easeLinear",
+      easingAdd: "",
+    },
+    y: {
+      from: 30,
+      to: 40,
+      cycle: 0,
+      isRoundTrip: false,
+      easing: "easeLinear",
+      easingAdd: "",
+    },
+    scale: {
+      from: 50,
+      to: 60,
+      cycle: 0,
+      isRoundTrip: false,
+      easing: "easeLinear",
+      easingAdd: "",
+    },
+    opacity: {
+      from: 70,
+      to: 80,
+      cycle: 0,
+      isRoundTrip: false,
+      easing: "easeLinear",
+      easingAdd: "",
+    },
+    frame: { start: 1, volume: 20 }, // 20: INIT_MAX_FRAME
+    pattern: { start: 9, end: 10, isRoundTrip: false },
+  };
+
+  test("pageIndex is config.pattern.start - 1", () => {
+    const config = Object.assign({}, FROM_TO_CEL_CONFIG);
+    config.frame.volume = 1;
+    expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 8 });
+  });
+  test("x is config.x.start", () => {
+    const config = Object.assign({}, FROM_TO_CEL_CONFIG);
+    config.frame.volume = 1;
+    expect(getDataByLocalFrame(5, config)).toMatchObject({ x: 10 });
+  });
+  test("y is config.y.start", () => {
+    const config = Object.assign({}, FROM_TO_CEL_CONFIG);
+    config.frame.volume = 1;
+    expect(getDataByLocalFrame(5, config)).toMatchObject({ y: 30 });
+  });
+  test("scale is config.scale.start", () => {
+    const config = Object.assign({}, FROM_TO_CEL_CONFIG);
+    config.frame.volume = 1;
+    expect(getDataByLocalFrame(5, config)).toMatchObject({ scale: 50 });
+  });
+  test("opacity is config.opacity.start", () => {
+    const config = Object.assign({}, FROM_TO_CEL_CONFIG);
+    config.frame.volume = 1;
+    expect(getDataByLocalFrame(5, config)).toMatchObject({ opacity: 70 });
+  });
+});
+
 const DEFAULT_CEL_CONFIG = {
   x: {
     from: 0,

@@ -1,6 +1,11 @@
 import * as d3 from "d3-ease";
 
+// * 表示有無はこのfunctionを呼ぶ前にチェックしているので、不要
 export default function getDataByLocalFrame(localFrame, config) {
+  if (config.frame.volume === 1) {
+    // 1フレだけの場合
+    return getStartValues(config);
+  }
   // easingする系の取得
   const x = calcFrameValue(localFrame, config.x, config.frame);
   const y = calcFrameValue(localFrame, config.y, config.frame);
@@ -11,16 +16,27 @@ export default function getDataByLocalFrame(localFrame, config) {
   return {
     x,
     y,
-    pageIndex,
     scale,
     opacity,
+    pageIndex,
   };
+}
+
+function getStartValues(config) {
+  const x = config.x.from;
+  const y = config.y.from;
+  const scale = config.scale.from
+  const opacity = config.opacity.from;
+  const pageIndex = config.pattern.start - 1; // pageIndexは0はじまり。
+  return {
+    x, y, scale, opacity, pageIndex,
+  }
 }
 
 function calcPageIndex(localFrame, { start, end, isRoundTrip }) {
   const pageNum = end - start + 1;
   let pageIndex = 0;
-  if (isRoundTrip && pageNum > 3) {
+  if (isRoundTrip) {
     pageIndex = (localFrame % (pageNum - 1));
     if (Math.floor(localFrame / (pageNum - 1)) % 2 === 1) {
       // 復路は反転
