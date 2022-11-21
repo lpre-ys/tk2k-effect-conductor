@@ -30,11 +30,7 @@ export function TimingConfig({ config, update }) {
   };
 
   const validateInput = () => {
-    const newConfig = {
-      start: parseInt(start),
-      volume: parseInt(volume),
-    };
-    return validateConfig(newConfig);
+    return validateConfig({ start, volume });
   };
 
   const validateConfig = useCallback(({ start, volume }) => {
