@@ -7,7 +7,7 @@ import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
-export function Patterns({ max, image, bgColor, changeBgColor }) {
+export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
   const patterns = [];
   for (let i = 0; i < max; i++) {
     const x = (i % 5) * 96;
@@ -49,19 +49,23 @@ export function Patterns({ max, image, bgColor, changeBgColor }) {
           data-testid="patterns-input-bgcolor"
         />
       </label>
-      <TrColorView />
+      <TrColorView key={imageKey} />
       <ul css={styles.ul}>{patterns}</ul>
     </>
   );
 }
 
 export default memo((props) => {
-  const { maxPage, trImage, bgColor } = useSelector((state) => state.material);
+  const max = useSelector((state) => state.material.maxPage);
+  const image = useSelector((state) => state.material.trImage);
+  const bgColor = useSelector((state) => state.material.bgColor);
+  const imageKey = useSelector((state) => state.material.key);
 
   const dispatch = useDispatch();
   const _props = {
-    max: maxPage,
-    image: trImage,
+    max,
+    image,
+    imageKey,
     bgColor,
     changeBgColor: (value) => {
       dispatch(changeBgColor(value));

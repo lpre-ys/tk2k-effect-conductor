@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTrColor } from "../../slice/materialSlice";
@@ -12,17 +13,38 @@ export function TrColorView({ image, trColor, changeTrColor }) {
   const [g, setG] = useState(trColor.g);
   const [b, setB] = useState(trColor.b);
 
-  const updateTrColor = (newColor) => {
-    makeTransparentImage(image, newColor).then(({ transparent, trColor }) => {
-      changeTrColor(transparent, trColor);
-    });
-  };
+  const updateTrColor = useCallback(
+    (newColor) => {
+      makeTransparentImage(image, newColor).then(({ transparent, trColor }) => {
+        changeTrColor(transparent, trColor);
+      });
+    },
+    [changeTrColor, image]
+  );
   const validateColor = (color) => {
     return Object.keys(color).reduce((flag, key) => {
       const value = parseInt(color[key]);
       return flag && !Number.isNaN(value) && value >= 0 && value <= 255;
     }, true);
   };
+  const checkChangeColor = (oldColor, newColor) => {
+    return (
+      oldColor.r !== newColor.r ||
+      oldColor.g !== newColor.g ||
+      oldColor.b !== newColor.b
+    );
+  };
+
+  useEffect(() => {
+    const newColor = {
+      r: parseInt(r),
+      g: parseInt(g),
+      b: parseInt(b),
+    };
+    if (validateColor(newColor) && checkChangeColor(trColor, newColor)) {
+      updateTrColor(newColor);
+    }
+  }, [r, g, b, updateTrColor, trColor]);
 
   return (
     <div css={styles.trColorWrapper} data-testid="tr-color-view">
@@ -56,14 +78,6 @@ export function TrColorView({ image, trColor, changeTrColor }) {
               value={r}
               onChange={({ target }) => {
                 setR(target.value);
-                const newColor = {
-                  r: parseInt(target.value),
-                  g: parseInt(g),
-                  b: parseInt(b),
-                };
-                if (validateColor(newColor)) {
-                  updateTrColor(newColor);
-                }
               }}
               data-color="r"
               data-testid="trcv-input-r"
@@ -75,14 +89,6 @@ export function TrColorView({ image, trColor, changeTrColor }) {
               value={g}
               onChange={({ target }) => {
                 setG(target.value);
-                const newColor = {
-                  r: parseInt(r),
-                  g: parseInt(target.value),
-                  b: parseInt(b),
-                };
-                if (validateColor(newColor)) {
-                  updateTrColor(newColor);
-                }
               }}
               data-color="g"
               data-testid="trcv-input-g"
@@ -94,14 +100,6 @@ export function TrColorView({ image, trColor, changeTrColor }) {
               value={b}
               onChange={({ target }) => {
                 setB(target.value);
-                const newColor = {
-                  r: parseInt(r),
-                  g: parseInt(g),
-                  b: parseInt(target.value),
-                };
-                if (validateColor(newColor)) {
-                  updateTrColor(newColor);
-                }
               }}
               data-color="b"
               data-testid="trcv-input-b"
@@ -127,9 +125,12 @@ export default (props) => {
   const _props = {
     image: originalImage,
     trColor,
-    changeTrColor: (transparent, trColor) => {
-      dispatch(changeTrColor({ transparent, trColor }));
-    },
+    changeTrColor: useCallback(
+      (transparent, trColor) => {
+        dispatch(changeTrColor({ transparent, trColor }));
+      },
+      [dispatch]
+    ),
     ...props,
   };
 

@@ -5,6 +5,19 @@ import { TrColorView } from "./TrColorView";
 
 const defaultColor = { r: 0, g: 0, b: 0 };
 
+jest.mock("../../util/makeTransparentImage");
+
+const mockMake = makeTransparentImage;
+
+beforeEach(() => {
+  mockMake.mockReset();
+  mockMake.mockResolvedValue({
+    transparent: "transparent-image",
+    maxPage: 42,
+    trColor: "test-trcolor",
+  });
+});
+
 test("ColorLabel style is rgb(trColor)", () => {
   render(<TrColorView trColor={{ r: 41, g: 175, b: 221 }} />);
 
@@ -45,8 +58,6 @@ test("textView is rgb(trColor)", () => {
   expect(target).toHaveTextContent("rgb(205, 39, 71)");
 });
 
-jest.mock("../../util/makeTransparentImage");
-
 describe("trColorInput", () => {
   describe("value", () => {
     test("R value is trColor.r", () => {
@@ -75,15 +86,6 @@ describe("trColorInput", () => {
     });
   });
   describe("change", () => {
-    const mockMake = makeTransparentImage;
-    beforeEach(() => {
-      mockMake.mockReset();
-      mockMake.mockResolvedValue({
-        transparent: "transparent-image",
-        maxPage: 42,
-        trColor: "test-trcolor",
-      });
-    });
     test("R change to trColor.r", async () => {
       const mockFn = jest.fn();
       render(

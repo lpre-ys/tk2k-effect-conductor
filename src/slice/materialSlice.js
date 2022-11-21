@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const materialSlice = createSlice({
   name: "material",
   initialState: {
+    key: Date.now(),
     originalImage: null,
     trImage: null,
     maxPage: 0,
@@ -16,6 +17,7 @@ export const materialSlice = createSlice({
       state.trImage = transparent;
       state.maxPage = maxPage;
       state.trColor = trColor;
+      state.key = Date.now();
     },
     changeTrColor: (state, action) => {
       const { transparent, trColor } = action.payload;
