@@ -3,6 +3,8 @@
 import { css } from "@emotion/react";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect } from "react";
+import { useCallback } from "react";
 import { memo } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,26 +14,10 @@ import PatternImage from "./Pattern/PatternImage";
 export function PatternConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
+  const [isRoundTrip, setIsRoundTrip] = useState(config.isRoundTrip);
 
-  const handleChangeStart = ({ target }) => {
-    setStart(target.value);
-    if (validateStart(target.value)) {
-      const newConfig = Object.assign({}, config);
-      newConfig.start = parseInt(target.value);
-      update(newConfig);
-    }
-  };
-  const handleChangeEnd = ({ target }) => {
-    setEnd(target.value);
-    if (validateEnd(target.value)) {
-      const newConfig = Object.assign({}, config);
-      newConfig.end = parseInt(target.value);
-      update(newConfig);
-    }
-  };
-
-  const validateStart = (value) => {
-    const num = parseInt(value);
+  const validateStart = (start, end) => {
+    const num = parseInt(start);
     let result = validate(num);
     if (!result) {
       return result;
@@ -39,8 +25,8 @@ export function PatternConfig({ config, update }) {
 
     return num <= end;
   };
-  const validateEnd = (value) => {
-    const num = parseInt(value);
+  const validateEnd = (start, end) => {
+    const num = parseInt(end);
     let result = validate(num);
     if (!result) {
       return result;
@@ -49,15 +35,34 @@ export function PatternConfig({ config, update }) {
     return num >= start;
   };
 
-  const validateAll = () => {
-    return validateStart(start) && validateEnd(end);
-  };
+  const validateConfig = useCallback(({ start, end }) => {
+    return validateStart(start, end) && validateEnd(start, end);
+  }, []);
+
+  function isChangeConfig(newConfig, oldConfig) {
+    return (
+      newConfig.start !== oldConfig.start ||
+      newConfig.end !== oldConfig.end ||
+      newConfig.isRoundTrip !== oldConfig.isRoundTrip
+    );
+  }
+
+  useEffect(() => {
+    const newConfig = {
+      start: parseInt(start),
+      end: parseInt(end),
+      isRoundTrip: isRoundTrip,
+    };
+    if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
+      update(newConfig);
+    }
+  }, [start, end, isRoundTrip, update, validateConfig, config]);
 
   return (
     <div>
       <h2>
         パターン
-        {!validateAll() && (
+        {!validateConfig({ start, end }) && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
             css={styles.exIcon}
@@ -79,12 +84,10 @@ export function PatternConfig({ config, update }) {
                 name="round-trip"
                 data-testid="from-to-options-round-trip"
                 type="checkbox"
-                checked={config.isRoundTrip}
+                checked={isRoundTrip}
                 value="true"
                 onChange={({ target }) => {
-                  const newConfig = Object.assign({}, config);
-                  newConfig.isRoundTrip = target.checked;
-                  update(newConfig);
+                  setIsRoundTrip(target.checked);
                 }}
               />
               :&nbsp;往復
@@ -96,9 +99,14 @@ export function PatternConfig({ config, update }) {
               <input
                 type="number"
                 data-testid="pattern-config-start"
-                css={[styles.number, !validateStart(start) && styles.error]}
+                css={[
+                  styles.number,
+                  !validateStart(start, end) && styles.error,
+                ]}
                 value={start}
-                onChange={handleChangeStart}
+                onChange={({ target }) => {
+                  setStart(target.value);
+                }}
               />
             </label>
             <br />
@@ -107,9 +115,11 @@ export function PatternConfig({ config, update }) {
               <input
                 type="number"
                 data-testid="pattern-config-end"
-                css={[styles.number, !validateEnd(end) && styles.error]}
+                css={[styles.number, !validateEnd(start, end) && styles.error]}
                 value={end}
-                onChange={handleChangeEnd}
+                onChange={({ target }) => {
+                  setEnd(target.value);
+                }}
               />
             </label>
           </div>

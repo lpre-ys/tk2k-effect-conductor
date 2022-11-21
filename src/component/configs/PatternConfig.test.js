@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { PatternConfig } from "./PatternConfig";
 // import userEvent from "@testing-library/user-event";
 
-jest.mock("./Pattern/PatternImage", () => ({ config, bgColor }) => {
+jest.mock("./Pattern/PatternImage", () => ({ config }) => {
   return (
     <div data-testid="mock-pattern-image">
       <p data-testid="pattern-image-start">{config.start}</p>
