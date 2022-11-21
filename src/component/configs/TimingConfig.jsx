@@ -3,6 +3,8 @@
 import { css } from "@emotion/react";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFrame } from "../../slice/celListSlice";
@@ -10,12 +12,8 @@ import { updateFrame } from "../../slice/celListSlice";
 export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
-  const [end, setEnd] = useState(config.start + config.volume - 1);
 
   const validateStart = (value) => {
-    return !Number.isNaN(parseInt(value));
-  };
-  const validateEnd = (value) => {
     return !Number.isNaN(parseInt(value));
   };
   const validateVolume = (value) => {
@@ -25,47 +23,43 @@ export function TimingConfig({ config, update }) {
     }
     return num > 0;
   };
-  const validateAll = () => {
-    return validateStart(start) && validateEnd(end) && validateVolume(volume);
-  };
-  const handleChangeStart = ({ target }) => {
-    setStart(target.value);
 
-    if (validateStart(target.value)) {
-      // configの更新
-      const newConfig = Object.assign({}, config);
-      newConfig.start = parseInt(target.value);
-      update(newConfig);
-      setEnd(newConfig.start + newConfig.volume - 1); // endも連動して更新する
-    }
-  };
-  const handleChangeEnd = ({ target }) => {
-    setEnd(target.value);
-
-    if (validateEnd(target.value)) {
-      // configの更新
-      const newConfig = Object.assign({}, config);
-      // Endを動かす場合、頭を動かし、volumeはそのまま。
-      newConfig.start = parseInt(target.value) + 1 - newConfig.volume;
-      update(newConfig);
-
-      setStart(newConfig.start); // startも連動して更新する
-    }
+  const calcEnd = () => {
+    const result = parseInt(start) + parseInt(volume) - 1;
+    return Number.isNaN(result) ? "" : result;
   };
 
-  const handleChangeVolume = ({ target }) => {
-    setVolume(target.value);
+  const validateInput = () => {
+    const newConfig = {
+      start: parseInt(start),
+      volume: parseInt(volume),
+    };
+    return validateConfig(newConfig);
+  };
 
-    if (validateVolume(target.value)) {
-      const newConfig = Object.assign({}, config);
-      newConfig.volume = parseInt(target.value);
+  const validateConfig = useCallback(({ start, volume }) => {
+    return validateStart(start) && validateVolume(volume);
+  }, []);
+
+  const isChangeConfig = (newConfig, oldConfig) => {
+    return (
+      newConfig.start !== oldConfig.start ||
+      newConfig.volume !== oldConfig.volume
+    );
+  };
+
+  useEffect(() => {
+    const newConfig = {
+      start: parseInt(start),
+      volume: parseInt(volume),
+    };
+    if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  };
+  }, [start, update, volume, config, validateConfig]);
 
   const handleReset = () => {
     setStart(config.start);
-    setEnd(config.start + config.volume - 1);
     setVolume(config.volume);
   };
 
@@ -73,7 +67,7 @@ export function TimingConfig({ config, update }) {
     <div>
       <h2>
         表示タイミング
-        {!validateAll() && (
+        {!validateInput() && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
             css={styles.exIcon}
@@ -88,15 +82,17 @@ export function TimingConfig({ config, update }) {
           data-testid="timing-start"
           css={[styles.number, !validateStart(start) && styles.error]}
           value={start}
-          onChange={handleChangeStart}
+          onChange={({ target }) => {
+            setStart(target.value);
+          }}
         />
         ～
         <input
-          type="number"
+          type="text"
           data-testid="timing-end"
-          css={[styles.number, !validateEnd(end) && styles.error]}
-          value={end}
-          onChange={handleChangeEnd}
+          css={[styles.end]}
+          value={calcEnd()}
+          disabled={true}
         />
         <label css={styles.label}>
           フレーム数: &nbsp;
@@ -105,7 +101,9 @@ export function TimingConfig({ config, update }) {
             data-testid="timing-volume"
             css={[styles.number, !validateVolume(volume) && styles.error]}
             value={volume}
-            onChange={handleChangeVolume}
+            onChange={({ target }) => {
+              setVolume(target.value);
+            }}
           />
         </label>
       </div>
@@ -131,6 +129,9 @@ export default (props) => {
 
 const styles = {
   number: css`
+    width: 2.8rem;
+  `,
+  end: css`
     width: 2.2rem;
   `,
   label: css`

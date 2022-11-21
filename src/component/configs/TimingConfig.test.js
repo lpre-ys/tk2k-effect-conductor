@@ -68,7 +68,7 @@ describe("Start", () => {
         target: { value: "5" },
       });
 
-      expect(screen.getByTestId("timing-end")).toHaveValue(14);
+      expect(screen.getByTestId("timing-end")).toHaveValue("14");
     });
     test("set valid value, then reset End error", () => {
       render(
@@ -135,130 +135,18 @@ describe("Start", () => {
 
 // * End
 describe("End", () => {
-  test("default value is config.start + config.volume - 1", () => {
+  test("value is config.start + config.volume - 1", () => {
     render(<TimingConfig config={{ start: 2, volume: 10 }} />);
 
     const target = screen.getByTestId("timing-end");
-    expect(target).toHaveValue(11);
+    expect(target).toHaveValue("11");
   });
-  describe("Error", () => {
-    test("invalid, then show error", () => {
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-      );
+  test("form is disabled", () => {
+    render(<TimingConfig config={{ start: 2, volume: 10 }} />);
 
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: "a" },
-      });
-
-      expect(screen.getByTestId("timing-end")).toHaveStyle({
-        color: "#b71c1c",
-      });
-    });
-    test("valid, then not show error style", () => {
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: "10" },
-      });
-
-      expect(screen.getByTestId("timing-end")).not.toHaveStyle({
-        color: "#b71c1c",
-      });
-    });
-    test("invalid to valid, then not show error style", () => {
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-      );
-      const target = screen.getByTestId("timing-end");
-
-      fireEvent.change(target, {
-        target: { value: "aaa" },
-      });
-      fireEvent.change(target, {
-        target: { value: "10" },
-      });
-
-      expect(target).not.toHaveStyle({
-        color: "#b71c1c",
-      });
-    });
-  });
-  describe("link Start", () => {
-    test("set valid value, then calc Start value", () => {
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: "5" },
-      });
-
-      expect(screen.getByTestId("timing-start")).toHaveValue(-4);
-    });
-    test("set valid value, then reset Start error", () => {
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={update} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-start"), {
-        target: { value: "a" },
-      });
-      fireEvent.change(screen.getByTestId("timing-volume"), {
-        target: { value: "b" },
-      });
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: "0" },
-      });
-
-      expect(screen.getByTestId("timing-start")).not.toHaveStyle({
-        color: "#b71c1c",
-      });
-      expect(screen.getByTestId("timing-volume")).toHaveStyle({
-        color: "#b71c1c",
-      });
-    });
-  });
-  describe("validation", () => {
-    test("changeTo 9, then call update", () => {
-      const mockFn = jest.fn();
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={mockFn} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: 9 },
-      });
-
-      expect(mockFn).toBeCalledWith({ start: 0, volume: 10 });
-    });
-    test("changeTo 10, then call update", () => {
-      const mockFn = jest.fn();
-      render(
-        <TimingConfig config={{ start: 2, volume: 10 }} update={mockFn} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: 10 },
-      });
-
-      expect(mockFn).toBeCalledWith({ start: 1, volume: 10 });
-    });
-    test("changeTo NaN, then noop", () => {
-      const mockFn = jest.fn();
-      render(
-        <TimingConfig config={{ start: 1, volume: 10 }} update={mockFn} />
-      );
-
-      fireEvent.change(screen.getByTestId("timing-end"), {
-        target: { value: "a" },
-      });
-
-      expect(mockFn).not.toBeCalled();
-    });
-  });
+    const target = screen.getByTestId("timing-end");
+    expect(target).toBeDisabled();
+  })
 });
 
 // * Volume
@@ -322,17 +210,11 @@ describe("Volume", () => {
     fireEvent.change(screen.getByTestId("timing-start"), {
       target: { value: "a" },
     });
-    fireEvent.change(screen.getByTestId("timing-end"), {
-      target: { value: "b" },
-    });
     fireEvent.change(screen.getByTestId("timing-volume"), {
       target: { value: "0" },
     });
 
     expect(screen.getByTestId("timing-start")).toHaveStyle({
-      color: "#b71c1c",
-    });
-    expect(screen.getByTestId("timing-end")).toHaveStyle({
       color: "#b71c1c",
     });
   });
@@ -380,16 +262,6 @@ describe("Header icon", () => {
     render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
     fireEvent.change(screen.getByTestId("timing-start"), {
-      target: { value: "a" },
-    });
-
-    const target = screen.getByTestId("timing-config-icon");
-    expect(target).toBeInTheDocument();
-  });
-  test("if End is invalid, then show Icon", () => {
-    render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
-
-    fireEvent.change(screen.getByTestId("timing-end"), {
       target: { value: "a" },
     });
 
