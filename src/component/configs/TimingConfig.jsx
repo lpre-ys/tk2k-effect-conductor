@@ -29,10 +29,6 @@ export function TimingConfig({ config, update }) {
     return Number.isNaN(result) ? "" : result;
   };
 
-  const validateInput = () => {
-    return validateConfig({ start, volume });
-  };
-
   const validateConfig = useCallback(({ start, volume }) => {
     return validateStart(start) && validateVolume(volume);
   }, []);
@@ -63,7 +59,7 @@ export function TimingConfig({ config, update }) {
     <div>
       <h2>
         表示タイミング
-        {!validateInput() && (
+        {!validateConfig({ start, volume }) && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
             css={styles.exIcon}
