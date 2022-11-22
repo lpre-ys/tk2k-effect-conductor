@@ -7,6 +7,8 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect } from "react";
+import { useCallback } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateByType } from "../../slice/celListSlice";
@@ -17,36 +19,34 @@ export function FromToConfig({ type, name, config, update }) {
   const [isOption, setIsOption] = useState(false);
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
-
-  const handleChangeFrom = ({ target }) => {
-    setFrom(target.value);
-    if (validate(target.value)) {
-      const newConfig = Object.assign({}, config);
-      newConfig.from = parseInt(target.value);
-      update(type, newConfig);
-    }
-  };
-  const handleChangeTo = ({ target }) => {
-    setTo(target.value);
-    if (validate(target.value)) {
-      const newConfig = Object.assign({}, config);
-      newConfig.to = parseInt(target.value);
-      update(type, newConfig);
-    }
-  };
+  const [optionKey, setOptionKey] = useState(Date.now());
+  const [isValidOption, setIsValidOption] = useState(true);
 
   const validate = (value) => {
     return !Number.isNaN(parseInt(value));
   };
 
-  const validateAll = () => {
+  const validateConfig = useCallback(({ from, to }) => {
     return validate(from) && validate(to);
+  }, []);
+
+  const isChangeConfig = (newConfig, oldConfig) => {
+    return newConfig.from !== oldConfig.from || newConfig.to !== oldConfig.to;
   };
+
+  useEffect(() => {
+    const newConfig = Object.assign({}, config);
+    newConfig.from = parseInt(from);
+    newConfig.to = parseInt(to);
+
+    if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
+      update(type, newConfig);
+    }
+  }, [config, from, to, type, update, validateConfig]);
 
   const hasOption = () => {
     return config.cycle !== 0 || config.isRoundTrip;
   };
-
   const headerColorStyle = {
     color: hasOption() ? "#00838F" : "#9E9E9E",
   };
@@ -74,7 +74,7 @@ export function FromToConfig({ type, name, config, update }) {
           />
         )}
         {name}
-        {!validateAll() && (
+        {(!validateConfig({ from, to }) || !isValidOption) && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
             css={styles.exIcon}
@@ -82,6 +82,7 @@ export function FromToConfig({ type, name, config, update }) {
               // RESET
               setFrom(config.from);
               setTo(config.to);
+              setOptionKey(Date.now());
               // ヘッダ側の処理を行わない
               e.stopPropagation();
             }}
@@ -96,7 +97,9 @@ export function FromToConfig({ type, name, config, update }) {
             data-testid="from-to-config-from"
             css={styles.number}
             value={from}
-            onChange={handleChangeFrom}
+            onChange={({ target }) => {
+              setFrom(target.value);
+            }}
           />
           →
           <input
@@ -104,11 +107,18 @@ export function FromToConfig({ type, name, config, update }) {
             data-testid="from-to-config-to"
             css={styles.number}
             value={to}
-            onChange={handleChangeTo}
+            onChange={({ target }) => {
+              setTo(target.value);
+            }}
           />
         </label>
         <EasingConfig type={type} />
-        <Options type={type} visible={isOption} />
+        <Options
+          type={type}
+          visible={isOption}
+          setIsValid={setIsValidOption}
+          key={optionKey}
+        />
       </div>
     </div>
   );

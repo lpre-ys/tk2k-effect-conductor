@@ -6,8 +6,8 @@ import { updateByType } from "../../../slice/celListSlice";
 
 export function Options({ type, visible, config, update }) {
   const handleChangeCycle = ({ target }) => {
-    let value = target.value;
-    if (value === "" || parseInt(value) < 0) {
+    let value = parseInt(target.value);
+    if (Number.isNaN(value) || value < 0) {
       // 空文字は0に変換しておく
       value = 0;
     }
