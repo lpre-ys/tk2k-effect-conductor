@@ -20,7 +20,6 @@ class App extends React.Component {
     this.state = {};
   }
   componentDidMount() {
-    // document.addEventListener("keydown", this.handleKeyDown);
     if (!!window.appMenu) {
       // 新規
       window.appMenu.onReceiveNew(() => {
