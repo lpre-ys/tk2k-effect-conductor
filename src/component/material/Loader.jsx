@@ -29,11 +29,11 @@ export function Loader({ setMsg, loadOriginalImage, setImageName }) {
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles.length === 1) {
       const reader = new FileReader();
-      reader.readAsDataURL(acceptedFiles[0]);
       reader.addEventListener("load", () => {
         const name = acceptedFiles[0].name.replace(/\.[^/.]+$/, "");
         loadImage(reader.result, name);
       });
+      reader.readAsDataURL(acceptedFiles[0]);
     }
   };
   const { getRootProps, getInputProps } = useDropzone({

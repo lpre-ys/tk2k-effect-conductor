@@ -1,20 +1,54 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Layer, Line, Stage } from "react-konva";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loadOriginalImage } from "../slice/materialSlice";
+import makeTransparentImage from "../util/makeTransparentImage";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
 import Controller from "./player/Controller";
 import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
-export const Player = ({ celList }) => {
+export const Player = ({ celList, loadMaterialImage }) => {
   const [bgColor, setBgColor] = useState("transparent");
   const [bgImage, setBgImage] = useState(null);
   const [isShowCelBorder, setIsShowCelBorder] = useState(false);
   const [msg, setMsg] = useState("");
+
+  // 画像コピペ対応
+  const handlePasteImage = ({ clipboardData }) => {
+    const item = clipboardData.items[0];
+    if (item.type.indexOf("image") === 0) {
+      // 画像かつ、画像サイズが正しい時対応する
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        // まずは素材として読み取りを試みる
+        const dataUrl = reader.result;
+        makeTransparentImage(dataUrl)
+          .then(({ transparent, maxPage, trColor }) => {
+            loadMaterialImage({ dataUrl, transparent, maxPage, trColor });
+          })
+          .catch(() => {
+            // サイズが異なる場合、背景画像として設定
+            setBgImage(dataUrl);
+          });
+      });
+
+      reader.readAsDataURL(blob);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("paste", handlePasteImage);
+
+    return () => {
+      document.removeEventListener("paste", handlePasteImage);
+    };
+  });
 
   return (
     <>
@@ -52,7 +86,11 @@ export const Player = ({ celList }) => {
 
 export default memo((props) => {
   const celList = useSelector((state) => state.celList.list);
+  const dispatch = useDispatch();
   const _props = {
+    loadMaterialImage: (params) => {
+      dispatch(loadOriginalImage(params));
+    },
     celList,
     ...props,
   };
