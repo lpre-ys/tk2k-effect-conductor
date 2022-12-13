@@ -69,7 +69,7 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile("build/index.html");
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 // Passthrough is not supported, GL is disabled, ANGLE is とか言うエラーを消すヤツ
 app.disableHardwareAcceleration();

@@ -77,7 +77,9 @@
       "package.json"
     ],
     "extraFiles": [
-      "fallback"
+      "fallback",
+      "readme.txt",
+      "LICENSE"
     ],
     "directories": {
       "buildResources": "asset"
