@@ -1,17 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { INIT_MAX_FRAME } from "../util/const";
 
+const initialState = {
+  celIndex: 0,
+  list: [initCel(1, INIT_MAX_FRAME)],
+};
+
 export const celListSlice = createSlice({
   name: "celList",
-  initialState: {
-    celIndex: 0,
-    list: [initCel(1, INIT_MAX_FRAME)],
-  },
+  initialState,
   reducers: {
-    resetCelList: (state) => {
-      state.celIndex = 0;
-      state.list = [initCel(1, INIT_MAX_FRAME)];
-    },
+    resetCelList: () => initialState,
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
     },

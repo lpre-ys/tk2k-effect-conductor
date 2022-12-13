@@ -35,7 +35,11 @@ export function Material({ originalImage, trImage }) {
           </>
         )}
       </section>
-      {msg && <p data-testid="material-msg">{msg}</p>}
+      {msg && (
+        <p css={styles.msg} data-testid="material-msg">
+          {msg}
+        </p>
+      )}
       {trImage && (
         <>
           <section className="patterns">
@@ -95,5 +99,8 @@ const styles = {
   `,
   loader: css`
     margin-bottom: 1rem;
+  `,
+  msg: css`
+    width: 14em;
   `,
 };

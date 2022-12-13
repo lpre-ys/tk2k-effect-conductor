@@ -1,18 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const INIT_MAX_FRAME = 20;
+const initialState = {
+  frame: 0,
+  maxFrame: INIT_MAX_FRAME,
+};
 
 export const frameSlice = createSlice({
   name: "frame",
-  initialState: {
-    frame: 0,
-    maxFrame: INIT_MAX_FRAME,
-  },
+  initialState,
   reducers: {
-    resetFrameConfig: (state) => {
-      state.frame = 0;
-      state.maxFrame = INIT_MAX_FRAME;
-    },
+    resetFrameConfig: () => initialState,
     loadFrameConfig: (state, action) => {
       Object.assign(state, action.payload);
     },

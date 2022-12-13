@@ -1,15 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  key: Date.now(),
+  originalImage: null,
+  trImage: null,
+  maxPage: 0,
+  trColor: { r: 0, g: 0, b: 0 },
+  bgColor: "transparent",
+};
+
 export const materialSlice = createSlice({
   name: "material",
-  initialState: {
-    key: Date.now(),
-    originalImage: null,
-    trImage: null,
-    maxPage: 0,
-    trColor: { r: 0, g: 0, b: 0 },
-    bgColor: "transparent",
-  },
+  initialState,
   reducers: {
     loadOriginalImage: (state, action) => {
       const { dataUrl, transparent, maxPage, trColor } = action.payload;
@@ -29,9 +31,10 @@ export const materialSlice = createSlice({
     },
     loadMaterial: (state, action) => {
       Object.assign(state, action.payload);
-    }
+    },
+    resetMaterial: () => initialState
   },
 });
 
-export const { loadOriginalImage, changeTrColor, changeBgColor, loadMaterial } = materialSlice.actions;
+export const { loadOriginalImage, changeTrColor, changeBgColor, loadMaterial, resetMaterial } = materialSlice.actions;
 export default materialSlice.reducer;

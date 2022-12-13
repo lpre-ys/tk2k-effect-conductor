@@ -1,14 +1,13 @@
-const {
-  BrowserWindow,
-  app,
-  ipcMain,
-  clipboard,
-  Menu,
-  dialog,
-} = require("electron");
+const { BrowserWindow, app, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
-const iconv = require("iconv-lite");
 const fs = require("fs");
+const {
+  tk2k,
+  getEmptyData,
+  write,
+  read,
+  parser,
+} = require("tk2k-clipdata");
 
 let mainWindow;
 
@@ -66,6 +65,7 @@ const createWindow = () => {
     webPreferences: {
       preload: path.resolve(__dirname, "../electron/preload.js"),
     },
+    icon: path.resolve(__dirname, "../asset/icon.png"),
   });
 
   mainWindow.loadFile("build/index.html");
@@ -117,145 +117,58 @@ function loadFile(path) {
   });
 }
 
-ipcMain.handle("write-anime", (event, { frameList, title, materialName }) => {
+ipcMain.handle("read-info", () => {
+  console.log("read-info");
+
+  return read(tk2k.ANIME)
+    .then((data) => {
+      const result = {};
+      result.title = parser.parseString(data.title.raw);
+      result.material = parser.parseString(data.material.raw);
+      result.target = parser.parseBer(data.target.raw);
+      result.yLine = parser.parseBer(data.yLine.raw);
+      result.rawEffect = data.effectList.raw;
+
+      return result;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+ipcMain.handle("write-anime", (event, { frameList, info }) => {
   console.log("write-anime!!!");
 
-  const animeData = [];
-  // タイトル、素材名の設定
-  const titleArray = new Uint8Array(iconv.encode(title, "Shift_JIS"));
-  animeData.push(1);
-  animeData.push(titleArray.length);
-  animeData.push(...titleArray);
-  const materialArray = new Uint8Array(iconv.encode(materialName, "Shift_JIS"));
-  animeData.push(2);
-  animeData.push(materialArray.length);
-  animeData.push(...materialArray);
+  const anime = getEmptyData(tk2k.ANIME);
+  anime.title.data = info.title;
+  anime.material.data = info.image;
+  anime.target.data = info.target;
+  anime.yLine.data = info.yLine;
 
-  animeData.push(6, 1, 0, 9, 1, 0, 10, 1, 1, 12); // フラッシュ設定など、変更予定が無い部分
+  if (info.rawEffect) {
+    anime.effectList.raw = info.rawEffect;
+  }
 
   // フレームデータの生成
   const frameData = [];
-  frameList.forEach((cellList, frameNo) => {
-    frameData.push(frameNo + 1);
-    frameData.push(1); // セル情報ID
-    if (cellList.length === 0) {
-      // 無をプッシュする
-      frameData.push(1, 0); // 表示無し
-    } else {
-      const celInfo = [];
-      celInfo.push(cellList.length);
-
-      cellList.forEach((cel, celNo) => {
-        celInfo.push(celNo + 1);
-        celInfo.push(...makeCellData(cel));
-      });
-
-      celInfo.unshift(celInfo.length); // celデータ全体の長さを頭に入れる
-      frameData.push(...celInfo);
-    }
-    frameData.push(0); // frameの終端
+  frameList.forEach((cels, frameNo) => {
+    const celList = cels.map((cel, celIndex) => {
+      const celObj = getEmptyData(tk2k.ANIME_CEL);
+      celObj.pattern.data = cel.pageIndex - 1;
+      celObj.x.data = cel.x;
+      celObj.y.data = cel.y;
+      celObj.scale.data = cel.scale;
+      celObj.alpha.data = cel.opacity;
+      return { id: celIndex + 1, data: celObj };
+    });
+    const frame = getEmptyData(tk2k.ANIME_FRAME);
+    frame.celList.data = celList;
+    frameData.push({ id: frameNo, data: frame });
   });
-  frameData.push(0); //終端
 
-  // フレームデータの結合
-  animeData.push(...parseBER(frameData.length));
-  animeData.push(frameList.length);
-  animeData.push(...frameData);
+  anime.frameList.data = frameData;
 
-  // ヘッダ生成
-  const dataLength = animeData.length;
-
-  const header = new ArrayBuffer(4);
-  const view = new DataView(header);
-  view.setUint32(0, dataLength, true);
-  animeData.unshift(1, 0, 0, 0);
-  animeData.unshift(...new Uint8Array(header));
-
-  clipboard.writeText(animeData.join(","));
-  console.log(animeData.join(","));
-
-  return new Promise((resolve, reject) => {
-    const spawn = require("child_process").spawn;
-    const child = spawn("powershell.exe", [
-      "-ExecutionPolicy",
-      "RemoteSigned",
-      "./fallback/write.ps1",
-    ]);
-
-    child.on("exit", (code) => {
-      console.log("PS exit. code:", code);
-      if (code === 0) {
-        console.log("Exit");
-        resolve();
-      } else {
-        reject(code);
-      }
-    });
-
-    child.stdout.setEncoding("utf-8");
-    child.stdout.on("data", function (data) {
-      console.log("on stdout data");
-      console.log(data);
-    });
-
-    child.stderr.on("data", function (data) {
-      console.log("Powershell Errors: " + data);
-    });
-
-    child.stdin.end();
+  write(tk2k.ANIME, anime).then(() => {
+    console.log("done");
   });
 });
-
-function makeCellData(cell) {
-  // frame viewは固定なので初期値にセットしておく(1, 1)
-  const data = [1, 1];
-  if (cell.pageIndex > 1) {
-    data.push(...makeBERData(2, cell.pageIndex - 1));
-  }
-  // X座標
-  data.push(...makeBERData(3, cell.x));
-  // Y座標
-  data.push(...makeBERData(4, cell.y));
-  // 拡大率
-  if (cell.scale !== 100) {
-    data.push(...makeBERData(5, cell.scale));
-  }
-  // 透明度
-  if (cell.opacity !== 0) {
-    data.push(...makeBERData(10, cell.opacity));
-  }
-  // 終端
-  data.push(0);
-  // dataの長さを最初にunshift
-  data.unshift(data.length);
-
-  return data;
-}
-
-function parseBER(number) {
-  // 数字がマイナスの場合、反転させるため数字を足す
-  if (number < 0) {
-    number += 4294967296;
-  }
-  const result = [];
-  let rem = number % 128;
-  let div = parseInt(number / 128);
-  result.push(rem);
-  while (div > 0) {
-    rem = div % 128;
-    div = parseInt(div / 128);
-    result.push(rem + 128);
-  }
-
-  return result.reverse();
-}
-
-function makeBERData(id, number) {
-  const data = [];
-  data.push(id);
-  const value = parseBER(number);
-  data.push(value.length);
-  data.push(...value);
-
-  return data;
-}

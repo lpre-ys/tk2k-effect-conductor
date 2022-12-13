@@ -1,9 +1,10 @@
 {
-  "name": "tk2k-easing-effect",
-  "version": "0.1.0",
+  "name": "tk2k-effect-conductor",
+  "version": "1.0.0",
   "private": true,
   "author": "lpre_ys",
-  "description": "tk2k effect maker",
+  "license": "GPL",
+  "description": "RPG maker 2000 battle anime maker",
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
@@ -24,7 +25,7 @@
     "react-hook-form": "^7.37.0",
     "react-konva": "^18.2.2",
     "react-redux": "^8.0.5",
-    "react-scripts": "5.0.1",
+    "tk2k-clipdata": "github:lpre-ys/tk2k-clipdata",
     "use-image": "^1.1.0",
     "web-vitals": "^2.1.4"
   },
@@ -34,7 +35,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "electron-build": "electron-builder --win --x64 --dir"
+    "electron-build": "electron-builder -w"
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +56,7 @@
     ]
   },
   "devDependencies": {
+    "react-scripts": "5.0.1",
     "electron": "^21.1.1",
     "electron-builder": "^23.6.0"
   },
@@ -66,8 +68,8 @@
   "main": "public/electron.js",
   "homepage": "./",
   "build": {
-    "appId": "com.lpre-ys.effect-tool",
-    "productName": "tk2KEffectTool",
+    "appId": "com.lpre-ys.effedct-conductor",
+    "productName": "EffectConductor",
     "files": [
       "!fallback",
       "electron/**/*",
@@ -79,6 +81,17 @@
     ],
     "directories": {
       "buildResources": "asset"
+    },
+    "win": {
+      "icon": "asset/icon.png",
+      "target": "nsis"
+    },
+    "nsis": {
+      "artifactName": "${productName}_setup_${version}.${ext}",
+      "include": "asset/installer.nsh",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": false
     }
   }
 }

@@ -7,12 +7,14 @@ import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImage, setTitle } from "../slice/infoSlice";
 import getDataByLocalFrame from "../util/calcFrameValue";
+import Options from "./export/Options";
 
 export const Export = ({
   maxFrame,
   configList,
   title,
   imageName,
+  info,
   setTitle,
   setImage,
 }) => {
@@ -47,12 +49,11 @@ export const Export = ({
 
       frameList.push(result);
     }
-    window.tk2k
-      .writeData({ frameList, title, materialName: imageName })
-      .then(() => {
-        setDisabled(false);
-      });
-  }, [configList, maxFrame, title, imageName]);
+    window.tk2k.writeData({ frameList, info }).then(() => {
+      setDisabled(false);
+    });
+  }, [configList, maxFrame, info]);
+
   return (
     <div css={styles.container}>
       <label>
@@ -86,6 +87,7 @@ export const Export = ({
         <FontAwesomeIcon icon={faCopy} css={styles.icon} />
         COPY!!
       </button>
+      <Options />
     </div>
   );
 };
@@ -96,12 +98,14 @@ export default (props) => {
   const configList = useSelector((state) => state.celList.list);
   const title = useSelector((state) => state.info.title);
   const imageName = useSelector((state) => state.info.image);
+  const info = useSelector((state) => state.info);
   const dispatch = useDispatch();
   const _props = {
     maxFrame,
     configList,
     title,
     imageName,
+    info,
     dispatch,
     setTitle: (value) => {
       dispatch(setTitle(value));
@@ -109,7 +113,6 @@ export default (props) => {
     setImage: (value) => {
       dispatch(setImage(value));
     },
-    ...props,
   };
 
   return <Export {..._props} />;
@@ -124,7 +127,6 @@ const styles = {
     }
     border-bottom: 1px dotted #9e9e9e;
   `,
-  label: css``,
   input: css`
     width: 10.5rem;
   `,

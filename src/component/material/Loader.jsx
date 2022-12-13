@@ -18,10 +18,10 @@ export function Loader({ setMsg, loadOriginalImage, setImageName }) {
       })
       .catch((error) => {
         if (error.message === "width") {
-          setMsg("素材画像の横幅が正しくないようです。");
+          setMsg("画像の横幅が、規格とは異なっています。");
         }
         if (error.message === "height") {
-          setMsg("素材画像の縦幅が正しくないようです。");
+          setMsg("画像の縦幅が、規格とは異なっています。");
         }
       });
   };

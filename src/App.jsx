@@ -11,8 +11,8 @@ import Player from "./component/Player";
 import Timeline from "./component/Timeline";
 import { loadCelList, resetCelList } from "./slice/celListSlice";
 import { loadFrameConfig, resetFrameConfig } from "./slice/frameSlice";
-import { loadInfo } from "./slice/infoSlice";
-import { loadMaterial } from "./slice/materialSlice";
+import { loadInfo, resetInfo } from "./slice/infoSlice";
+import { loadMaterial, resetMaterial } from "./slice/materialSlice";
 
 class App extends React.Component {
   constructor(props) {
@@ -23,9 +23,7 @@ class App extends React.Component {
     if (!!window.appMenu) {
       // 新規
       window.appMenu.onReceiveNew(() => {
-        // configとCelConfigのリセット
-        this.props.resetFrameConfig();
-        this.props.resetCelList();
+        this.props.resetAll();
       });
       // 保存
       window.appMenu.onReceiveSave(() => {
@@ -105,8 +103,12 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
     },
-    resetFrameConfig,
-    resetCelList,
+    resetAll: () => {
+      dispatch(resetFrameConfig());
+      dispatch(resetCelList());
+      dispatch(resetInfo());
+      dispatch(resetMaterial());
+    },
   };
 };
 
