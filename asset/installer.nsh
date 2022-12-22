@@ -1,0 +1,3 @@
+ManifestDPIAware true
+Page directory
+Page instfiles

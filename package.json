@@ -1,0 +1,105 @@
+{
+  "name": "tk2k-effect-conductor",
+  "version": "1.0.0",
+  "private": true,
+  "author": "lpre_ys",
+  "license": "GPL",
+  "description": "RPG maker 2000 battle anime maker",
+  "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@reduxjs/toolkit": "^1.9.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "d3-ease": "^3.0.1",
+    "iconv-lite": "^0.6.3",
+    "konva": "^8.3.13",
+    "normalize.css": "^8.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.2",
+    "react-hook-form": "^7.37.0",
+    "react-konva": "^18.2.2",
+    "react-redux": "^8.0.5",
+    "tk2k-clipdata": "github:lpre-ys/tk2k-clipdata",
+    "use-image": "^1.1.0",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "clean": "rimraf build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "electron-clean": "rimraf dist",
+    "electron-build": "electron-builder -w",
+    "release": "run-s clean electron-clean build electron-build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^21.1.1",
+    "electron-builder": "^23.6.0",
+    "npm-run-all": "^4.1.5",
+    "react-scripts": "5.0.1",
+    "rimraf": "^3.0.2"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(konva|d3-ease)).*\\.js$"
+    ]
+  },
+  "main": "public/electron.js",
+  "homepage": "./",
+  "build": {
+    "appId": "com.lpre-ys.effedct-conductor",
+    "productName": "EffectConductor",
+    "files": [
+      "electron/**/*",
+      "build/**/*",
+      "package.json"
+    ],
+    "extraFiles": [
+      "readme.txt",
+      "LICENSE"
+    ],
+    "asarUnpack": [
+      "node_modules/tk2k-clipdata/"
+    ],
+    "directories": {
+      "buildResources": "asset"
+    },
+    "win": {
+      "icon": "asset/icon.png",
+      "target": "nsis"
+    },
+    "nsis": {
+      "artifactName": "${productName}_setup_${version}.${ext}",
+      "include": "asset/installer.nsh",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": false
+    }
+  }
+}
