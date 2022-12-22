@@ -1,51 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../util/renderWithProviders";
 // import userEvent from "@testing-library/user-event";
 import { Configs } from "./Configs";
 
-const defaultConfig = {
-  x: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  y: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  scale: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  opacity: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  frame: { start: 1, volume: 1 },
-  pattern: { start: 1, end: 1 },
-};
-const defaultMaterial = {
-  originalImage: null,
-  transparentImage: null,
-  maxPage: 0,
-  transparentColor: null,
-  bgColor: "transparent",
-};
 
 jest.mock("react-konva", () => {
   const { forwardRef } = jest.requireActual("react");

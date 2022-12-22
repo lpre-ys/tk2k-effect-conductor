@@ -5,6 +5,7 @@ import { memo, useEffect, useState } from "react";
 import { Layer, Line, Stage } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { loadOriginalImage } from "../slice/materialSlice";
+import { setBgColor, setBgImage } from "../slice/playerSlice";
 import makeTransparentImage from "../util/makeTransparentImage";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
@@ -12,9 +13,16 @@ import Controller from "./player/Controller";
 import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
-export const Player = ({ celList, loadMaterialImage }) => {
-  const [bgColor, setBgColor] = useState("transparent");
-  const [bgImage, setBgImage] = useState(null);
+export const Player = ({
+  celList,
+  bgImage,
+  bgColor,
+  setBgImage,
+  setBgColor,
+  loadMaterialImage,
+}) => {
+  // const [bgColor, setBgColor] = useState("transparent");
+  // const [bgImage, setBgImage] = useState(null);
   const [isShowCelBorder, setIsShowCelBorder] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -86,12 +94,22 @@ export const Player = ({ celList, loadMaterialImage }) => {
 
 export default memo((props) => {
   const celList = useSelector((state) => state.celList.list);
+  const bgImage = useSelector((state) => state.player.bgImage);
+  const bgColor = useSelector((state) => state.player.bgColor);
   const dispatch = useDispatch();
   const _props = {
-    loadMaterialImage: (params) => {
-      dispatch(loadOriginalImage(params));
+    loadMaterialImage: (value) => {
+      dispatch(loadOriginalImage(value));
+    },
+    setBgImage: (value) => {
+      dispatch(setBgImage(value));
+    },
+    setBgColor: (value) => {
+      dispatch(setBgColor(value));
     },
     celList,
+    bgImage,
+    bgColor,
     ...props,
   };
 

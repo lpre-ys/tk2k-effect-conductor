@@ -119,7 +119,7 @@ describe("loadImage", () => {
       userEvent.upload(input, file);
 
       await waitFor(() => {
-        expect(mockFn).toBeCalledWith("素材画像の横幅が正しくないようです。");
+        expect(mockFn).toBeCalledWith("画像の横幅が、規格とは異なっています。");
       });
     });
     test("Error is height, then setMsg Height Error Msg", async () => {
@@ -133,7 +133,7 @@ describe("loadImage", () => {
       userEvent.upload(input, file);
 
       await waitFor(() => {
-        expect(mockFn).toBeCalledWith("素材画像の縦幅が正しくないようです。");
+        expect(mockFn).toBeCalledWith("画像の縦幅が、規格とは異なっています。");
       });
     });
   });

@@ -3,6 +3,7 @@ import { INIT_MAX_FRAME } from "../util/const";
 
 const initialState = {
   celIndex: 0,
+  drawKey: Date.now(),
   list: [initCel(1, INIT_MAX_FRAME)],
 };
 
@@ -10,7 +11,11 @@ export const celListSlice = createSlice({
   name: "celList",
   initialState,
   reducers: {
-    resetCelList: () => initialState,
+    resetCelList: (state) => {
+      // keyの更新が必要なため、個別に記載する
+      Object.assign(state, initialState);
+      state.drawKey = Date.now();
+    },
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
     },
@@ -56,7 +61,7 @@ export const celListSlice = createSlice({
           cel.frame = action.payload;
         }
         return cel;
-      })
+      });
     },
     updatePattern: (state, action) => {
       state.list = state.list.map((cel, index) => {
@@ -64,7 +69,7 @@ export const celListSlice = createSlice({
           cel.pattern = action.payload;
         }
         return cel;
-      })
+      });
     },
     updateByType: (state, action) => {
       const { type, data } = action.payload;
@@ -73,8 +78,8 @@ export const celListSlice = createSlice({
           cel[type] = data;
         }
         return cel;
-      })
-    }
+      });
+    },
   },
 });
 
@@ -87,7 +92,7 @@ export const {
   copyCel,
   updateFrame,
   updatePattern,
-  updateByType
+  updateByType,
 } = celListSlice.actions;
 export default celListSlice.reducer;
 
@@ -125,7 +130,11 @@ function initCel(start, volume) {
       easing: "easeLinear",
       easingAdd: "",
     },
-    frame: { start: start, volume: volume },
+    frame: {
+      start: start,
+      volume: volume,
+      isHideLast: false,
+    },
     pattern: {
       start: 1,
       end: 1,

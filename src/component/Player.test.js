@@ -44,19 +44,14 @@ jest.mock("use-image", () => {
 });
 
 describe("ViewSettings", () => {
-  test("INIT bgColor is transparent", () => {
-    renderWithProviders(<Player celList={[]} />);
-
-    const target = screen.getByLabelText("背景色:");
-    expect(target).toHaveValue("transparent");
-  });
   test("change bgColor, then update bgColor", () => {
-    renderWithProviders(<Player celList={[]} />);
+    const mockFn = jest.fn();
+    renderWithProviders(<Player setBgColor={mockFn} celList={[]} />);
 
     const target = screen.getByLabelText("背景色:");
 
     fireEvent.change(target, { target: { value: "red" } });
-    expect(target).toHaveValue("red");
+    expect(mockFn).lastCalledWith('red');
   });
   test("INIT isShowCelBorder is false", () => {
     renderWithProviders(<Player celList={[]} />);
@@ -87,18 +82,6 @@ describe("background", () => {
 
     const target = screen.getByAltText("mock-use-image-tr.png");
     expect(target).toBeInTheDocument();
-  });
-  test("init color is transparent", () => {
-    renderWithProviders(<Player celList={[]} />);
-
-    const target = screen.getByText("transparent");
-    expect(target).toBeInTheDocument();
-  });
-  test("init image is null", () => {
-    renderWithProviders(<Player celList={[]} />);
-
-    const target = screen.queryByAltText("mock-use-image-null");
-    expect(target).toBeNull();
   });
 });
 

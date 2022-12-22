@@ -1,6 +1,6 @@
 Effect Conductor
 
-github:
+github: https://github.com/lpre-ys/tk2k-effect-conductor
 作者: lpre_ys
 
 ----------------------------

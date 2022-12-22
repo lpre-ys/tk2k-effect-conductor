@@ -22,7 +22,7 @@ const Tips = () => {
         <FontAwesomeIcon icon={faCircleQuestion} />
       </span>
       <div css={styles.dialog} style={{ display: isShow ? "block" : "none" }}>
-        ツクール2000の戦闘アニメをコピーし、読み込みボタンを押すと、クリップボードから、セルの動作以外の情報を取得し、上書き設定します。
+        クリップボード内の戦闘アニメデータから、セルの動作以外の情報を取得し、上書き設定します。
       </div>
     </>
   );

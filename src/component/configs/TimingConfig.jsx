@@ -12,6 +12,7 @@ import { updateFrame } from "../../slice/celListSlice";
 export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
+  const [isHideLast, setIsHideLast] = useState(config.isHideLast);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -36,7 +37,8 @@ export function TimingConfig({ config, update }) {
   const isChangeConfig = (newConfig, oldConfig) => {
     return (
       newConfig.start !== oldConfig.start ||
-      newConfig.volume !== oldConfig.volume
+      newConfig.volume !== oldConfig.volume ||
+      newConfig.isHideLast !== oldConfig.isHideLast
     );
   };
 
@@ -44,15 +46,17 @@ export function TimingConfig({ config, update }) {
     const newConfig = {
       start: parseInt(start),
       volume: parseInt(volume),
+      isHideLast: isHideLast,
     };
     if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  }, [start, update, volume, config, validateConfig]);
+  }, [start, update, volume, config, validateConfig, isHideLast]);
 
   const handleReset = () => {
     setStart(config.start);
     setVolume(config.volume);
+    setIsHideLast(config.isHideLast);
   };
 
   return (
@@ -99,6 +103,21 @@ export function TimingConfig({ config, update }) {
           />
         </label>
       </div>
+      <div>
+        <label css={[styles.label, styles.checkbox]}>
+          <input
+            name="is-hide-last"
+            data-testid="timing-is-hide-last"
+            type="checkbox"
+            checked={isHideLast}
+            value="true"
+            onChange={({ target }) => {
+              setIsHideLast(target.checked);
+            }}
+          />
+          :&nbsp;最終フレームを非表示
+        </label>
+      </div>
     </div>
   );
 }
@@ -128,6 +147,7 @@ const styles = {
   `,
   label: css`
     margin-left: 1em;
+    user-select: none;
   `,
   wrapper: css`
     margin: 0.5em;
@@ -143,5 +163,8 @@ const styles = {
       font-size: 1.1em;
       color: #e53935;
     }
+  `,
+  checkbox: css`
+    cursor: pointer;
   `,
 };

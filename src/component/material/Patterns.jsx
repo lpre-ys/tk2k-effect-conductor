@@ -86,6 +86,7 @@ const styles = {
     padding: 0.3em;
     margin: 0;
     justify-content: space-between;
+    align-content: flex-start;
     width: 222px;
   `,
   li: css`

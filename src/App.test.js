@@ -52,8 +52,6 @@ describe("<Player />", () => {
     const target = screen.getByTestId("effectCanvas");
     expect(target).toBeInTheDocument();
   });
-
-
 });
 
 // * Configs

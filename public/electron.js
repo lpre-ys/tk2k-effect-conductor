@@ -10,6 +10,7 @@ const {
 } = require("tk2k-clipdata");
 
 let mainWindow;
+let prePath = false;
 
 const template = Menu.buildFromTemplate([
   {
@@ -28,6 +29,7 @@ const template = Menu.buildFromTemplate([
           dialog
             .showOpenDialog(mainWindow, {
               properties: ["openFile"],
+              defaultPath: prePath ? prePath : app.getPath('documents'),
               filters: [
                 {
                   name: "Effect Data",
@@ -39,6 +41,7 @@ const template = Menu.buildFromTemplate([
               if (canceled) {
                 return;
               }
+              prePath = path.dirname(filePaths[0]);
               loadFile(filePaths[0]);
             });
         },
@@ -81,6 +84,7 @@ app.once("window-all-closed", () => app.quit());
 ipcMain.handle("save-state-data", (event, data) => {
   dialog
     .showSaveDialog(mainWindow, {
+      defaultPath: prePath ? prePath : app.getPath('documents'),
       properties: ["openFile"],
       filters: [{ name: "Effect Data", extensions: ["json"] }],
     })
@@ -88,6 +92,7 @@ ipcMain.handle("save-state-data", (event, data) => {
       if (canceled) {
         return;
       }
+      prePath = path.dirname(filePath);
       // ファイル保存処理
       writeFile(filePath, JSON.stringify(data));
     });
@@ -142,8 +147,8 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
   const anime = getEmptyData(tk2k.ANIME);
   anime.title.data = info.title;
   anime.material.data = info.image;
-  anime.target.data = info.target;
-  anime.yLine.data = info.yLine;
+  anime.target.data = parseInt(info.target);
+  anime.yLine.data = parseInt(info.yLine);
 
   if (info.rawEffect) {
     anime.effectList.raw = info.rawEffect;
@@ -170,5 +175,10 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
 
   write(tk2k.ANIME, anime).then(() => {
     console.log("done");
+  }).catch((error) => {
+    dialog.showErrorBox(
+      "エラー",
+      ["データコピーに失敗しました", `Error: ${error.text}`].join("\\n")
+    );
   });
 });

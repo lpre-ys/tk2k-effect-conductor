@@ -7,6 +7,7 @@ import { Group, Rect, Sprite, Text } from "react-konva";
 import { useSelector } from "react-redux";
 import useImage from "use-image";
 import getDataByLocalFrame from "../../util/calcFrameValue";
+import isShowCel from "../../util/isShowCel";
 
 const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
   const { trImage, maxPage } = useSelector((state) => state.material);
@@ -46,7 +47,8 @@ const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
   let visible = false;
 
   const localFrame = frame - (config.frame.start - 1);
-  if (localFrame >= 0 && localFrame < config.frame.volume) {
+  // if (localFrame >= 0 && localFrame < config.frame.volume) {
+  if (isShowCel(frame, config.frame)) {
     visible = true;
     data = getDataByLocalFrame(localFrame, config);
   } else {

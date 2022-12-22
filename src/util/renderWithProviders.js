@@ -6,6 +6,7 @@ import frameSlice from '../slice/frameSlice'
 import materialSlice from '../slice/materialSlice'
 import celListSlice from '../slice/celListSlice'
 import infoSlice from '../slice/infoSlice'
+import playerSlice from '../slice/playerSlice'
 // As a basic setup, import your same slice reducers
 
 export function renderWithProviders(
@@ -18,7 +19,8 @@ export function renderWithProviders(
         frame: frameSlice,
         material: materialSlice,
         celList: celListSlice,
-        info: infoSlice
+        info: infoSlice,
+        player: playerSlice,
       }, preloadedState
     }),
     ...renderOptions

@@ -13,6 +13,7 @@ import { loadCelList, resetCelList } from "./slice/celListSlice";
 import { loadFrameConfig, resetFrameConfig } from "./slice/frameSlice";
 import { loadInfo, resetInfo } from "./slice/infoSlice";
 import { loadMaterial, resetMaterial } from "./slice/materialSlice";
+import { loadPlayer, resetPlayer } from "./slice/playerSlice";
 
 class App extends React.Component {
   constructor(props) {
@@ -48,7 +49,7 @@ class App extends React.Component {
               <Export />
               <Player />
             </div>
-            <Configs key={this.props.celIndex} />
+            <Configs key={`${this.props.celIndex}:${this.props.drawKey}`} />
           </div>
           <Timeline />
         </div>
@@ -91,6 +92,7 @@ const styles = {
 const mapStateToProps = (state) => {
   return {
     celIndex: state.celList.celIndex,
+    drawKey: state.celList.drawKey,
     data: state,
   };
 };
@@ -102,12 +104,14 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(loadFrameConfig(value.frame));
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
+      dispatch(loadPlayer(value.player));
     },
     resetAll: () => {
       dispatch(resetFrameConfig());
       dispatch(resetCelList());
       dispatch(resetInfo());
       dispatch(resetMaterial());
+      dispatch(resetPlayer());
     },
   };
 };

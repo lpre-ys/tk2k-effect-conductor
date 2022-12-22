@@ -7,6 +7,7 @@ import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImage, setTitle } from "../slice/infoSlice";
 import getDataByLocalFrame from "../util/calcFrameValue";
+import isShowCel from "../util/isShowCel";
 import Options from "./export/Options";
 
 export const Export = ({
@@ -33,8 +34,7 @@ export const Export = ({
       // 基本データ作成
       const result = configList
         .map((celConfig) => {
-          const end = celConfig.frame.start + celConfig.frame.volume;
-          if (celConfig.frame.start - 1 <= i && end - 1 > i) {
+          if (isShowCel(i, celConfig.frame)) {
             const localFrame = i - celConfig.frame.start + 1;
             const cel = getDataByLocalFrame(localFrame, celConfig);
             cel.pageIndex += 1;
