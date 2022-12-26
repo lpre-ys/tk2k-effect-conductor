@@ -1,13 +1,14 @@
-const { BrowserWindow, app, ipcMain, Menu, dialog } = require("electron");
+const {
+  BrowserWindow,
+  app,
+  ipcMain,
+  Menu,
+  dialog,
+  shell,
+} = require("electron");
 const path = require("path");
 const fs = require("fs");
-const {
-  tk2k,
-  getEmptyData,
-  write,
-  read,
-  parser,
-} = require("tk2k-clipdata");
+const { tk2k, getEmptyData, write, read, parser } = require("tk2k-clipdata");
 
 let mainWindow;
 let prePath = false;
@@ -29,7 +30,7 @@ const template = Menu.buildFromTemplate([
           dialog
             .showOpenDialog(mainWindow, {
               properties: ["openFile"],
-              defaultPath: prePath ? prePath : app.getPath('documents'),
+              defaultPath: prePath ? prePath : app.getPath("documents"),
               filters: [
                 {
                   name: "Effect Data",
@@ -73,6 +74,12 @@ const createWindow = () => {
 
   mainWindow.loadFile("build/index.html");
   // mainWindow.webContents.openDevTools();
+
+  // 外部URL表示関連
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' }
+  })
 };
 // Passthrough is not supported, GL is disabled, ANGLE is とか言うエラーを消すヤツ
 app.disableHardwareAcceleration();
@@ -84,7 +91,7 @@ app.once("window-all-closed", () => app.quit());
 ipcMain.handle("save-state-data", (event, data) => {
   dialog
     .showSaveDialog(mainWindow, {
-      defaultPath: prePath ? prePath : app.getPath('documents'),
+      defaultPath: prePath ? prePath : app.getPath("documents"),
       properties: ["openFile"],
       filters: [{ name: "Effect Data", extensions: ["json"] }],
     })
@@ -173,12 +180,16 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
 
   anime.frameList.data = frameData;
 
-  write(tk2k.ANIME, anime).then(() => {
-    console.log("done");
-  }).catch((error) => {
-    dialog.showErrorBox(
-      "エラー",
-      ["データコピーに失敗しました", `Error: ${error.text}`].join("\\n")
-    );
-  });
+  return write(tk2k.ANIME, anime)
+    .then(() => {
+      console.log("done");
+      return true;
+    })
+    .catch((error) => {
+      dialog.showErrorBox(
+        "エラー",
+        ["データコピーに失敗しました", `Error: ${error.text}`].join("\\n")
+      );
+      return false;
+    });
 });

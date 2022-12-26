@@ -2,9 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("tk2k", {
   writeData: async (args) => {
-    await ipcRenderer.invoke("write-anime", args).then((result) => {
-      return result;
-    });
+    return await ipcRenderer.invoke("write-anime", args);
   },
   readInfo: async (args) => {
     return await ipcRenderer.invoke("read-info", args);

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setImage, setTitle } from "../slice/infoSlice";
 import getDataByLocalFrame from "../util/calcFrameValue";
 import isShowCel from "../util/isShowCel";
+import ErrorInfo from "./export/ErrorInfo";
 import Options from "./export/Options";
 
 export const Export = ({
@@ -20,6 +21,7 @@ export const Export = ({
   setImage,
 }) => {
   const [disabled, setDisabled] = useState(false);
+  const [errorMsgKey, setErrorMsgKey] = useState(false);
 
   const handleExport = useCallback(() => {
     if (
@@ -49,13 +51,24 @@ export const Export = ({
 
       frameList.push(result);
     }
-    window.tk2k.writeData({ frameList, info }).then(() => {
-      setDisabled(false);
-    });
+    window.tk2k
+      .writeData({ frameList, info })
+      .then((result) => {
+        setDisabled(false);
+        if (result) {
+          setErrorMsgKey(false);
+        } else {
+          setErrorMsgKey(Date.now());
+        }
+      })
+      .catch((error) => {
+        setDisabled(false);
+      });
   }, [configList, maxFrame, info]);
 
   return (
     <div css={styles.container}>
+      {errorMsgKey && <ErrorInfo key={errorMsgKey} />}
       <label>
         名前:&nbsp;
         <input
