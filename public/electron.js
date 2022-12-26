@@ -26,6 +26,7 @@ const template = Menu.buildFromTemplate([
       { type: "separator" },
       {
         label: "開く",
+        accelerator: "Ctrl+O",
         click: () => {
           dialog
             .showOpenDialog(mainWindow, {
@@ -49,6 +50,7 @@ const template = Menu.buildFromTemplate([
       },
       {
         label: "保存",
+        accelerator: "Ctrl+S",
         click: () => {
           mainWindow.webContents.send("save", {});
         },
