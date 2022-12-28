@@ -6,6 +6,7 @@ import { Layer, Rect, Sprite, Stage } from "react-konva";
 import TrBg from "../../../tr2x.png";
 import { css } from "@emotion/react";
 import { useSelector } from "react-redux";
+import makePageList from "../../../util/makePageList";
 
 export function PatternImage({ config, trImage, bgColor }) {
   const spriteRef = useRef();
@@ -56,9 +57,11 @@ export function PatternImage({ config, trImage, bgColor }) {
     );
   }
 }
-function makePatterns({ start, end, isRoundTrip }) {
+function makePatterns(config) {
+  const pageList = makePageList(config);
   const patterns = [];
-  for (let page = start - 1; page < end; page++) {
+  for (let i = 0; i < pageList.length; i++) {
+    const page = pageList[i] - 1;
     const x = page % 5;
     const y = parseInt(page / 5);
     // 左上
@@ -69,21 +72,6 @@ function makePatterns({ start, end, isRoundTrip }) {
     patterns.push(96);
     // 縦幅
     patterns.push(96);
-  }
-  if (isRoundTrip) {
-    // 戻りを追加
-    for (let page = end - 2; page >= start; page--) {
-      const x = page % 5;
-      const y = parseInt(page / 5);
-      // 左上
-      patterns.push(x * 96);
-      // 右上
-      patterns.push(y * 96);
-      // 横幅
-      patterns.push(96);
-      // 縦幅
-      patterns.push(96);
-    }
   }
 
   return patterns;

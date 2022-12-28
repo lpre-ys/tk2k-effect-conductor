@@ -1,4 +1,5 @@
 import * as d3 from "d3-ease";
+import makePageList from "./makePageList";
 
 // * 表示有無はこのfunctionを呼ぶ前にチェックしているので、不要
 export default function getDataByLocalFrame(localFrame, config) {
@@ -33,22 +34,11 @@ function getStartValues(config) {
   }
 }
 
-function calcPageIndex(localFrame, { start, end, isRoundTrip }) {
-  const pageNum = end - start + 1;
-  let pageIndex = 0;
-  if (isRoundTrip) {
-    pageIndex = (localFrame % (pageNum - 1));
-    if (Math.floor(localFrame / (pageNum - 1)) % 2 === 1) {
-      // 復路は反転
-      pageIndex = pageNum - pageIndex - 1;
-    }
-  } else {
-    pageIndex = (localFrame % pageNum);
-  }
-  // 開始分ずらす
-  pageIndex += start - 1;
+function calcPageIndex(localFrame, config) {
+  // まずはページのリストを作成する
+  const pageList = makePageList(config);
 
-  return pageIndex;
+  return pageList[localFrame % pageList.length] - 1;
 }
 
 function calcFrameValue(localFrame, config, frameConfig) {

@@ -18,21 +18,11 @@ export function PatternConfig({ config, update }) {
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
-    let result = validate(num);
-    if (!result) {
-      return result;
-    }
-
-    return num <= end;
+    return validate(num);
   };
   const validateEnd = (start, end) => {
     const num = parseInt(end);
-    let result = validate(num);
-    if (!result) {
-      return result;
-    }
-
-    return num >= start;
+    return validate(num);
   };
 
   const validateConfig = useCallback(({ start, end }) => {
