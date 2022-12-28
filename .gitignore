@@ -25,3 +25,5 @@ yarn-error.log*
 
 # test
 /test.js
+
+memo.md

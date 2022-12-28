@@ -24,12 +24,12 @@ export const celListSlice = createSlice({
     },
     addCel: (state, action) => {
       const { volume, start } = action.payload;
-      const newList = [...state.list, initCel(start, volume)];
+      const newList = [...state.list];
 
-      // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
+      newList.splice(state.celIndex + 1, 0, initCel(start, volume));
       state.list = newList;
       // 追加したセルを選択する
-      state.celIndex = newList.length - 1;
+      state.celIndex += 1;
     },
     deleteCel: (state) => {
       if (state.list.length < 2) {
@@ -54,6 +54,8 @@ export const celListSlice = createSlice({
       const target = JSON.parse(JSON.stringify(state.list[state.celIndex]));
       copyList.splice(state.celIndex, 0, target);
       state.list = copyList;
+      // 追加したセルを選択する
+      state.celIndex += 1;
     },
     updateFrame: (state, action) => {
       state.list = state.list.map((cel, index) => {
