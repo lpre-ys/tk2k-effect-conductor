@@ -13,6 +13,7 @@ export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
   const [isHideLast, setIsHideLast] = useState(config.isHideLast);
+  const [isLoopBack, setIsLoopBack] = useState(config.isLoopBack);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -38,7 +39,8 @@ export function TimingConfig({ config, update }) {
     return (
       newConfig.start !== oldConfig.start ||
       newConfig.volume !== oldConfig.volume ||
-      newConfig.isHideLast !== oldConfig.isHideLast
+      newConfig.isHideLast !== oldConfig.isHideLast ||
+      newConfig.isLoopBack !== oldConfig.isLoopBack
     );
   };
 
@@ -46,17 +48,19 @@ export function TimingConfig({ config, update }) {
     const newConfig = {
       start: parseInt(start),
       volume: parseInt(volume),
-      isHideLast: isHideLast,
+      isHideLast,
+      isLoopBack,
     };
     if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  }, [start, update, volume, config, validateConfig, isHideLast]);
+  }, [start, update, volume, config, validateConfig, isHideLast, isLoopBack]);
 
   const handleReset = () => {
     setStart(config.start);
     setVolume(config.volume);
     setIsHideLast(config.isHideLast);
+    setIsLoopBack(config.isLoopBack);
   };
 
   return (
@@ -117,6 +121,19 @@ export function TimingConfig({ config, update }) {
           />
           :&nbsp;最終フレームを非表示
         </label>
+        <label css={[styles.label, styles.checkbox]}>
+          <input
+            name="is-loop-back"
+            data-testid="timing-is-hide-last"
+            type="checkbox"
+            checked={isLoopBack}
+            value="true"
+            onChange={({ target }) => {
+              setIsLoopBack(target.checked);
+            }}
+          />
+          :&nbsp;はみ出たフレームを折り返す
+        </label>
       </div>
     </div>
   );
@@ -166,5 +183,7 @@ const styles = {
   `,
   checkbox: css`
     cursor: pointer;
+    display: block;
+    padding-top: 0.3rem;
   `,
 };

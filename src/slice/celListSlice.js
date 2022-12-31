@@ -136,6 +136,7 @@ function initCel(start, volume) {
       start: start,
       volume: volume,
       isHideLast: false,
+      isLoopBack: false
     },
     pattern: {
       start: 1,
