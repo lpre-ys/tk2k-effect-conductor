@@ -132,7 +132,7 @@ export function TimingConfig({ config, update }) {
               setIsLoopBack(target.checked);
             }}
           />
-          :&nbsp;はみ出たフレームを折り返す
+          :&nbsp;終端でループ
         </label>
       </div>
     </div>
