@@ -6,13 +6,13 @@ import { useCallback } from "react";
 import { Group, Rect, Sprite, Text } from "react-konva";
 import { useSelector } from "react-redux";
 import useImage from "use-image";
-import getDataByLocalFrame from "../../util/calcFrameValue";
-import isShowCel from "../../util/isShowCel";
+import calcFrameValue from "../../util/calcFrameValue";
 
 const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
   const { trImage, maxPage } = useSelector((state) => state.material);
 
   const frame = useSelector((state) => state.frame.frame);
+  const maxFrame = useSelector((state) => state.frame.maxFrame);
 
   const [imgElement] = useImage(trImage);
 
@@ -42,17 +42,16 @@ const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
     opacity: 100,
     pageIndex: 0,
   };
-  let data = resetData;
 
   let visible = false;
 
-  const localFrame = frame - (config.frame.start - 1);
   // if (localFrame >= 0 && localFrame < config.frame.volume) {
-  if (isShowCel(frame, config.frame)) {
+  let data = calcFrameValue(frame, maxFrame, config);
+  if (data) {
     visible = true;
-    data = getDataByLocalFrame(localFrame, config);
   } else {
     visible = false;
+    data = resetData;
   }
   if (!trImage) {
     return <></>;
