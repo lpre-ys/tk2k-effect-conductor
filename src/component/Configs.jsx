@@ -1,16 +1,51 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import FromToConfig from "./configs/FromToConfig";
 import PatternConfig from "./configs/PatternConfig";
 import TimingConfig from "./configs/TimingConfig";
+import { setCelName } from "../slice/celListSlice";
+import { useEffect, useRef, useState } from "react";
 
-export function Configs({ celIndex }) {
+export function Configs({ name, setCelName }) {
+  const [isInput, setIsInput] = useState(false);
+  const ref = useRef();
+
+  useEffect(() => {
+    if (isInput && ref.current) {
+      ref.current.focus();
+    }
+  }, [isInput]);
   return (
     <div css={styles.container}>
-      <h1>セル: {celIndex + 1}</h1>
+      {isInput ? (
+        <h1>
+          <input
+            type="text"
+            value={name}
+            css={styles.input}
+            style={{ display: isInput ? "block" : "none" }}
+            onBlur={() => {
+              setIsInput(false);
+            }}
+            onChange={({ target }) => {
+              setCelName(target.value);
+            }}
+            ref={ref}
+          />
+        </h1>
+      ) : (
+        <h1
+          css={styles.name}
+          onClick={() => {
+            setIsInput(true);
+          }}
+        >
+          {name}
+        </h1>
+      )}
       <TimingConfig />
       <PatternConfig />
       <FromToConfig type="x" name="X座標" />
@@ -23,9 +58,17 @@ export function Configs({ celIndex }) {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (props) => {
-  const celIndex = useSelector((state) => state.celList.celIndex);
+  const name = useSelector(
+    (state) => state.celList.list[state.celList.celIndex].name
+  );
+  const dispatch = useDispatch();
+
   const _props = {
-    celIndex,
+    name,
+    setCelName: (value) => {
+      dispatch(setCelName(value));
+    },
+
     ...props,
   };
 
@@ -38,5 +81,13 @@ const styles = {
     padding: 0 1em;
     height: 710px;
     overflow-y: scroll;
+  `,
+  name: css`
+    text-decoration: underline 1px #9e9e9e;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  `,
+  input: css`
+    width: 10em;
   `,
 };

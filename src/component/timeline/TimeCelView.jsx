@@ -43,6 +43,7 @@ export function TimeCelView({
         index={index}
         isHideLast={isLeft ? false : config.frame.isHideLast}
         setCelIndex={setCelIndex}
+        name={config.name ? config.name : index}
         type={isLeft ? "right" : "normal"}
       />
       {isLeft && config.frame.volume <= maxFrame && (
@@ -53,6 +54,7 @@ export function TimeCelView({
           index={index}
           isHideLast={config.frame.isHideLast}
           setCelIndex={setCelIndex}
+          name={config.name ? config.name : index}
           type="left"
         />
       )}
@@ -67,6 +69,7 @@ function TimelineBar({
   index,
   isHideLast,
   setCelIndex,
+  name,
   type,
 }) {
   const width = FRAME_SIZE * volume - (type === "normal" ? 8 : 3);
@@ -97,7 +100,7 @@ function TimelineBar({
         }}
         data-testid="time-cel-view-inside"
       >
-        <p css={styles.timelineText}>{index + 1}</p>
+        <p css={styles.timelineText}>{name}</p>
       </div>
     </div>
   );
@@ -157,5 +160,6 @@ const styles = {
     text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, -1px 1px 0 #fff,
       1px -1px 0 #fff, 0px 1px 0 #fff, 0-1px 0 #fff, -1px 0 0 #fff, 1px 0 0 #fff;
     user-select: none;
+    white-space: nowrap;
   `,
 };
