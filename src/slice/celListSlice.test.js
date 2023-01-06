@@ -137,3 +137,9 @@ describe("copy", () => {
     expect(state.celIndex).toBe(1);
   });
 });
+
+describe('moveCel', () => {
+  test('TODO!!!', () => {
+    expect().toBeTruthy();
+  })
+})

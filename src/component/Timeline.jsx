@@ -2,7 +2,12 @@
 
 import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faSortDown,
+  faSortUp,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -92,6 +97,19 @@ export function Timeline({
         >
           <FontAwesomeIcon icon={faTrashAlt} css={styles.icon} />
           削除
+        </button>
+        <button
+          css={[styles.sortButton, celList.length < 2 && styles.disabled]}
+          disabled={celList.length < 2}
+        >
+          <FontAwesomeIcon icon={faSortUp} />
+        </button>
+        <button
+          css={[styles.sortButton, celList.length < 2 && styles.disabled]}
+          style={{ marginRight: "1rem" }}
+          disabled={celList.length < 2}
+        >
+          <FontAwesomeIcon icon={faSortDown} />
         </button>
       </div>
       <div
@@ -210,10 +228,27 @@ const styles = {
       color: #fafafa;
     }
   `,
+  sortButton: css`
+    border: none;
+    padding: 0.3em 0.5em 0.3em 0.5em;
+    margin: 0 0.1em;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    background: #e0e0e0;
+    color: #424242;
+    :hover {
+      background-color: #757575;
+      color: #fafafa;
+    }
+  `,
   deleteButton: css`
     background: #e53935;
     color: #eeeeee;
-    margin-left: 2em;
+    margin: 0 4em 0 2em;
     :hover {
       background: #c62828;
     }

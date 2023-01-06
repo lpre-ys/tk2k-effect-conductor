@@ -77,6 +77,36 @@ export const celListSlice = createSlice({
       // 追加したセルを選択する
       state.celIndex += 1;
     },
+    moveCel: (state, action) => {
+      let target = parseInt(action.payload);
+      if (state.list.length < 2) {
+        return;
+      }
+      if (target < 0 || state.list.length >= target) {
+        // ターゲットが配列の範囲外の場合、処理しない
+        return;
+      }
+      if (state.celIndex === target) {
+        // ターゲットと選択中のセルが同じ場合、処理しない
+        return;
+      }
+      // 現在のセルを取得
+      const cel = JSON.parse(JSON.stringify(state.list[state.celIndex]));
+      // 現在のセルを削除したリストを取得
+      const newList = state.list.filter((config, index) => {
+        return index !== state.celIndex;
+      });
+      // ターゲットが、選択中のセルIDよりも大きい場合、末尾への追加になるため、-1しておく。
+      if (target > state.celIndex) {
+        target -= 1;
+      }
+
+      // ターゲットにセルを挿入する
+      newList.splice(target, 0, cel);
+
+      // 挿入したセルを選択する
+      state.celIndex = target;
+    },
     updateFrame: (state, action) => {
       state.list = state.list.map((cel, index) => {
         if (index === state.celIndex) {
@@ -113,6 +143,7 @@ export const {
   addCel,
   deleteCel,
   copyCel,
+  moveCel,
   updateFrame,
   updatePattern,
   updateByType,
