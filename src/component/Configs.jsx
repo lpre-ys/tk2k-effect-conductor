@@ -21,7 +21,7 @@ export function Configs({ name, setCelName }) {
   return (
     <div css={styles.container}>
       {isInput ? (
-        <h1>
+        <h1 css={styles.header}>
           <input
             type="text"
             value={name}
@@ -38,12 +38,12 @@ export function Configs({ name, setCelName }) {
         </h1>
       ) : (
         <h1
-          css={styles.name}
+          css={[styles.name, styles.header]}
           onClick={() => {
             setIsInput(true);
           }}
         >
-          {name}
+          {name ? name : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"}
         </h1>
       )}
       <TimingConfig />
@@ -86,6 +86,9 @@ const styles = {
     text-decoration: underline 1px #9e9e9e;
     text-underline-offset: 3px;
     cursor: pointer;
+  `,
+  header: css`
+    height: 2rem;
   `,
   input: css`
     width: 10em;
