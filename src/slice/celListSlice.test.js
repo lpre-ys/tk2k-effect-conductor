@@ -5,6 +5,7 @@ import reducer, {
   resetCelList,
   setCelIndex,
   setCelName,
+  moveCel,
 } from "./celListSlice";
 
 test("return Initial state", () => {
@@ -138,8 +139,100 @@ describe("copy", () => {
   });
 });
 
-describe('moveCel', () => {
-  test('TODO!!!', () => {
-    expect().toBeTruthy();
-  })
-})
+describe("moveCel", () => {
+  describe("list.length", () => {
+    test("length is 0, then noop", () => {
+      const data = {
+        celIndex: 0,
+        list: [],
+      };
+      const state = reducer(data, moveCel(0));
+      expect(state.list).toEqual([]);
+      expect(state.celIndex).toBe(0);
+    });
+    test("length is 1, then noop", () => {
+      const data = {
+        celIndex: 0,
+        list: [1],
+      };
+      const state = reducer(data, moveCel(0));
+      expect(state.list).toEqual([1]);
+      expect(state.celIndex).toBe(0);
+    });
+    test("length is 2, then move", () => {
+      const data = {
+        celIndex: 1,
+        list: [1, 2],
+      };
+      const state = reducer(data, moveCel(0));
+      expect(state.list).toEqual([2, 1]);
+      expect(state.celIndex).toBe(0);
+    });
+  });
+  describe("target", () => {
+    const list = [1, 2, 3, 4, 5];
+    test("celIndex is 2, target is -1, then noop", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(-1));
+      expect(state.list).toEqual([1, 2, 3, 4, 5]);
+      expect(state.celIndex).toBe(2);
+    });
+    test("celIndex is 2, target is 0, then 3, 1, 2, 4, 5", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(0));
+      expect(state.list).toEqual([3, 1, 2, 4, 5]);
+      expect(state.celIndex).toBe(0);
+    });
+    test("celIndex is 2, target is 1, then 1, 3, 2, 4, 5", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(1));
+      expect(state.list).toEqual([1, 3, 2, 4, 5]);
+      expect(state.celIndex).toBe(1);
+    });
+    test("celIndex is 2, target is 2, then noop", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(2));
+      expect(state.list).toEqual([1, 2, 3, 4, 5]);
+      expect(state.celIndex).toBe(2);
+    });
+    test("celIndex is 2, target is 3, then 1, 2, 4, 3, 5", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(3));
+      expect(state.list).toEqual([1, 2, 4, 3, 5]);
+      expect(state.celIndex).toBe(3);
+    });
+    test("celIndex is 2, target is 4, then 1, 2, 4, 5, 3", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(4));
+      expect(state.list).toEqual([1, 2, 4, 5, 3]);
+      expect(state.celIndex).toBe(4);
+    });
+    test("celIndex is 2, target is 5, then noop", () => {
+      const data = {
+        celIndex: 2,
+        list: [...list],
+      };
+      const state = reducer(data, moveCel(5));
+      expect(state.list).toEqual([1, 2, 3, 4, 5]);
+      expect(state.celIndex).toBe(2);
+    });
+  });
+});

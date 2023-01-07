@@ -82,7 +82,7 @@ export const celListSlice = createSlice({
       if (state.list.length < 2) {
         return;
       }
-      if (target < 0 || state.list.length >= target) {
+      if (target < 0 || target >= state.list.length) {
         // ターゲットが配列の範囲外の場合、処理しない
         return;
       }
@@ -96,13 +96,10 @@ export const celListSlice = createSlice({
       const newList = state.list.filter((config, index) => {
         return index !== state.celIndex;
       });
-      // ターゲットが、選択中のセルIDよりも大きい場合、末尾への追加になるため、-1しておく。
-      if (target > state.celIndex) {
-        target -= 1;
-      }
 
       // ターゲットにセルを挿入する
       newList.splice(target, 0, cel);
+      state.list = newList;
 
       // 挿入したセルを選択する
       state.celIndex = target;
