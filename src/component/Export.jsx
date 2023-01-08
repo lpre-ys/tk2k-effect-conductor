@@ -33,7 +33,8 @@ export const Export = ({
     const frameList = [];
     for (let i = 0; i < maxFrame; i++) {
       // 基本データ作成
-      const result = configList
+      const result = [...configList]
+        .reverse()
         .map((celConfig) => {
           const cel = calcFrameValue(i, maxFrame, celConfig);
           if (cel) {

@@ -72,7 +72,7 @@ export const Player = ({
           <Layer imageSmoothingEnabled={false}>
             <Background color={bgColor} image={bgImage} />
             <Grid />
-            {celList.map((cel, id) => {
+            {[...celList].reverse().map((cel, id) => {
               return (
                 <Cel
                   key={id}
