@@ -37,7 +37,7 @@ const DEFAULT_CEL_CONFIG = {
     easingAdd: "",
   },
   frame: { start: 1, volume: 20, isLoopBack: false, isHideLast: false }, // 20: INIT_MAX_FRAME
-  pattern: { start: 1, end: 1, isRoundTrip: false },
+  pattern: { start: 1, end: 1, isRoundTrip: false, align: 'loop' },
 };
 
 describe("pattern", () => {
@@ -70,7 +70,7 @@ describe("pattern", () => {
   });
   describe("one way", () => {
     test("start is 1, end is 2, then pageIndex is 0-1 loop", () => {
-      const config = Object.assign({}, DEFAULT_CEL_CONFIG);
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
       config.pattern.start = 1;
       config.pattern.end = 2;
 
@@ -80,7 +80,7 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
     });
     test("start is 3, end is 6, then pageIndex is 2-5 loop", () => {
-      const config = Object.assign({}, DEFAULT_CEL_CONFIG);
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
       config.pattern.start = 3;
       config.pattern.end = 6;
 
@@ -96,7 +96,7 @@ describe("pattern", () => {
   });
   describe("round trip", () => {
     test("start is 1, end is 2, then pageIndex is 0-1 loop", () => {
-      const config = Object.assign({}, DEFAULT_CEL_CONFIG);
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
       config.pattern.start = 1;
       config.pattern.end = 2;
       config.pattern.isRoundTrip = true;
@@ -107,7 +107,7 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
     });
     test("start is 1, end is 5, then pageIndex is 01234321 loop", () => {
-      const config = Object.assign({}, DEFAULT_CEL_CONFIG);
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
       config.pattern.start = 1;
       config.pattern.end = 5;
       config.pattern.isRoundTrip = true;
@@ -125,7 +125,7 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(10, config)).toMatchObject({ pageIndex: 2 });
     });
     test("start is 3, end is 6, then pageIndex is 234543 loop", () => {
-      const config = Object.assign({}, DEFAULT_CEL_CONFIG);
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
       config.pattern.start = 3;
       config.pattern.end = 6;
       config.pattern.isRoundTrip = true;
@@ -138,6 +138,99 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 3 });
       expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
       expect(getDataByLocalFrame(7, config)).toMatchObject({ pageIndex: 3 });
+    });
+  });
+  describe('center', () => {
+    test('start is 1, end is 3, volume is 5, then: 0, 0, 1, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'center';
+      config.frame.volume = 5;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 2 });
+    });
+    test('start is 1, end is 3, volume is 6, then: 0, 0, 0, 1, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'center';
+      config.frame.volume = 6;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 2 });
+    });
+  });
+  describe('even', () => {
+    test('start is 1, end is 3, volume is 6, then: 0, 0, 1, 1, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'even';
+      config.frame.volume = 6;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 2 });
+    });
+    test('start is 1, end is 3, volume is 7, then: 0, 0, 0, 1, 1, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'even';
+      config.frame.volume = 7;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
+    });
+    test('start is 1, end is 3, volume is 8, then: 0, 0, 0, 1, 1, 1, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'even';
+      config.frame.volume = 8;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(7, config)).toMatchObject({ pageIndex: 2 });
+    });
+    test('start is 1, end is 3, volume is 9, then: 0, 0, 0, 1, 1, 1, 2, 2, 2', () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = 'even';
+      config.frame.volume = 9;
+
+      expect(getDataByLocalFrame(0, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(1, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(2, config)).toMatchObject({ pageIndex: 0 });
+      expect(getDataByLocalFrame(3, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(4, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(5, config)).toMatchObject({ pageIndex: 1 });
+      expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(7, config)).toMatchObject({ pageIndex: 2 });
+      expect(getDataByLocalFrame(8, config)).toMatchObject({ pageIndex: 2 });
     });
   });
 });

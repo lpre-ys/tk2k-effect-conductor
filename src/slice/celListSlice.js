@@ -28,6 +28,7 @@ export const celListSlice = createSlice({
           // nameがないなら、index + 1で追加
           cel.name = makeDefaultName(index + 1);
         }
+        // TODO
         return cel;
       });
     },
@@ -196,6 +197,7 @@ function initCel(start, volume, name) {
       start: 1,
       end: 1,
       isRoundTrip: false,
+      align: 'loop'
     },
   };
 }
