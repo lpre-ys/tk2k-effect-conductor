@@ -58,7 +58,7 @@ describe("<Player />", () => {
 test("has Configs component", () => {
   renderWithProviders(<App />);
 
-  const target = screen.getByText("セル: 1");
+  const target = screen.getByText("表示タイミング");
   expect(target).toBeInTheDocument();
 });
 

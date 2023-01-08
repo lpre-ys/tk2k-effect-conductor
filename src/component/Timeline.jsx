@@ -2,11 +2,16 @@
 
 import { css } from "@emotion/react";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faSortDown,
+  faSortUp,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCel, copyCel, deleteCel } from "../slice/celListSlice";
+import { addCel, copyCel, deleteCel, moveCel } from "../slice/celListSlice";
 import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
 
@@ -17,10 +22,12 @@ export function Timeline({
   frame,
   maxFrame,
   celList,
+  celIndex,
   setFrame,
   addCel,
   copyCel,
   deleteCel,
+  moveCel,
 }) {
   const scrollRef = useRef(null);
 
@@ -79,11 +86,7 @@ export function Timeline({
           コピー
         </button>
         <button
-          css={[
-            styles.button,
-            styles.deleteButton,
-            celList.length < 2 && styles.disabled,
-          ]}
+          css={[styles.button, styles.deleteButton]}
           type="button"
           onClick={() => {
             deleteCel();
@@ -92,6 +95,25 @@ export function Timeline({
         >
           <FontAwesomeIcon icon={faTrashAlt} css={styles.icon} />
           削除
+        </button>
+        <button
+          css={[styles.button, styles.sortButton]}
+          disabled={celList.length < 2 || celIndex < 1}
+          onClick={() => {
+            moveCel(celIndex - 1);
+          }}
+        >
+          <FontAwesomeIcon icon={faSortUp} />
+        </button>
+        <button
+          css={[styles.button, styles.sortButton]}
+          style={{ marginRight: "1rem" }}
+          disabled={celList.length < 2 || celIndex >= celList.length - 1}
+          onClick={() => {
+            moveCel(celIndex + 1);
+          }}
+        >
+          <FontAwesomeIcon icon={faSortDown} />
         </button>
       </div>
       <div
@@ -161,11 +183,13 @@ export default (props) => {
   const frame = useSelector((state) => state.frame.frame);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const celList = useSelector((state) => state.celList.list);
+  const celIndex = useSelector((state) => state.celList.celIndex);
   const dispatch = useDispatch();
   const _props = {
     frame,
     maxFrame,
     celList,
+    celIndex,
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
@@ -177,6 +201,9 @@ export default (props) => {
     },
     deleteCel: () => {
       dispatch(deleteCel());
+    },
+    moveCel: (target) => {
+      dispatch(moveCel(target));
     },
     ...props,
   };
@@ -209,24 +236,29 @@ const styles = {
       background-color: #757575;
       color: #fafafa;
     }
+    :disabled {
+      background-color: #9e9e9e;
+      color: #fafafa;
+      cursor: not-allowed;
+      :hover {
+        background-color: #9e9e9e;
+        color: #fafafa;
+      }
+    }
+  `,
+  sortButton: css`
+    padding: 0.3em 0.5em 0.3em 0.5em;
+    margin: 0 0.1em;
   `,
   deleteButton: css`
     background: #e53935;
     color: #eeeeee;
-    margin-left: 2em;
+    margin: 0 4em 0 2em;
     :hover {
       background: #c62828;
     }
   `,
-  disabled: css`
-    background-color: #9e9e9e;
-    color: #fafafa;
-    cursor: not-allowed;
-    :hover {
-      background-color: #9e9e9e;
-      color: #fafafa;
-    }
-  `,
+  disabled: css``,
   icon: css`
     position: absolute;
     top: 0.4em;

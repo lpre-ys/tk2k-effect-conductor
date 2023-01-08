@@ -6,10 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setImage, setTitle } from "../slice/infoSlice";
-import getDataByLocalFrame from "../util/calcFrameValue";
-import isShowCel from "../util/isShowCel";
 import ErrorInfo from "./export/ErrorInfo";
 import Options from "./export/Options";
+import calcFrameValue from "../util/calcFrameValue";
 
 export const Export = ({
   maxFrame,
@@ -34,11 +33,11 @@ export const Export = ({
     const frameList = [];
     for (let i = 0; i < maxFrame; i++) {
       // 基本データ作成
-      const result = configList
+      const result = [...configList]
+        .reverse()
         .map((celConfig) => {
-          if (isShowCel(i, celConfig.frame)) {
-            const localFrame = i - celConfig.frame.start + 1;
-            const cel = getDataByLocalFrame(localFrame, celConfig);
+          const cel = calcFrameValue(i, maxFrame, celConfig);
+          if (cel) {
             cel.pageIndex += 1;
             return cel;
           } else {

@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { INIT_MAX_FRAME } from "../util/const";
+import { CEL_NAME_PREFIX, INIT_MAX_FRAME } from "../util/const";
 
 const initialState = {
   celIndex: 0,
   drawKey: Date.now(),
-  list: [initCel(1, INIT_MAX_FRAME)],
+  list: [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))],
 };
 
 export const celListSlice = createSlice({
@@ -18,18 +18,38 @@ export const celListSlice = createSlice({
     },
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
+      // VerUP対応
+      state.list.map((cel, index) => {
+        if ("isLoopBack" in cel.frame === false) {
+          // isLoopBackをfalseで追加
+          cel.frame.isLoopBack = false;
+        }
+        if ("name" in cel === false) {
+          // nameがないなら、index + 1で追加
+          cel.name = makeDefaultName(index + 1);
+        }
+        return cel;
+      });
+    },
+    setCelName: (state, action) => {
+      state.list[state.celIndex].name = action.payload;
     },
     setCelIndex: (state, action) => {
       state.celIndex = parseInt(action.payload);
     },
     addCel: (state, action) => {
       const { volume, start } = action.payload;
-      const newList = [...state.list, initCel(start, volume)];
-
-      // TODO 追加する位置を、末尾じゃなくて、選択してるのの次にしたい。（COPYでやってるはず）
-      state.list = newList;
+      const newList = [...state.list];
       // 追加したセルを選択する
-      state.celIndex = newList.length - 1;
+      const index = state.celIndex + 1;
+
+      newList.splice(
+        state.celIndex + 1,
+        0,
+        initCel(start, volume, makeDefaultName(state.list.length + 1))
+      );
+      state.list = newList;
+      state.celIndex = index;
     },
     deleteCel: (state) => {
       if (state.list.length < 2) {
@@ -54,6 +74,35 @@ export const celListSlice = createSlice({
       const target = JSON.parse(JSON.stringify(state.list[state.celIndex]));
       copyList.splice(state.celIndex, 0, target);
       state.list = copyList;
+      // 追加したセルを選択する
+      state.celIndex += 1;
+    },
+    moveCel: (state, action) => {
+      let target = parseInt(action.payload);
+      if (state.list.length < 2) {
+        return;
+      }
+      if (target < 0 || target >= state.list.length) {
+        // ターゲットが配列の範囲外の場合、処理しない
+        return;
+      }
+      if (state.celIndex === target) {
+        // ターゲットと選択中のセルが同じ場合、処理しない
+        return;
+      }
+      // 現在のセルを取得
+      const cel = JSON.parse(JSON.stringify(state.list[state.celIndex]));
+      // 現在のセルを削除したリストを取得
+      const newList = state.list.filter((config, index) => {
+        return index !== state.celIndex;
+      });
+
+      // ターゲットにセルを挿入する
+      newList.splice(target, 0, cel);
+      state.list = newList;
+
+      // 挿入したセルを選択する
+      state.celIndex = target;
     },
     updateFrame: (state, action) => {
       state.list = state.list.map((cel, index) => {
@@ -87,17 +136,24 @@ export const {
   resetCelList,
   loadCelList,
   setCelIndex,
+  setCelName,
   addCel,
   deleteCel,
   copyCel,
+  moveCel,
   updateFrame,
   updatePattern,
   updateByType,
 } = celListSlice.actions;
 export default celListSlice.reducer;
 
-function initCel(start, volume) {
+function makeDefaultName(num) {
+  return CEL_NAME_PREFIX + num;
+}
+
+function initCel(start, volume, name) {
   return {
+    name: name,
     x: {
       from: 0,
       to: 0,
@@ -134,6 +190,7 @@ function initCel(start, volume) {
       start: start,
       volume: volume,
       isHideLast: false,
+      isLoopBack: false,
     },
     pattern: {
       start: 1,

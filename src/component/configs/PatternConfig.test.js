@@ -95,14 +95,14 @@ describe("Start", () => {
       expect(mockFn).not.toBeCalled();
       expect(start).toHaveValue(26);
     });
-    test("start is 2, end is 1, then not call update, but update value", () => {
+    test("start is 2, end is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
       render(<PatternConfig config={{ start: 1, end: 1 }} update={mockFn} />);
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 2 } });
 
-      expect(mockFn).not.toBeCalled();
+      expect(mockFn).toBeCalled();
       expect(start).toHaveValue(2);
     });
   });
@@ -176,14 +176,14 @@ describe("End", () => {
       expect(mockFn).not.toBeCalled();
       expect(end).toHaveValue(26);
     });
-    test("start is 2, end is 1, then not call update, but update value", () => {
+    test("start is 2, end is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
       render(<PatternConfig config={{ start: 2, end: 2 }} update={mockFn} />);
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 1 } });
 
-      expect(mockFn).not.toBeCalled();
+      expect(mockFn).toBeCalled();
       expect(end).toHaveValue(1);
     });
   });
