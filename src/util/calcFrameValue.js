@@ -30,7 +30,11 @@ export function getDataByLocalFrame(localFrame, config) {
   const scale = calcParameter(localFrame, config.scale, config.frame);
   const opacity = calcParameter(localFrame, config.opacity, config.frame);
   // フレームの決定
-  const pageIndex = calcPageIndex(localFrame, config.pattern);
+  const pageIndex = calcPageIndex(
+    localFrame,
+    config.pattern,
+    config.frame.volume
+  );
   return {
     x,
     y,
@@ -72,11 +76,44 @@ function getStartValues(config) {
   };
 }
 
-function calcPageIndex(localFrame, config) {
+function calcPageIndex(localFrame, config, volume) {
   // まずはページのリストを作成する
   const pageList = makePageList(config);
 
-  return pageList[localFrame % pageList.length] - 1;
+  let page;
+
+  // TODO 後で、必ず、絶対に、リファクタリングしなさい！！！！！
+  if (config.align === "start") {
+    page = pageList[localFrame]
+      ? pageList[localFrame]
+      : pageList[pageList.length - 1];
+  } else if (config.align === "end") {
+    const head = volume - pageList.length;
+    if (localFrame < head) {
+      page = pageList[0];
+    } else {
+      page = pageList[localFrame - head];
+    }
+  } else if (config.align === "center") {
+    const head = Math.floor((volume - pageList.length) / 2);
+    if (localFrame < head) {
+      page = pageList[0];
+    } else {
+      page = pageList[localFrame - head]
+        ? pageList[localFrame - head]
+        : pageList[pageList.length - 1];
+    }
+  } else if (config.align === "even") {
+    const index = Math.floor(localFrame / (volume / pageList.length));
+    console.log(localFrame, index, volume, pageList.length);
+    page = pageList[index];
+  } else {
+    if (config.isRoundTrip) {
+      pageList.pop();
+    }
+    page = pageList[localFrame % pageList.length];
+  }
+  return page - 1;
 }
 
 function calcParameter(localFrame, config, frameConfig) {

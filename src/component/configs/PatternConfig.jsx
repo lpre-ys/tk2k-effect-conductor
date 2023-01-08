@@ -15,6 +15,7 @@ export function PatternConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
   const [isRoundTrip, setIsRoundTrip] = useState(config.isRoundTrip);
+  const [align, setAlign] = useState(config.align);
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
@@ -33,7 +34,8 @@ export function PatternConfig({ config, update }) {
     return (
       newConfig.start !== oldConfig.start ||
       newConfig.end !== oldConfig.end ||
-      newConfig.isRoundTrip !== oldConfig.isRoundTrip
+      newConfig.isRoundTrip !== oldConfig.isRoundTrip ||
+      newConfig.align !== oldConfig.align
     );
   }
 
@@ -41,12 +43,13 @@ export function PatternConfig({ config, update }) {
     const newConfig = {
       start: parseInt(start),
       end: parseInt(end),
-      isRoundTrip: isRoundTrip,
+      isRoundTrip,
+      align,
     };
     if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  }, [start, end, isRoundTrip, update, validateConfig, config]);
+  }, [start, end, isRoundTrip, align, update, validateConfig, config]);
 
   return (
     <div>
@@ -70,11 +73,16 @@ export function PatternConfig({ config, update }) {
         <div css={styles.wrapper}>
           <div>
             <label css={[styles.label, styles.alignList]}>
-              <select value="loop">
-                {Object.keys(alignList).map((align) => {
+              <select
+                value={align}
+                onChange={({ target }) => {
+                  setAlign(target.value);
+                }}
+              >
+                {Object.keys(alignList).map((key) => {
                   return (
-                    <option value={align} key={align}>
-                      {alignList[align]}
+                    <option value={key} key={key}>
+                      {alignList[key]}
                     </option>
                   );
                 })}
