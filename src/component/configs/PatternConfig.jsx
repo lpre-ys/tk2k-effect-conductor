@@ -69,6 +69,17 @@ export function PatternConfig({ config, update }) {
         <PatternImage config={config} />
         <div css={styles.wrapper}>
           <div>
+            <label css={[styles.label, styles.alignList]}>
+              <select value="loop">
+                {Object.keys(alignList).map((align) => {
+                  return (
+                    <option value={align} key={align}>
+                      {alignList[align]}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
             <label css={[styles.label, styles.checkbox]}>
               <input
                 name="round-trip"
@@ -170,6 +181,9 @@ const styles = {
   checkbox: css`
     cursor: pointer;
   `,
+  alignList: css`
+    margin-right: 1em;
+  `,
 };
 
 // 共通のバリデーション
@@ -187,3 +201,11 @@ function validate(num) {
   }
   return true;
 }
+
+const alignList = {
+  loop: "ループ",
+  even: "等間隔",
+  start: "先頭",
+  end: "末尾",
+  center: "中央",
+};
