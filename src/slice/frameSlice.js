@@ -12,7 +12,9 @@ export const frameSlice = createSlice({
   reducers: {
     resetFrameConfig: () => initialState,
     loadFrameConfig: (state, action) => {
-      Object.assign(state, action.payload);
+      // 古いデータにString型の物があるので、ここでも変換しておく
+      state.frame = parseInt(action.payload.frame);
+      state.maxFrame = parseInt(action.payload.maxFrame);
     },
     setFrame: (state, action) => {
       if (action.payload < 0) {
@@ -21,10 +23,10 @@ export const frameSlice = createSlice({
       if (action.payload >= state.max) {
         return;
       }
-      state.frame = action.payload;
+      state.frame = parseInt(action.payload);
     },
     setMaxFrame: (state, action) => {
-      state.maxFrame = action.payload;
+      state.maxFrame = parseInt(action.payload);
     },
     nextFrame: (state) => {
       state.frame += 1;

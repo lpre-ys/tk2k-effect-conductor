@@ -80,8 +80,8 @@ const createWindow = () => {
   // 外部URL表示関連
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
-    return { action: 'deny' }
-  })
+    return { action: "deny" };
+  });
 };
 // Passthrough is not supported, GL is disabled, ANGLE is とか言うエラーを消すヤツ
 app.disableHardwareAcceleration();

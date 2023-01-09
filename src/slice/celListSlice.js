@@ -61,6 +61,8 @@ export const celListSlice = createSlice({
       state.list = newList;
       // 1個前のセルを選択する
       state.celIndex = state.celIndex === 0 ? 0 : state.celIndex - 1;
+      // 表示更新に失敗するケースがあるので、drawKeyも更新してしまう。
+      state.drawKey = Date.now();
     },
     copyCel: (state) => {
       // 有り得ない値だった場合、処理をしない
@@ -72,7 +74,8 @@ export const celListSlice = createSlice({
       }
       const copyList = [...state.list];
       const target = JSON.parse(JSON.stringify(state.list[state.celIndex]));
-      copyList.splice(state.celIndex, 0, target);
+      target.name += "_コピー";
+      copyList.splice(state.celIndex + 1, 0, target);
       state.list = copyList;
       // 追加したセルを選択する
       state.celIndex += 1;
