@@ -100,7 +100,14 @@ function TimelineBar({
         }}
         data-testid="time-cel-view-inside"
       >
-        <p css={styles.timelineText}>{name}</p>
+        <p
+          css={styles.timelineText}
+          style={{
+            marginLeft: start < 1 ? `${(start * -1 + 1) * 20 - 6}px` : "0",
+          }}
+        >
+          {name}
+        </p>
       </div>
     </div>
   );
