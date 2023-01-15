@@ -80,39 +80,41 @@ function calcPageIndex(localFrame, config, volume) {
   // まずはページのリストを作成する
   const pageList = makePageList(config);
 
-  let page;
-
-  // TODO 後で、必ず、絶対に、リファクタリングしなさい！！！！！
-  if (config.align === "start") {
-    page = pageList[localFrame]
-      ? pageList[localFrame]
-      : pageList[pageList.length - 1];
-  } else if (config.align === "end") {
-    const head = volume - pageList.length;
-    if (localFrame < head) {
-      page = pageList[0];
-    } else {
-      page = pageList[localFrame - head];
-    }
-  } else if (config.align === "center") {
-    const head = Math.floor((volume - pageList.length) / 2);
-    if (localFrame < head) {
-      page = pageList[0];
-    } else {
-      page = pageList[localFrame - head]
-        ? pageList[localFrame - head]
-        : pageList[pageList.length - 1];
-    }
-  } else if (config.align === "even") {
-    const index = Math.floor(localFrame / (volume / pageList.length));
-    console.log(localFrame, index, volume, pageList.length);
-    page = pageList[index];
-  } else {
-    if (config.isRoundTrip) {
-      pageList.pop();
-    }
-    page = pageList[localFrame % pageList.length];
+  if (["start", "end", "center"].includes(config.align)) {
+    return calcPageIndexByPosition(config, pageList, localFrame, volume);
   }
+
+  if (config.align === "even") {
+    const index = Math.floor(localFrame / (volume / pageList.length));
+    return pageList[index] - 1;
+  }
+
+  // ループ
+  if (config.isRoundTrip) {
+    pageList.pop();
+  }
+  return pageList[localFrame % pageList.length] - 1;
+}
+
+function calcPageIndexByPosition(config, pageList, localFrame, volume) {
+  let head;
+  if (config.align === "start") {
+    head = 0;
+  } else if (config.align === "end") {
+    head = volume - pageList.length;
+  } else if (config.align === "center") {
+    head = Math.floor((volume - pageList.length) / 2);
+  }
+
+  let page;
+  if (localFrame < head) {
+    page = pageList[0];
+  } else {
+    page = pageList[localFrame - head]
+      ? pageList[localFrame - head]
+      : pageList[pageList.length - 1];
+  }
+
   return page - 1;
 }
 
