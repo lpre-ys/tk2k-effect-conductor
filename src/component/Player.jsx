@@ -21,8 +21,6 @@ export const Player = ({
   setBgColor,
   loadMaterialImage,
 }) => {
-  // const [bgColor, setBgColor] = useState("transparent");
-  // const [bgImage, setBgImage] = useState(null);
   const [isShowCelBorder, setIsShowCelBorder] = useState(false);
   const [msg, setMsg] = useState("");
 

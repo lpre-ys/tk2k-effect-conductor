@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   nextFrame,
@@ -30,6 +31,7 @@ export function Controller({
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
+  const { t } = useTranslation();
 
   const animeRef = useRef();
 
@@ -238,7 +240,7 @@ export function Controller({
         </li>
         <li css={styles.liMaxFrame}>
           <label>
-            総フレーム数:&nbsp;
+            {t("player.maxFrame")}:&nbsp;
             <input
               type="number"
               data-testid="controller-max-frame"

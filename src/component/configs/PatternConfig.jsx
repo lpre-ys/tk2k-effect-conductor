@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useCallback } from "react";
 import { memo } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePattern } from "../../slice/celListSlice";
 import PatternImage from "./Pattern/PatternImage";
@@ -16,6 +17,7 @@ export function PatternConfig({ config, update }) {
   const [end, setEnd] = useState(config.end);
   const [isRoundTrip, setIsRoundTrip] = useState(config.isRoundTrip);
   const [align, setAlign] = useState(config.align);
+  const { t } = useTranslation();
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
@@ -51,10 +53,17 @@ export function PatternConfig({ config, update }) {
     }
   }, [start, end, isRoundTrip, align, update, validateConfig, config]);
 
+  const alignList = {
+    loop: t("configs.pattern.loop"),
+    even: t("configs.pattern.even"),
+    start: t("configs.pattern.head"),
+    end: t("configs.pattern.last"),
+    center: t("configs.pattern.center"),
+  };
   return (
     <div>
       <h2>
-        パターン
+        {t("configs.pattern.label")}
         {!validateConfig({ start, end }) && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
@@ -99,12 +108,12 @@ export function PatternConfig({ config, update }) {
                   setIsRoundTrip(target.checked);
                 }}
               />
-              :&nbsp;往復
+              :&nbsp;{t("configs.roundTrip")}
             </label>
           </div>
           <div>
             <label css={styles.label}>
-              開始:&nbsp;
+              {t("configs.pattern.start")}:&nbsp;
               <input
                 type="number"
                 data-testid="pattern-config-start"
@@ -120,7 +129,7 @@ export function PatternConfig({ config, update }) {
             </label>
             <br />
             <label css={styles.label}>
-              終了:&nbsp;
+              {t("configs.pattern.end")}:&nbsp;
               <input
                 type="number"
                 data-testid="pattern-config-end"
@@ -209,11 +218,3 @@ function validate(num) {
   }
   return true;
 }
-
-const alignList = {
-  loop: "ループ",
-  even: "等間隔",
-  start: "先頭",
-  end: "末尾",
-  center: "中央",
-};

@@ -1,0 +1,73 @@
+{
+  "timeline": {
+    "header": "タイムライン",
+    "add": "追加",
+    "copy": "コピー",
+    "delete": "削除"
+  },
+  "material": {
+    "header": "素材データ",
+    "preview": "プレビュー",
+    "pattern": "パターン",
+    "bgColor": "背景色",
+    "trColor": "透過色"
+  },
+  "export": {
+    "name": "名前",
+    "file": "素材ファイル",
+    "option": "詳細オプション",
+    "load": "クリップボードから読み込み",
+    "target": {
+      "label": "適用範囲",
+      "single": "単体",
+      "screen": "全体"
+    },
+    "yLine": {
+      "label": "Y座標基準",
+      "head": "頭上",
+      "center": "中心",
+      "feet": "足元"
+    },
+    "seFlash": {
+      "label": "音&フラッシュ",
+      "on": "設定有り",
+      "off": "設定無し",
+      "clear": "クリア"
+    }
+  },
+  "player": {
+    "bgColor": "背景色",
+    "bgImage": "背景画像設定",
+    "clear": "クリア",
+    "border": "枠表示",
+    "maxFrame": "総フレーム数"
+  },
+  "configs": {
+    "timing": {
+      "label": "表示タイミング",
+      "frame": "フレーム数",
+      "isHideLast": "最終フレームを非表示",
+      "loop": "終端でループ"
+    },
+    "pattern": {
+      "label": "パターン",
+      "loop": "ループ",
+      "even": "等間隔",
+      "head": "先頭",
+      "last": "末尾",
+      "center": "中央",
+      "start": "開始",
+      "end": "終了"
+    },
+    "x": "X座標",
+    "y": "Y座標",
+    "scale": "拡大率",
+    "opacity": "透明度",
+    "cycle": "周期",
+    "roundTrip": "往復"
+  },
+  "other": {
+    "cel": "セル",
+    "copy": "コピー"
+  }
+}

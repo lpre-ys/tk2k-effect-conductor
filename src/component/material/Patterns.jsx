@@ -2,12 +2,14 @@
 
 import { css } from "@emotion/react";
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
 import TrColorView from "./TrColorView";
 
 export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
+  const { t } = useTranslation();
   const patterns = [];
   for (let i = 0; i < max; i++) {
     const x = (i % 5) * 96;
@@ -38,7 +40,7 @@ export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
   return (
     <>
       <label>
-        背景色:&nbsp;
+        {t("material.bgColor")}:&nbsp;
         <input
           type="text"
           css={styles.input}

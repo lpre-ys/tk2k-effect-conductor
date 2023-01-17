@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFrame } from "../../slice/celListSlice";
 
@@ -14,6 +15,7 @@ export function TimingConfig({ config, update }) {
   const [volume, setVolume] = useState(config.volume);
   const [isHideLast, setIsHideLast] = useState(config.isHideLast);
   const [isLoopBack, setIsLoopBack] = useState(config.isLoopBack);
+  const { t } = useTranslation();
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -66,7 +68,7 @@ export function TimingConfig({ config, update }) {
   return (
     <div>
       <h2>
-        表示タイミング
+        {t("configs.timing.label")}
         {!validateConfig({ start, volume }) && (
           <FontAwesomeIcon
             icon={faTriangleExclamation}
@@ -95,7 +97,7 @@ export function TimingConfig({ config, update }) {
           disabled={true}
         />
         <label css={styles.label}>
-          フレーム数: &nbsp;
+          {t("configs.timing.frame")}: &nbsp;
           <input
             type="number"
             data-testid="timing-volume"
@@ -119,7 +121,7 @@ export function TimingConfig({ config, update }) {
               setIsHideLast(target.checked);
             }}
           />
-          :&nbsp;最終フレームを非表示
+          :&nbsp;{t("configs.timing.isHideLast")}
         </label>
         <label css={[styles.label, styles.checkbox]}>
           <input
@@ -132,7 +134,7 @@ export function TimingConfig({ config, update }) {
               setIsLoopBack(target.checked);
             }}
           />
-          :&nbsp;終端でループ
+          :&nbsp;{t("configs.timing.loop")}
         </label>
       </div>
     </div>

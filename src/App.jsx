@@ -14,6 +14,7 @@ import { loadFrameConfig, resetFrameConfig } from "./slice/frameSlice";
 import { loadInfo, resetInfo } from "./slice/infoSlice";
 import { loadMaterial, resetMaterial } from "./slice/materialSlice";
 import { loadPlayer, resetPlayer } from "./slice/playerSlice";
+import { withTranslation } from "react-i18next";
 
 class App extends React.Component {
   constructor(props) {
@@ -34,6 +35,10 @@ class App extends React.Component {
       window.appMenu.onReceiveLoad((data) => {
         this.props.loadData(JSON.parse(data));
       });
+      // 言語切り替え
+      window.appMenu.onReceiveLanguage(({ lang }) => {
+        this.props.i18n.changeLanguage(lang);
+      });
     }
   }
 
@@ -43,6 +48,18 @@ class App extends React.Component {
         <Global styles={normalize}></Global>
         <Global styles={styles.global}></Global>
         <div className="App" css={styles.container}>
+          {(!process.env.NODE_ENV ||
+            process.env.NODE_ENV === "development") && (
+            <button
+              onClick={() => {
+                this.props.i18n.changeLanguage(
+                  this.props.i18n.language === "ja" ? "en" : "ja"
+                );
+              }}
+            >
+              test
+            </button>
+          )}
           <div className="effect">
             <Material />
             <div className="player" css={styles.player}>
@@ -116,4 +133,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withTranslation()(
+  connect(mapStateToProps, mapDispatchToProps)(App)
+);

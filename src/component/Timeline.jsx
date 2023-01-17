@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCel, copyCel, deleteCel, moveCel } from "../slice/celListSlice";
 import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
+import { useTranslation } from "react-i18next";
 
 const FRAME_SIZE = 20;
 const TIMELINE_HEIGHT = 28;
@@ -30,6 +31,7 @@ export function Timeline({
   moveCel,
 }) {
   const scrollRef = useRef(null);
+  const { t } = useTranslation();
 
   const baseList = [];
   for (let i = 0; i < maxFrame; i++) {
@@ -61,7 +63,7 @@ export function Timeline({
 
   return (
     <div className="timeline" css={styles.container} data-testid="timeline">
-      <h1 css={styles.header}>タイムライン</h1>
+      <h1 css={styles.header}>{t("timeline.header")}</h1>
       <div>
         <button
           css={styles.button}
@@ -73,7 +75,7 @@ export function Timeline({
           }}
         >
           <FontAwesomeIcon icon={faPlus} css={styles.icon} />
-          追加
+          {t("timeline.add")}
         </button>
         <button
           css={styles.button}
@@ -83,7 +85,7 @@ export function Timeline({
           }}
         >
           <FontAwesomeIcon icon={faCopy} css={styles.icon} />
-          コピー
+          {t("timeline.copy")}
         </button>
         <button
           css={[styles.button, styles.deleteButton]}
@@ -94,7 +96,7 @@ export function Timeline({
           disabled={celList.length < 2}
         >
           <FontAwesomeIcon icon={faTrashAlt} css={styles.icon} />
-          削除
+          {t("timeline.delete")}
         </button>
         <button
           css={[styles.button, styles.sortButton]}

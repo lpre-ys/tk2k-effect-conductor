@@ -25,6 +25,11 @@ contextBridge.exposeInMainWorld("appMenu", {
       listener(...arg);
     });
   },
+  onReceiveLanguage: (listener) => {
+    ipcRenderer.on("lang", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
   saveData: async (args) => {
     await ipcRenderer.invoke("save-state-data", args).then((result) => {
       return result;

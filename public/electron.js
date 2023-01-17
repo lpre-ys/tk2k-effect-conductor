@@ -9,60 +9,32 @@ const {
 const path = require("path");
 const fs = require("fs");
 const { tk2k, getEmptyData, write, read, parser } = require("tk2k-clipdata");
+const i18n = require("../electron/configs/i18next.config");
+const menuTemplate = require("../electron/menuTemplate");
 
 let mainWindow;
 let prePath = false;
 
-const template = Menu.buildFromTemplate([
-  {
-    label: "ファイル",
-    submenu: [
-      {
-        label: "新規作成",
-        click: () => {
-          mainWindow.webContents.send("new", {});
+const openFile = () => {
+  dialog
+    .showOpenDialog(mainWindow, {
+      properties: ["openFile"],
+      defaultPath: prePath ? prePath : app.getPath("documents"),
+      filters: [
+        {
+          name: "Effect Data",
+          extensions: ["json"],
         },
-      },
-      { type: "separator" },
-      {
-        label: "開く",
-        accelerator: "Ctrl+O",
-        click: () => {
-          dialog
-            .showOpenDialog(mainWindow, {
-              properties: ["openFile"],
-              defaultPath: prePath ? prePath : app.getPath("documents"),
-              filters: [
-                {
-                  name: "Effect Data",
-                  extensions: ["json"],
-                },
-              ],
-            })
-            .then(({ canceled, filePaths }) => {
-              if (canceled) {
-                return;
-              }
-              prePath = path.dirname(filePaths[0]);
-              loadFile(filePaths[0]);
-            });
-        },
-      },
-      {
-        label: "保存",
-        accelerator: "Ctrl+S",
-        click: () => {
-          mainWindow.webContents.send("save", {});
-        },
-      },
-      { type: "separator" },
-      { role: "close", label: "終了" },
-    ],
-  },
-]);
-
-Menu.setApplicationMenu(template);
-
+      ],
+    })
+    .then(({ canceled, filePaths }) => {
+      if (canceled) {
+        return;
+      }
+      prePath = path.dirname(filePaths[0]);
+      loadFile(filePaths[0]);
+    });
+};
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -89,6 +61,19 @@ app.disableHardwareAcceleration();
 app.whenReady().then(createWindow);
 
 app.once("window-all-closed", () => app.quit());
+
+// i18n関連
+i18n.on("loaded", (loaded) => {
+  i18n.changeLanguage("ja");
+  i18n.off("loaded");
+});
+
+i18n.on("languageChanged", () => {
+  const menu = Menu.buildFromTemplate(
+    menuTemplate(app, mainWindow, i18n, openFile)
+  );
+  Menu.setApplicationMenu(menu);
+});
 
 ipcMain.handle("save-state-data", (event, data) => {
   dialog

@@ -9,6 +9,7 @@ import { setImage, setTitle } from "../slice/infoSlice";
 import ErrorInfo from "./export/ErrorInfo";
 import Options from "./export/Options";
 import calcFrameValue from "../util/calcFrameValue";
+import { useTranslation } from "react-i18next";
 
 export const Export = ({
   maxFrame,
@@ -21,6 +22,7 @@ export const Export = ({
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [errorMsgKey, setErrorMsgKey] = useState(false);
+  const { t } = useTranslation();
 
   const handleExport = useCallback(() => {
     if (
@@ -69,7 +71,7 @@ export const Export = ({
     <div css={styles.container}>
       {errorMsgKey && <ErrorInfo key={errorMsgKey} />}
       <label>
-        名前:&nbsp;
+        {t("export.name")}:&nbsp;
         <input
           type="text"
           value={title}
@@ -80,7 +82,7 @@ export const Export = ({
         />
       </label>
       <label>
-        素材ファイル:&nbsp;
+        {t("export.file")}:&nbsp;
         <input
           type="text"
           value={imageName}

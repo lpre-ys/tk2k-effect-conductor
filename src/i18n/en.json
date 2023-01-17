@@ -1,0 +1,73 @@
+{
+  "timeline": {
+    "header": "Timeline",
+    "add": "New",
+    "copy": "Copy",
+    "delete": "Delete"
+  },
+  "material": {
+    "header": "Material Data",
+    "preview": "Preview",
+    "pattern": "Pattern",
+    "bgColor": "Background",
+    "trColor": "Transparent"
+  },
+  "export": {
+    "name": "Name",
+    "file": "Graphic",
+    "option": "Options",
+    "load": "Load from Clipboard",
+    "target": {
+      "label": "Scope",
+      "single": "Single",
+      "screen": "Screen"
+    },
+    "yLine": {
+      "label": "Y-Position",
+      "head": "Head",
+      "center": "Center",
+      "feet": "Feet"
+    },
+    "seFlash": {
+      "label": "SE & Flash",
+      "on": "exists",
+      "off": "none",
+      "clear": "Clear"
+    }
+  },
+  "player": {
+    "bgColor": "Bg color",
+    "bgImage": "Load bg image",
+    "clear": "Clear",
+    "border": "Show border",
+    "maxFrame": "Max frame"
+  },
+  "configs": {
+    "timing": {
+      "label": "Timing",
+      "frame": "frame",
+      "isHideLast": "hide last frame",
+      "loop": "loop"
+    },
+    "pattern": {
+      "label": "Pattern",
+      "loop": "Loop",
+      "even": "Even",
+      "head": "Head",
+      "last": "Last",
+      "center": "Center",
+      "start": "Start",
+      "end": "End "
+    },
+    "x": "X",
+    "y": "Y",
+    "scale": "Zoom",
+    "opacity": "Transparency",
+    "cycle": "Cycle",
+    "roundTrip": "Round trip"
+  },
+  "other": {
+    "cel": "cell",
+    "copy": "copy"
+  }
+}

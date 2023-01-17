@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CEL_NAME_PREFIX, INIT_MAX_FRAME } from "../util/const";
+import { INIT_MAX_FRAME } from "../util/const";
+import i18n from "../i18n/config";
 
 const initialState = {
   celIndex: 0,
@@ -75,7 +76,7 @@ export const celListSlice = createSlice({
       }
       const copyList = [...state.list];
       const target = JSON.parse(JSON.stringify(state.list[state.celIndex]));
-      target.name += "_コピー";
+      target.name += "_" + i18n.t("other.copy");
       copyList.splice(state.celIndex + 1, 0, target);
       state.list = copyList;
       // 追加したセルを選択する
@@ -152,7 +153,7 @@ export const {
 export default celListSlice.reducer;
 
 function makeDefaultName(num) {
-  return CEL_NAME_PREFIX + num;
+  return i18n.t("other.cel") + num;
 }
 
 function initCel(start, volume, name) {
@@ -200,7 +201,7 @@ function initCel(start, volume, name) {
       start: 1,
       end: 1,
       isRoundTrip: false,
-      align: 'loop'
+      align: "loop",
     },
   };
 }

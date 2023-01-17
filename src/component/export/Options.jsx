@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearRawEffect,
@@ -29,6 +30,7 @@ export const Options = ({
 }) => {
   const [isShowOption, setIsShowOption] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { t } = useTranslation();
 
   const handleReadInfo = () => {
     if (
@@ -62,7 +64,7 @@ export const Options = ({
         ) : (
           <FontAwesomeIcon icon={faAngleRight} css={styles.icon} />
         )}
-        詳細Option
+        {t("export.option")}
       </button>
       {isShowOption && (
         <div css={styles.optionContainer}>
@@ -79,52 +81,52 @@ export const Options = ({
             ) : (
               <button css={styles.loadButton} onClick={handleReadInfo}>
                 <FontAwesomeIcon icon={faPaste} css={styles.icon} />
-                クリップボードから読み込み
+                {t("export.load")}
               </button>
             )}
             <Tips />
           </div>
           <label>
-            適用範囲:&nbsp;
+            {t("export.target.label")}:&nbsp;
             <select
               value={target}
               onChange={({ target }) => {
                 setTarget(target.value);
               }}
             >
-              <option value="0">単体</option>
-              <option value="1">全体</option>
+              <option value="0">{t("export.target.single")}</option>
+              <option value="1">{t("export.target.screen")}</option>
             </select>
           </label>
           <label>
-            Y座標基準:&nbsp;
+            {t("export.yLine.label")}:&nbsp;
             <select
               value={yLine}
               onChange={({ target }) => {
                 setYLine(target.value);
               }}
             >
-              <option value="0">頭上</option>
-              <option value="1">中心</option>
-              <option value="2">足元</option>
+              <option value="0">{t("export.yLine.head")}</option>
+              <option value="1">{t("export.yLine.center")}</option>
+              <option value="2">{t("export.yLine.feet")}</option>
             </select>
           </label>
           <span>
-            音&amp;フラッシュ:&nbsp;
+            {t("export.seFlash.label")}:&nbsp;
             {!!rawEffect ? (
               <>
-                設定有り
+                {t("export.seFlash.on")}
                 <span
                   css={styles.clear}
                   onClick={() => {
                     clearRawEffect();
                   }}
                 >
-                  クリア
+                  {t("export.seFlash.clear")}
                 </span>
               </>
             ) : (
-              <>設定無し</>
+              <>{t("export.seFlash.off")}</>
             )}
           </span>
         </div>
