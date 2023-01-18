@@ -265,7 +265,7 @@ describe("Header icon", () => {
       target: { value: "a" },
     });
 
-    const target = screen.getByTestId("timing-config-icon");
+    const target = screen.getByTestId("config-header-icon-error");
     expect(target).toBeInTheDocument();
   });
   test("if Volume is invalid, then show Icon", () => {
@@ -275,13 +275,13 @@ describe("Header icon", () => {
       target: { value: "a" },
     });
 
-    const target = screen.getByTestId("timing-config-icon");
+    const target = screen.getByTestId("config-header-icon-error");
     expect(target).toBeInTheDocument();
   });
   test("if All valid, then not show Icon", () => {
     render(<TimingConfig config={{ start: 1, volume: 10 }} update={update} />);
 
-    const target = screen.queryByTestId("timing-config-icon");
+    const target = screen.queryByTestId("config-header-icon-error");
     expect(target).toBeNull();
   });
 });

@@ -21,6 +21,7 @@ export const celListSlice = createSlice({
       Object.assign(state, action.payload);
       // VerUP対応
       state.list.map((cel, index) => {
+        // 1.0.2
         if ("isLoopBack" in cel.frame === false) {
           // isLoopBackをfalseで追加
           cel.frame.isLoopBack = false;
@@ -29,7 +30,16 @@ export const celListSlice = createSlice({
           // nameがないなら、index + 1で追加
           cel.name = makeDefaultName(index + 1);
         }
-        // TODO
+        // 1.0.3
+        if ("align" in cel.pattern === false) {
+          cel.pattern.align = "loop";
+        }
+        if ("customPattern" in cel.pattern === false) {
+          cel.pattern.customPattern = [];
+        }
+        if ("isCustom" in cel.pattern === false) {
+          cel.pattern.isCustom = false;
+        }
         return cel;
       });
     },
@@ -202,6 +212,8 @@ function initCel(start, volume, name) {
       end: 1,
       isRoundTrip: false,
       align: "loop",
+      customPattern: [],
+      isCustom: false
     },
   };
 }

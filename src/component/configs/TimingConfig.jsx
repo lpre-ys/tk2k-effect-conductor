@@ -1,14 +1,15 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfigOption } from "../../hook/useConfigOption";
 import { updateFrame } from "../../slice/celListSlice";
+import { Header } from "./Header";
+import { Options } from "./Timing/Options";
 
 export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
@@ -16,6 +17,20 @@ export function TimingConfig({ config, update }) {
   const [isHideLast, setIsHideLast] = useState(config.isHideLast);
   const [isLoopBack, setIsLoopBack] = useState(config.isLoopBack);
   const { t } = useTranslation();
+
+  const hasOption = () => {
+    return config.isHideLast || config.isLoopBack;
+  };
+  const reset = () => {
+    setStart(config.start);
+    setVolume(config.volume);
+    setIsHideLast(config.isHideLast);
+    setIsLoopBack(config.isLoopBack);
+  };
+  const { isValidOption, headerProps, optionProps } = useConfigOption(
+    hasOption,
+    reset
+  );
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -58,26 +73,14 @@ export function TimingConfig({ config, update }) {
     }
   }, [start, update, volume, config, validateConfig, isHideLast, isLoopBack]);
 
-  const handleReset = () => {
-    setStart(config.start);
-    setVolume(config.volume);
-    setIsHideLast(config.isHideLast);
-    setIsLoopBack(config.isLoopBack);
-  };
-
   return (
     <div>
-      <h2>
-        {t("configs.timing.label")}
-        {!validateConfig({ start, volume }) && (
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            css={styles.exIcon}
-            onClick={handleReset}
-            data-testid="timing-config-icon"
-          />
-        )}
-      </h2>
+      <Header
+        name={t("configs.timing.label")}
+        isValid={validateConfig({ start, volume }) && isValidOption}
+        {...headerProps}
+      />
+
       <div css={styles.wrapper}>
         <input
           type="number"
@@ -109,7 +112,14 @@ export function TimingConfig({ config, update }) {
           />
         </label>
       </div>
-      <div>
+      <Options
+        isHideLast={isHideLast}
+        setIsHideLast={setIsHideLast}
+        isLoopBack={isLoopBack}
+        setIsLoopBack={setIsLoopBack}
+        {...optionProps}
+      />
+      {/* <div>
         <label css={[styles.label, styles.checkbox]}>
           <input
             name="is-hide-last"
@@ -136,7 +146,7 @@ export function TimingConfig({ config, update }) {
           />
           :&nbsp;{t("configs.timing.loop")}
         </label>
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -182,10 +192,5 @@ const styles = {
       font-size: 1.1em;
       color: #e53935;
     }
-  `,
-  checkbox: css`
-    cursor: pointer;
-    display: block;
-    padding-top: 0.3rem;
   `,
 };

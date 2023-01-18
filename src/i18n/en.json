@@ -57,7 +57,8 @@
       "last": "Last",
       "center": "Center",
       "start": "Start",
-      "end": "End "
+      "end": "End ",
+      "custom": "Custom Pattern"
     },
     "x": "X",
     "y": "Y",

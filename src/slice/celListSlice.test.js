@@ -21,10 +21,10 @@ describe("loadCelList", () => {
       list: [],
     };
     data.list.push(
-      { frame: {} },
-      { name: "test", frame: { isHideLast: true } },
-      { frame: { isLoopBack: true } },
-      { name: "test2", frame: { isLoopBack: true } }
+      { frame: {}, pattern: {} },
+      { name: "test", frame: { isHideLast: true }, pattern: {} },
+      { frame: { isLoopBack: true }, pattern: {} },
+      { name: "test2", frame: { isLoopBack: true }, pattern: {} }
     );
     const state = reducer(undefined, loadCelList(data));
     expect(state.list).toHaveLength(4);

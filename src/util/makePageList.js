@@ -1,12 +1,19 @@
-export default function makePageList({ start, end, isRoundTrip }) {
-  let pageList = [];
-  if (start < end) {
-    for (let page = start; page <= end; page++) {
-      pageList.push(page);
+export default function makePageList({ start, end, isRoundTrip, isCustom, customPattern }) {
+  const pageList = [];
+  if (isCustom) {
+    pageList.push(...customPattern);
+    if (pageList.length < 1) {
+      pageList.push(1);
     }
   } else {
-    for (let page = start; page >= end; page--) {
-      pageList.push(page);
+    if (start < end) {
+      for (let page = start; page <= end; page++) {
+        pageList.push(page);
+      }
+    } else {
+      for (let page = start; page >= end; page--) {
+        pageList.push(page);
+      }
     }
   }
 

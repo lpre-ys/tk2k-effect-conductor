@@ -1,26 +1,31 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import {
-  faAngleDown,
-  faAngleRight,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfigOption } from "../../hook/useConfigOption";
 import { updateByType } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
+import { Header } from "./Header";
 
 export function FromToConfig({ type, name, config, update }) {
-  const [isOption, setIsOption] = useState(false);
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
-  const [optionKey, setOptionKey] = useState(Date.now());
-  const [isValidOption, setIsValidOption] = useState(true);
+
+  const hasOption = () => {
+    return config.cycle !== 0 || config.isRoundTrip;
+  };
+  const reset = () => {
+    setFrom(config.from);
+    setTo(config.to);
+  };
+  const { isValidOption, headerProps, optionProps } = useConfigOption(
+    hasOption,
+    reset
+  );
 
   const validate = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -44,52 +49,13 @@ export function FromToConfig({ type, name, config, update }) {
     }
   }, [config, from, to, type, update, validateConfig]);
 
-  const hasOption = () => {
-    return config.cycle !== 0 || config.isRoundTrip;
-  };
-  const headerColorStyle = {
-    color: hasOption() ? "#00838F" : "#9E9E9E",
-  };
   return (
     <div>
-      <h2
-        css={[styles.header]}
-        onClick={() => {
-          setIsOption(!isOption);
-        }}
-      >
-        {isOption ? (
-          <FontAwesomeIcon
-            icon={faAngleDown}
-            css={styles.headerIcon}
-            style={headerColorStyle}
-            data-testid="from-to-config-icon-down"
-          />
-        ) : (
-          <FontAwesomeIcon
-            icon={faAngleRight}
-            css={styles.headerIcon}
-            style={headerColorStyle}
-            data-testid="from-to-config-icon-right"
-          />
-        )}
-        {name}
-        {(!validateConfig({ from, to }) || !isValidOption) && (
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            css={styles.exIcon}
-            onClick={(e) => {
-              // RESET
-              setFrom(config.from);
-              setTo(config.to);
-              setOptionKey(Date.now());
-              // ヘッダ側の処理を行わない
-              e.stopPropagation();
-            }}
-            data-testid="from-to-config-icon-error"
-          />
-        )}
-      </h2>
+      <Header
+        name={name}
+        isValid={validateConfig({ from, to }) && isValidOption}
+        {...headerProps}
+      />
       <div css={styles.wrapper}>
         <label css={styles.label}>
           <input
@@ -113,12 +79,7 @@ export function FromToConfig({ type, name, config, update }) {
           />
         </label>
         <EasingConfig type={type} />
-        <Options
-          type={type}
-          visible={isOption}
-          setIsValid={setIsValidOption}
-          key={optionKey}
-        />
+        <Options type={type} {...optionProps} />
       </div>
     </div>
   );
@@ -142,19 +103,6 @@ export default (props) => {
 };
 
 const styles = {
-  header: css`
-    cursor: pointer;
-    position: relative;
-    padding-left: 1.2em;
-    user-select: none;
-  `,
-  headerIcon: css`
-    // color: #0097a7;
-    position: absolute;
-    top: 0.55em;
-    left: 0.4em;
-    font-size: 1rem;
-  `,
   wrapper: css`
     margin: 0 0.5em;
   `,
@@ -166,15 +114,5 @@ const styles = {
   `,
   error: css`
     color: #b71c1c;
-  `,
-  exIcon: css`
-    color: #b71c1c;
-    cursor: pointer;
-    margin-left: 0.2em;
-    :hover {
-      font-size: 1.1em;
-      color: #e53935;
-    }
-    width: 1em;
   `,
 };

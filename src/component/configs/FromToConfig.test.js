@@ -129,7 +129,7 @@ describe("Header", () => {
     test('No Cycle and No RoundTrip, then header icon is gray', () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
 
-      const target = screen.getByTestId('from-to-config-icon-right');
+      const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#9e9e9e' });
     });
     test('has Cycle, then header icon is blue', () => {
@@ -137,7 +137,7 @@ describe("Header", () => {
       config.cycle = 3;
       renderWithProviders(<FromToConfig type="x" config={config} />);
 
-      const target = screen.getByTestId('from-to-config-icon-right');
+      const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
     });
     test('on RoundTrip, then header icon is blue', () => {
@@ -145,13 +145,13 @@ describe("Header", () => {
       config.isRoundTrip = true;
       renderWithProviders(<FromToConfig type="x" config={config} />);
 
-      const target = screen.getByTestId('from-to-config-icon-right');
+      const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
     });
     test("not show Option, then show Rignt icon", () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
-      const target = screen.getByTestId("from-to-config-icon-right");
+      const target = screen.getByTestId("config-header-icon-right");
       expect(target).toBeInTheDocument();
     });
     test("show Option, then show Down icon", () => {
@@ -159,7 +159,7 @@ describe("Header", () => {
 
       userEvent.click(screen.getByRole("heading"));
 
-      const target = screen.getByTestId("from-to-config-icon-down");
+      const target = screen.getByTestId("config-header-icon-down");
       expect(target).toBeInTheDocument();
     });
   });
@@ -167,7 +167,7 @@ describe("Header", () => {
     test("no Error, then not show Error icon", () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
-      const target = screen.queryByTestId("from-to-config-icon-error");
+      const target = screen.queryByTestId("config-header-icon-error");
       expect(target).not.toBeInTheDocument();
     });
     test("from Error, then show Error icon", () => {
@@ -177,7 +177,7 @@ describe("Header", () => {
         target: { value: "" },
       });
 
-      const target = screen.queryByTestId("from-to-config-icon-error");
+      const target = screen.queryByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
     test("to Error, then show Error icon", () => {
@@ -187,7 +187,7 @@ describe("Header", () => {
         target: { value: "" },
       });
 
-      const target = screen.queryByTestId("from-to-config-icon-error");
+      const target = screen.queryByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
     test("ckick Icon, then reset value to config", () => {
@@ -200,7 +200,7 @@ describe("Header", () => {
       fireEvent.change(from, { target: { value: "" } });
       fireEvent.change(to, { target: { value: "" } });
 
-      const icon = screen.getByTestId("from-to-config-icon-error");
+      const icon = screen.getByTestId("config-header-icon-error");
       userEvent.click(icon);
 
       expect(icon).not.toBeInTheDocument();
@@ -215,7 +215,7 @@ describe("Header", () => {
       const from = screen.getByTestId("from-to-config-from");
       fireEvent.change(from, { target: { value: "" } });
 
-      const icon = screen.getByTestId("from-to-config-icon-error");
+      const icon = screen.getByTestId("config-header-icon-error");
       userEvent.click(icon);
 
       const target = screen.queryByTestId("from-to-options");

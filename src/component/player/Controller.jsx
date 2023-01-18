@@ -96,7 +96,7 @@ export function Controller({
   }
 
   const handleKeyDown = (event) => {
-    if (event.target.tagName === "INPUT") {
+    if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
       return;
     }
     if (event.key === "ArrowLeft") {
