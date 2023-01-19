@@ -12,7 +12,7 @@ export function Options({
   const { t } = useTranslation();
   if (isOption) {
     return (
-      <div>
+      <div data-testid="configs-timing-options">
         <label css={[styles.label, styles.checkbox]}>
           <input
             name="is-hide-last"

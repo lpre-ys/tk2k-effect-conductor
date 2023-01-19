@@ -27,10 +27,7 @@ export function TimingConfig({ config, update }) {
     setIsHideLast(config.isHideLast);
     setIsLoopBack(config.isLoopBack);
   };
-  const { isValidOption, headerProps, optionProps } = useConfigOption(
-    hasOption,
-    reset
-  );
+  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -77,10 +74,9 @@ export function TimingConfig({ config, update }) {
     <div>
       <Header
         name={t("configs.timing.label")}
-        isValid={validateConfig({ start, volume }) && isValidOption}
+        isValid={validateConfig({ start, volume })}
         {...headerProps}
       />
-
       <div css={styles.wrapper}>
         <input
           type="number"
@@ -119,34 +115,6 @@ export function TimingConfig({ config, update }) {
         setIsLoopBack={setIsLoopBack}
         {...optionProps}
       />
-      {/* <div>
-        <label css={[styles.label, styles.checkbox]}>
-          <input
-            name="is-hide-last"
-            data-testid="timing-is-hide-last"
-            type="checkbox"
-            checked={isHideLast}
-            value="true"
-            onChange={({ target }) => {
-              setIsHideLast(target.checked);
-            }}
-          />
-          :&nbsp;{t("configs.timing.isHideLast")}
-        </label>
-        <label css={[styles.label, styles.checkbox]}>
-          <input
-            name="is-loop-back"
-            data-testid="timing-is-hide-last"
-            type="checkbox"
-            checked={isLoopBack}
-            value="true"
-            onChange={({ target }) => {
-              setIsLoopBack(target.checked);
-            }}
-          />
-          :&nbsp;{t("configs.timing.loop")}
-        </label>
-      </div> */}
     </div>
   );
 }

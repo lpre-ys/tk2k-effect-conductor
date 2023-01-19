@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { INIT_MAX_FRAME } from "../util/const";
+import { DEFAULT_CEL, INIT_MAX_FRAME } from "../util/const";
 import i18n from "../i18n/config";
+import merge from "deepmerge";
 
 const initialState = {
   celIndex: 0,
   drawKey: Date.now(),
   list: [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))],
 };
+
 
 export const celListSlice = createSlice({
   name: "celList",
@@ -20,28 +22,20 @@ export const celListSlice = createSlice({
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
       // VerUP対応
-      state.list.map((cel, index) => {
-        // 1.0.2
-        if ("isLoopBack" in cel.frame === false) {
-          // isLoopBackをfalseで追加
-          cel.frame.isLoopBack = false;
-        }
+      const list = state.list.map((cel, index) => {
+        // デフォルト値を持っていてほしいので、マージする
+        const merged = merge(DEFAULT_CEL, cel);
+
+        // 名前はデフォ値を生成するので、ここで個別対応
+        // 空文字で設定している可能性があるので
+        // ロードしたデータにkeyがあるか無いかでチェックする
         if ("name" in cel === false) {
-          // nameがないなら、index + 1で追加
-          cel.name = makeDefaultName(index + 1);
+          merged.name = makeDefaultName(index + 1);
         }
-        // 1.0.3
-        if ("align" in cel.pattern === false) {
-          cel.pattern.align = "loop";
-        }
-        if ("customPattern" in cel.pattern === false) {
-          cel.pattern.customPattern = [];
-        }
-        if ("isCustom" in cel.pattern === false) {
-          cel.pattern.isCustom = false;
-        }
-        return cel;
+
+        return merged;
       });
+      state.list = list;
     },
     setCelName: (state, action) => {
       state.list[state.celIndex].name = action.payload;
@@ -167,53 +161,10 @@ function makeDefaultName(num) {
 }
 
 function initCel(start, volume, name) {
-  return {
-    name: name,
-    x: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    y: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    scale: {
-      from: 100,
-      to: 100,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    opacity: {
-      from: 0,
-      to: 0,
-      cycle: 0,
-      isRoundTrip: false,
-      easing: "easeLinear",
-      easingAdd: "",
-    },
-    frame: {
-      start: start,
-      volume: volume,
-      isHideLast: false,
-      isLoopBack: false,
-    },
-    pattern: {
-      start: 1,
-      end: 1,
-      isRoundTrip: false,
-      align: "loop",
-      customPattern: [],
-      isCustom: false
-    },
-  };
+  const cel = JSON.parse(JSON.stringify(DEFAULT_CEL));
+  cel.name = name;
+  cel.frame.start = start;
+  cel.frame.volume = volume;
+
+  return cel;
 }

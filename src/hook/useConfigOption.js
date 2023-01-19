@@ -2,7 +2,6 @@ import { useState } from "react";
 
 export function useConfigOption(hasOption, reset) {
   const [isOption, setIsOption] = useState(false);
-  const [isValidOption, setIsValidOption] = useState(true);
   const [optionKey, setOptionKey] = useState(Date.now());
 
   const headerColorStyle = {
@@ -17,7 +16,6 @@ export function useConfigOption(hasOption, reset) {
   }
 
   return {
-    isValidOption,
     headerProps: {
       reset: onReset,
       color: headerColorStyle,
@@ -25,7 +23,6 @@ export function useConfigOption(hasOption, reset) {
       setIsOption
     },
     optionProps: {
-      setIsValid: setIsValidOption,
       key: optionKey,
       isOption,
     }

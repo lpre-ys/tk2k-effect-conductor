@@ -16,7 +16,7 @@ export function Options({
     return null;
   }
   return (
-    <div css={styles.container}>
+    <div css={styles.container} data-testid="configs-pattern-options">
       <button
         css={[styles.button, isCustom && styles.buttonOn]}
         onClick={() => {
@@ -29,16 +29,18 @@ export function Options({
         />
         {t("configs.pattern.custom")}:&nbsp;{isCustom ? "ON" : "OFF"}
       </button>
-      <div>
-        <textarea
-          css={styles.textarea}
-          style={{ display: isCustom ? "block" : "none" }}
-          onChange={({ target }) => {
-            setCustomPattern(target.value);
-          }}
-          value={customPattern}
-        ></textarea>
-      </div>
+      {isCustom && (
+        <div>
+          <textarea
+            css={styles.textarea}
+            data-testid="configs-pattern-options-textarea"
+            onChange={({ target }) => {
+              setCustomPattern(target.value);
+            }}
+            value={customPattern}
+          ></textarea>
+        </div>
+      )}
     </div>
   );
 }

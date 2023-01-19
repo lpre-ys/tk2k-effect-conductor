@@ -20,7 +20,7 @@ export function PatternConfig({ config, update }) {
   const [align, setAlign] = useState(config.align);
   const [isCustom, setIsCustom] = useState(config.isCustom);
   const [customPattern, setCustomPattern] = useState(
-    config.customPattern ? config.customPattern.join(",") : ""
+    config.customPattern.join(",")
   );
   const { t } = useTranslation();
 
@@ -32,10 +32,7 @@ export function PatternConfig({ config, update }) {
     setEnd(config.end);
     setCustomPattern(config.customPattern.join(","));
   };
-  const { isValidOption, headerProps, optionProps } = useConfigOption(
-    hasOption,
-    reset
-  );
+  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
@@ -129,9 +126,7 @@ export function PatternConfig({ config, update }) {
       <Header
         name={t("configs.pattern.label")}
         isValid={
-          validateConfig({ start, end }) &&
-          validateCustomPattern(customPattern) &&
-          isValidOption
+          validateConfig({ start, end }) && validateCustomPattern(customPattern)
         }
         {...headerProps}
       />

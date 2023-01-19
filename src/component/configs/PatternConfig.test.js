@@ -12,13 +12,13 @@ jest.mock("./Pattern/PatternImage", () => ({ config }) => {
 });
 describe("PatternImage", () => {
   test("has PatternImage", () => {
-    render(<PatternConfig config={{ start: 1, end: 1 }} />);
+    render(<PatternConfig config={{ start: 1, end: 1, customPattern: [] }} />);
 
     const target = screen.getByTestId("mock-pattern-image");
     expect(target).toBeInTheDocument();
   });
   test("config is props.config", () => {
-    render(<PatternConfig config={{ start: 4, end: 7 }} />);
+    render(<PatternConfig config={{ start: 4, end: 7, customPattern: [] }} />);
 
     const start = screen.getByTestId("pattern-image-start");
     expect(start).toHaveTextContent(4);
@@ -29,25 +29,37 @@ describe("PatternImage", () => {
 
 describe("Start", () => {
   test("default value is config.start", () => {
-    render(<PatternConfig config={{ start: 11, end: 15 }} />);
+    render(
+      <PatternConfig config={{ start: 11, end: 15, customPattern: [] }} />
+    );
 
     const target = screen.getByTestId("pattern-config-start");
     expect(target).toHaveValue(11);
   });
   test("then call update and update value", () => {
     const mockFn = jest.fn();
-    render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+    render(
+      <PatternConfig
+        config={{ start: 1, end: 25, customPattern: [] }}
+        update={mockFn}
+      />
+    );
 
     const start = screen.getByTestId("pattern-config-start");
     fireEvent.change(start, { target: { value: 7 } });
 
-    expect(mockFn).toBeCalledWith({ start: 7, end: 25 });
+    expect(mockFn).toBeCalledWith({ start: 7, end: 25, customPattern: [] });
     expect(start).toHaveValue(7);
   });
   describe("Validation", () => {
     test("start is Not Number, then not call handlar, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: "" } });
@@ -57,7 +69,12 @@ describe("Start", () => {
     });
     test("start is 0, then not call update, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 0 } });
@@ -67,7 +84,12 @@ describe("Start", () => {
     });
     test("start is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 3, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 3, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 1 } });
@@ -77,7 +99,12 @@ describe("Start", () => {
     });
     test("start is 25, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 25 } });
@@ -87,7 +114,12 @@ describe("Start", () => {
     });
     test("start is 26, then not call update, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 26 } });
@@ -97,7 +129,12 @@ describe("Start", () => {
     });
     test("start is 2, end is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 1 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 1, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const start = screen.getByTestId("pattern-config-start");
       fireEvent.change(start, { target: { value: 2 } });
@@ -110,25 +147,39 @@ describe("Start", () => {
 
 describe("End", () => {
   test("default value is config.end", () => {
-    render(<PatternConfig config={{ start: 11, end: 15 }} />);
+    render(
+      <PatternConfig config={{ start: 11, end: 15, customPattern: [] }} />
+    );
 
     const target = screen.getByTestId("pattern-config-end");
     expect(target).toHaveValue(15);
   });
   test("then call update and update value", () => {
     const mockFn = jest.fn();
-    render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+    render(
+      <PatternConfig
+        config={{ start: 1, end: 25, customPattern: [] }}
+        update={mockFn}
+      />
+    );
 
     const end = screen.getByTestId("pattern-config-end");
     fireEvent.change(end, { target: { value: 14 } });
 
-    expect(mockFn).toBeCalledWith({ start: 1, end: 14 });
+    expect(mockFn).toBeCalledWith(
+      expect.objectContaining({ start: 1, end: 14 })
+    );
     expect(end).toHaveValue(14);
   });
   describe("Validation", () => {
     test("end is Not Number, then not call handlar, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: "" } });
@@ -138,7 +189,12 @@ describe("End", () => {
     });
     test("end is 0, then not call update, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 0 } });
@@ -148,7 +204,12 @@ describe("End", () => {
     });
     test("end is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 1 } });
@@ -158,7 +219,12 @@ describe("End", () => {
     });
     test("end is 25, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 20 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 20, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 25 } });
@@ -168,7 +234,12 @@ describe("End", () => {
     });
     test("end is 26, then not call update, but update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 1, end: 25 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 26 } });
@@ -178,7 +249,12 @@ describe("End", () => {
     });
     test("start is 2, end is 1, then call update, and update value", () => {
       const mockFn = jest.fn();
-      render(<PatternConfig config={{ start: 2, end: 2 }} update={mockFn} />);
+      render(
+        <PatternConfig
+          config={{ start: 2, end: 2, customPattern: [] }}
+          update={mockFn}
+        />
+      );
 
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: 1 } });
@@ -194,31 +270,40 @@ describe("view Error", () => {
   describe("Header", () => {
     test("start is Error, then show icon", () => {
       render(
-        <PatternConfig config={{ start: 1, end: 25 }} update={update} />
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={update}
+        />
       );
 
       fireEvent.change(screen.getByTestId("pattern-config-start"), {
         target: { value: "" },
       });
 
-      const target = screen.getByTestId("pattern-config-icon");
+      const target = screen.getByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
     test("end is Error, then show icon", () => {
       render(
-        <PatternConfig config={{ start: 1, end: 25 }} update={update} />
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={update}
+        />
       );
 
       fireEvent.change(screen.getByTestId("pattern-config-end"), {
         target: { value: "" },
       });
 
-      const target = screen.getByTestId("pattern-config-icon");
+      const target = screen.getByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
     test("no Error, then show icon", () => {
       render(
-        <PatternConfig config={{ start: 1, end: 25 }} update={update} />
+        <PatternConfig
+          config={{ start: 1, end: 25, customPattern: [] }}
+          update={update}
+        />
       );
 
       fireEvent.change(screen.getByTestId("pattern-config-start"), {
@@ -234,12 +319,15 @@ describe("view Error", () => {
         target: { value: "6" },
       });
 
-      const target = screen.queryByTestId("pattern-config-icon");
+      const target = screen.queryByTestId("config-header-icon-error");
       expect(target).toBeNull();
     });
     test("icon click, then values reset to config", () => {
       render(
-        <PatternConfig config={{ start: 5, end: 12 }} update={update} />
+        <PatternConfig
+          config={{ start: 5, end: 12, customPattern: [] }}
+          update={update}
+        />
       );
 
       const start = screen.getByTestId("pattern-config-start");
@@ -247,7 +335,7 @@ describe("view Error", () => {
       const end = screen.getByTestId("pattern-config-end");
       fireEvent.change(end, { target: { value: "" } });
 
-      const icon = screen.queryByTestId("pattern-config-icon");
+      const icon = screen.queryByTestId("config-header-icon-error");
       fireEvent.click(icon);
 
       expect(start).toHaveValue(5);
@@ -255,23 +343,33 @@ describe("view Error", () => {
     });
   });
   test("start is Error, then has error style", () => {
-    render(<PatternConfig config={{ start: 1, end: 25 }} update={update} />);
+    render(
+      <PatternConfig
+        config={{ start: 1, end: 25, customPattern: [] }}
+        update={update}
+      />
+    );
 
     const target = screen.getByTestId("pattern-config-start");
     fireEvent.change(target, { target: { value: "" } });
 
     expect(target).toHaveStyle({
-      color: "#b71c1c"
+      color: "#b71c1c",
     });
   });
   test("end is Error, then has error style", () => {
-    render(<PatternConfig config={{ start: 1, end: 25 }} update={update} />);
+    render(
+      <PatternConfig
+        config={{ start: 1, end: 25, customPattern: [] }}
+        update={update}
+      />
+    );
 
     const target = screen.getByTestId("pattern-config-end");
     fireEvent.change(target, { target: { value: "" } });
 
     expect(target).toHaveStyle({
-      color: "#b71c1c"
+      color: "#b71c1c",
     });
   });
 });

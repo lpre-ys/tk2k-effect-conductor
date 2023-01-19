@@ -22,10 +22,7 @@ export function FromToConfig({ type, name, config, update }) {
     setFrom(config.from);
     setTo(config.to);
   };
-  const { isValidOption, headerProps, optionProps } = useConfigOption(
-    hasOption,
-    reset
-  );
+  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
 
   const validate = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -53,7 +50,7 @@ export function FromToConfig({ type, name, config, update }) {
     <div>
       <Header
         name={name}
-        isValid={validateConfig({ from, to }) && isValidOption}
+        isValid={validateConfig({ from, to })}
         {...headerProps}
       />
       <div css={styles.wrapper}>
