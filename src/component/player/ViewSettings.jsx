@@ -4,6 +4,7 @@ import { css } from "@emotion/react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
+import ColorPicker from "../form/ColorPicker";
 
 export default function ViewSettings({
   background,
@@ -17,17 +18,11 @@ export default function ViewSettings({
     <div css={styles.container}>
       <div css={styles.wrapper}>
         <div css={styles.bgWrapper}>
-          <label>
-            {t("player.bgColor")}:&nbsp;
-            <input
-              type="text"
-              css={styles.input}
-              value={background}
-              onChange={({ target }) => {
-                setBgColor(target.value);
-              }}
-            />
-          </label>
+          <ColorPicker
+            label={t("player.bgColor")}
+            color={background}
+            setColor={setBgColor}
+          />
           <BgImage setBgImage={setBgImage} />
           <label css={styles.label}>
             {t("player.border")}:&nbsp;

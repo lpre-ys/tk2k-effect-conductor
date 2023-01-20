@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { changeBgColor } from "../../slice/materialSlice";
 import TrImage from "../../tr2x.png";
+import ColorPicker from "../form/ColorPicker";
 import TrColorView from "./TrColorView";
 
 export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
@@ -39,18 +40,11 @@ export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
 
   return (
     <>
-      <label>
-        {t("material.bgColor")}:&nbsp;
-        <input
-          type="text"
-          css={styles.input}
-          value={bgColor}
-          onChange={({ target }) => {
-            changeBgColor(target.value);
-          }}
-          data-testid="patterns-input-bgcolor"
-        />
-      </label>
+      <ColorPicker
+        label={t("material.bgColor")}
+        color={bgColor}
+        setColor={changeBgColor}
+      />
       <TrColorView key={imageKey} />
       <ul css={styles.ul}>{patterns}</ul>
     </>
