@@ -14,7 +14,6 @@ export default function Background({ color, image }) {
         height={240}
         fillPatternImage={trImage}
       ></Rect>
-      <Rect x={0} y={0} width={320} height={240} fill={color}></Rect>
       {!!image && bgImage && (
         <Image
           x={(320 - bgImage.naturalWidth) / 2}
@@ -24,6 +23,7 @@ export default function Background({ color, image }) {
           image={bgImage}
         />
       )}
+      <Rect x={0} y={0} width={320} height={240} fill={color}></Rect>
     </>
   );
 }

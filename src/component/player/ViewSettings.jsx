@@ -24,6 +24,15 @@ export default function ViewSettings({
             setColor={setBgColor}
           />
           <BgImage setBgImage={setBgImage} />
+          <button
+            type="button"
+            onClick={() => {
+              setBgImage(null);
+              setBgColor("transparent");
+            }}
+          >
+            {t("player.clear")}
+          </button>
           <label css={styles.label}>
             {t("player.border")}:&nbsp;
             <input
@@ -67,22 +76,12 @@ function BgImage({ setBgImage }) {
   });
 
   return (
-    <>
-      <div css={styles.loader}>
-        <div {...getRootProps()}>
-          <input data-testid="drop-player-bg-image" {...getInputProps()} />
-          {t("player.bgImage")}
-        </div>
+    <div css={styles.loader}>
+      <div {...getRootProps()}>
+        <input data-testid="drop-player-bg-image" {...getInputProps()} />
+        {t("player.bgImage")}
       </div>
-      <button
-        type="button"
-        onClick={() => {
-          setBgImage(null);
-        }}
-      >
-        {t("player.clear")}
-      </button>
-    </>
+    </div>
   );
 }
 

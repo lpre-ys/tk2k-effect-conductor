@@ -9,7 +9,7 @@
     "header": "Material Data",
     "preview": "Preview",
     "pattern": "Pattern",
-    "bgColor": "Background",
+    "bgColor": "Bg color",
     "trColor": "Transparent"
   },
   "export": {
@@ -62,8 +62,8 @@
     },
     "x": "X",
     "y": "Y",
-    "scale": "Zoom",
-    "opacity": "Transparency",
+    "scale": "Scale",
+    "opacity": "Opacity",
     "cycle": "Cycle",
     "roundTrip": "Round trip"
   },
