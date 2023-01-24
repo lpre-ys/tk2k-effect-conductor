@@ -3,6 +3,15 @@ import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../util/renderWithProviders";
 import { Patterns } from "./Patterns";
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 test("image is div.backgroundImage", () => {
   renderWithProviders(<Patterns max={1} image="testbg.png" />);
 
@@ -31,13 +40,13 @@ describe("bgColor, changeBgColor", () => {
   test("change BGColor then call changeBgColor", () => {
     const mockHandler = jest.fn();
     renderWithProviders(
-      <Patterns max={1} image="test.png" changeBgColor={mockHandler} />
+      <Patterns max={1} image="test.png" bgColor="transparent" changeBgColor={mockHandler} />
     );
-    const inputElement = screen.getByTestId("patterns-input-bgcolor");
+    const picker = screen.getByTestId("colorpicker-color");
 
-    userEvent.type(inputElement, "red");
+    userEvent.click(picker);
 
-    expect(mockHandler).toBeCalledWith("red");
+    expect(mockHandler).toBeCalledWith("#FFFFFF");
   });
 
   test("bgColor is transparent, then bg style is url(tr.png)", () => {
@@ -54,10 +63,10 @@ describe("bgColor, changeBgColor", () => {
     expect(target).toHaveStyle(`background: gray`);
   });
 
-  test("bgColor input value is bgColor", () => {
-    renderWithProviders(<Patterns max={1} bgColor="test" />);
-    const target = screen.getByTestId("patterns-input-bgcolor");
-    expect(target).toHaveValue("test");
+  test("ColorPicker color is bgColor", () => {
+    renderWithProviders(<Patterns max={1} bgColor="darkgray" />);
+    const target = screen.getByTestId("colorpicker-color");
+    expect(target).toHaveStyle({ backgroundColor: "darkgray" });
   });
 });
 

@@ -3,6 +3,15 @@ import React from "react";
 import App from "./App";
 import { renderWithProviders } from "./util/renderWithProviders";
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 // * Material *
 test("has Material component", () => {
   renderWithProviders(<App />);

@@ -2,41 +2,50 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ViewSettings from "./ViewSettings";
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 const handler = jest.fn();
 
 describe("bg color", () => {
   test("INIT then value is props.background", () => {
     render(
       <ViewSettings
-        background="testbgcolor"
+        background="white"
         setBgColor={handler}
         setBgImage={handler}
         setIsShowCelBorder={handler}
       />
     );
 
-    const target = screen.getByLabelText("背景色:");
+    const target = screen.getByTestId("colorpicker-color");
 
     expect(target).toBeInTheDocument();
-    expect(target).toHaveValue("testbgcolor");
+    expect(target).toHaveStyle({ backgroundColor: "white" });
   });
 
   test("change, then call setBgColor with value", () => {
     const mockFn = jest.fn();
     render(
       <ViewSettings
-        background="testbgcolor"
+        background="transparent"
         setBgColor={mockFn}
         setBgImage={handler}
         setIsShowCelBorder={handler}
       />
     );
 
-    const target = screen.getByLabelText("背景色:");
+    const target = screen.getByTestId("colorpicker-color");
 
-    fireEvent.change(target, { target: { value: "testchange" } });
+    fireEvent.click(target);
 
-    expect(mockFn).toBeCalledWith("testchange");
+    expect(mockFn).toBeCalledWith("#FFFFFF");
   });
 });
 

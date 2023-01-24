@@ -3,6 +3,15 @@ import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../util/renderWithProviders";
 import { Material } from "./Material";
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 describe("INIT state", () => {
   test("then no msg", () => {
     renderWithProviders(<Material />);
@@ -65,13 +74,13 @@ describe("Patterns", () => {
   test("trImg is loaded, then has Patterns component", () => {
     renderWithProviders(<Material trImage="test" />);
 
-    const target = screen.getByTestId("patterns-input-bgcolor");
+    const target = screen.getByTestId("patterns-ul");
     expect(target).toBeInTheDocument();
   });
   test("trImg is not loaded, then not has Patterns component", () => {
     renderWithProviders(<Material />);
 
-    const target = screen.queryByTestId("patterns-input-bgcolor");
+    const target = screen.queryByTestId("patterns-ul");
     expect(target).toBeNull();
   });
 });

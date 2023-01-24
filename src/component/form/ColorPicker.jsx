@@ -16,8 +16,10 @@ export default function ColorPicker({ label, color, setColor }) {
 
   return (
     <>
-      <div css={styles.bgColorContainer}>
-        <span ref={labelRef}>{label}:&nbsp;</span>
+      <div css={styles.bgColorContainer} data-testid="colorpicker-component">
+        <span ref={labelRef} data-testid="colorpicker-label">
+          {label}:&nbsp;
+        </span>
         <div css={styles.bgColorBase}>
           <div
             css={styles.bgColor}
@@ -28,6 +30,7 @@ export default function ColorPicker({ label, color, setColor }) {
               }
               setShowPalette(true);
             }}
+            data-testid="colorpicker-color"
           ></div>
         </div>
         <div

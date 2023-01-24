@@ -29,6 +29,15 @@ jest.mock("react-konva", () => {
   };
 });
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 jest.mock("use-image", () => {
   return {
     __esModule: true.valueOf,
@@ -44,14 +53,34 @@ jest.mock("use-image", () => {
 });
 
 describe("ViewSettings", () => {
-  test("change bgColor, then update bgColor", () => {
-    const mockFn = jest.fn();
-    renderWithProviders(<Player setBgColor={mockFn} celList={[]} />);
+  describe("bgColor", () => {
+    test("has ColorPicker component", () => {
+      renderWithProviders(<Player celList={[]} />);
+      const target = screen.getByTestId("colorpicker-component");
 
-    const target = screen.getByLabelText("背景色:");
+      expect(target).toBeInTheDocument();
+    });
+    test("ColorPicker.label is 背景色", () => {
+      renderWithProviders(<Player celList={[]} />);
+      const target = screen.getByText(/背景色/);
 
-    fireEvent.change(target, { target: { value: "red" } });
-    expect(mockFn).lastCalledWith('red');
+      expect(target).toBeInTheDocument();
+    });
+    test("ColorPicker.color is bgColor", () => {
+      renderWithProviders(<Player celList={[]} bgColor="green" />);
+      const target = screen.getByTestId("colorpicker-color")
+      expect(target).toHaveStyle({ backgroundColor: "green" })
+    });
+    test("ColorPicker.setColor is setBgColor", () => {
+      const mockFn = jest.fn();
+      renderWithProviders(
+        <Player celList={[]} bgColor="transparent" setBgColor={mockFn} />
+      );
+
+      userEvent.click(screen.getByTestId("colorpicker-color"));
+
+      expect(mockFn).toBeCalledWith("#FFFFFF");
+    });
   });
   test("INIT isShowCelBorder is false", () => {
     renderWithProviders(<Player celList={[]} />);

@@ -46,7 +46,9 @@ export function Patterns({ max, image, imageKey, bgColor, changeBgColor }) {
         setColor={changeBgColor}
       />
       <TrColorView key={imageKey} />
-      <ul css={styles.ul}>{patterns}</ul>
+      <ul css={styles.ul} data-testid="patterns-ul">
+        {patterns}
+      </ul>
     </>
   );
 }
