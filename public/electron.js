@@ -52,7 +52,7 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile("build/index.html");
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // 外部URL表示関連
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
