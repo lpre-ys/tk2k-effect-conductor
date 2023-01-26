@@ -20,6 +20,13 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    if (!!window.initArgs) {
+      const lang = window.initArgs.lang();
+      if (lang && this.props.i18n.language !== lang) {
+        this.props.i18n.changeLanguage(lang);
+        this.props.resetAll();
+      }
+    }
   }
   componentDidMount() {
     if (!!window.appMenu) {

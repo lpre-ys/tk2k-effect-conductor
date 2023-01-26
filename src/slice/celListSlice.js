@@ -9,15 +9,15 @@ const initialState = {
   list: [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))],
 };
 
-
 export const celListSlice = createSlice({
   name: "celList",
   initialState,
   reducers: {
     resetCelList: (state) => {
       // keyの更新が必要なため、個別に記載する
-      Object.assign(state, initialState);
+      state.celIndex = 0;
       state.drawKey = Date.now();
+      state.list = [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))];
     },
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
