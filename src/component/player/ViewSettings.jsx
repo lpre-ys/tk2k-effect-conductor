@@ -1,17 +1,21 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { setBgColor, setBgImage, setZoom } from "../../slice/playerSlice";
 import ColorPicker from "../form/ColorPicker";
 
-export default function ViewSettings({
-  background,
+export function ViewSettings({
+  bgColor,
   setBgColor,
   setBgImage,
   isShowCelBorder,
   setIsShowCelBorder,
+  zoom,
+  setZoom,
 }) {
   const { t } = useTranslation();
   return (
@@ -20,7 +24,7 @@ export default function ViewSettings({
         <div css={styles.bgWrapper}>
           <ColorPicker
             label={t("player.bgColor")}
-            color={background}
+            color={bgColor}
             setColor={setBgColor}
           />
           <BgImage setBgImage={setBgImage} />
@@ -45,14 +49,53 @@ export default function ViewSettings({
               }}
             />
           </label>
+          <label css={styles.label}>
+            {t("player.zoom")}:&nbsp;
+            <select
+              value={zoom}
+              onChange={({ target }) => {
+                setZoom(target.value);
+              }}
+            >
+              <option value={2} key={2}>
+                2x
+              </option>
+              <option value={1} key={1}>
+                1x
+              </option>
+            </select>
+          </label>
         </div>
       </div>
     </div>
   );
 }
 
+export default memo((props) => {
+  const bgColor = useSelector((state) => state.player.bgColor);
+  const zoom = useSelector((state) => state.player.zoom);
+
+  const dispatch = useDispatch();
+  const _props = {
+    setBgColor: (value) => {
+      dispatch(setBgColor(value));
+    },
+    setBgImage: (value) => {
+      dispatch(setBgImage(value));
+    },
+    setZoom: (value) => {
+      dispatch(setZoom(value));
+    },
+    bgColor,
+    zoom,
+    ...props,
+  };
+
+  return <ViewSettings {..._props} />;
+});
+
 function BgImage({ setBgImage }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -76,7 +119,10 @@ function BgImage({ setBgImage }) {
   });
 
   return (
-    <div css={styles.loader}>
+    <div
+      css={styles.loader}
+      style={{ width: `${i18n.language === "en" ? 200 : 250}px` }}
+    >
       <div {...getRootProps()}>
         <input data-testid="drop-player-bg-image" {...getInputProps()} />
         {t("player.bgImage")}

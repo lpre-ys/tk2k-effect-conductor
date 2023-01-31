@@ -6,8 +6,14 @@ import { Player } from "./Player";
 jest.mock("react-konva", () => {
   return {
     __esModule: true,
-    Stage: ({ children }) => {
-      return <div data-testid="mock-stage">{children}</div>;
+    Stage: ({ scaleX, scaleY, children }) => {
+      return (
+        <div data-testid="mock-stage">
+          {scaleX && <p>scaleX: {scaleX}</p>}
+          {scaleY && <p>scaleY: {scaleY}</p>}
+          {children}
+        </div>
+      );
     },
     Layer: ({ children }) => {
       return <div data-testid="mock-layer">{children}</div>;
@@ -53,35 +59,6 @@ jest.mock("use-image", () => {
 });
 
 describe("ViewSettings", () => {
-  describe("bgColor", () => {
-    test("has ColorPicker component", () => {
-      renderWithProviders(<Player celList={[]} />);
-      const target = screen.getByTestId("colorpicker-component");
-
-      expect(target).toBeInTheDocument();
-    });
-    test("ColorPicker.label is 背景色", () => {
-      renderWithProviders(<Player celList={[]} />);
-      const target = screen.getByText(/背景色/);
-
-      expect(target).toBeInTheDocument();
-    });
-    test("ColorPicker.color is bgColor", () => {
-      renderWithProviders(<Player celList={[]} bgColor="green" />);
-      const target = screen.getByTestId("colorpicker-color")
-      expect(target).toHaveStyle({ backgroundColor: "green" })
-    });
-    test("ColorPicker.setColor is setBgColor", () => {
-      const mockFn = jest.fn();
-      renderWithProviders(
-        <Player celList={[]} bgColor="transparent" setBgColor={mockFn} />
-      );
-
-      userEvent.click(screen.getByTestId("colorpicker-color"));
-
-      expect(mockFn).toBeCalledWith("#FFFFFF");
-    });
-  });
   test("INIT isShowCelBorder is false", () => {
     renderWithProviders(<Player celList={[]} />);
 
@@ -247,6 +224,21 @@ describe("Info", () => {
     userEvent.click(target);
 
     expect(screen.getByText("INFO")).toBeInTheDocument();
+  });
+});
+
+describe("zoom", () => {
+  test("Stage.scaleX is props.zoom", () => {
+    renderWithProviders(<Player celList={[]} zoom={4} />);
+
+    const target = screen.getByText("scaleX: 4");
+    expect(target).toBeInTheDocument();
+  });
+  test("Stage.scaleY is props.zoom", () => {
+    renderWithProviders(<Player celList={[]} zoom={3} />);
+
+    const target = screen.getByText("scaleY: 3");
+    expect(target).toBeInTheDocument();
   });
 });
 

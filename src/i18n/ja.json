@@ -10,7 +10,11 @@
     "preview": "プレビュー",
     "pattern": "パターン",
     "bgColor": "背景色",
-    "trColor": "透過色"
+    "trColor": "透過色",
+    "error": {
+      "width": "画像の横幅が、規格とは異なっています。",
+      "height": "画像の縦幅が、規格とは異なっています。"
+    }
   },
   "export": {
     "name": "名前",
@@ -40,7 +44,8 @@
     "bgImage": "背景画像設定",
     "clear": "クリア",
     "border": "枠表示",
-    "maxFrame": "総フレーム数"
+    "maxFrame": "総フレーム数",
+    "zoom": "ズーム"
   },
   "configs": {
     "timing": {

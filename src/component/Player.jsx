@@ -2,10 +2,10 @@
 
 import { css } from "@emotion/react";
 import { memo, useEffect, useState } from "react";
-import { Layer, Line, Stage } from "react-konva";
+import { Layer, Line, Stage, Rect } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { loadOriginalImage } from "../slice/materialSlice";
-import { setBgColor, setBgImage } from "../slice/playerSlice";
+import { setBgImage } from "../slice/playerSlice";
 import makeTransparentImage from "../util/makeTransparentImage";
 import Background from "./player/Background";
 import Cel from "./player/Cel";
@@ -13,14 +13,7 @@ import Controller from "./player/Controller";
 import Info from "./player/Info";
 import ViewSettings from "./player/ViewSettings";
 
-export const Player = ({
-  celList,
-  bgImage,
-  bgColor,
-  setBgImage,
-  setBgColor,
-  loadMaterialImage,
-}) => {
+export const Player = ({ celList, zoom, setBgImage, loadMaterialImage }) => {
   const [isShowCelBorder, setIsShowCelBorder] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -59,17 +52,14 @@ export const Player = ({
   return (
     <>
       <ViewSettings
-        background={bgColor}
         isShowCelBorder={isShowCelBorder}
-        setBgColor={setBgColor}
-        setBgImage={setBgImage}
         setIsShowCelBorder={setIsShowCelBorder}
       />
       <div css={styles.canvasArea} data-testid="effectCanvas">
-        <Stage width={320 * 2} height={240 * 2} scaleX={2} scaleY={2}>
+        <Stage width={320 * 2} height={240 * 2} scaleX={zoom} scaleY={zoom}>
           <Layer imageSmoothingEnabled={false}>
-            <Background color={bgColor} image={bgImage} />
-            <Grid />
+            <Background />
+            <Grid zoom={zoom} />
             {[...celList].reverse().map((cel, id) => {
               return (
                 <Cel
@@ -78,6 +68,7 @@ export const Player = ({
                   config={cel}
                   isShowCelBorder={isShowCelBorder}
                   setMsg={setMsg}
+                  zoom={zoom}
                 />
               );
             })}
@@ -92,8 +83,7 @@ export const Player = ({
 
 export default memo((props) => {
   const celList = useSelector((state) => state.celList.list);
-  const bgImage = useSelector((state) => state.player.bgImage);
-  const bgColor = useSelector((state) => state.player.bgColor);
+  const zoom = useSelector((state) => state.player.zoom);
   const dispatch = useDispatch();
   const _props = {
     loadMaterialImage: (value) => {
@@ -102,31 +92,37 @@ export default memo((props) => {
     setBgImage: (value) => {
       dispatch(setBgImage(value));
     },
-    setBgColor: (value) => {
-      dispatch(setBgColor(value));
-    },
     celList,
-    bgImage,
-    bgColor,
+    zoom,
     ...props,
   };
 
   return <Player {..._props} />;
 });
 
-function Grid() {
+function Grid({ zoom }) {
+  const width = 320 * (2 / zoom);
+  const height = 240 * (2 / zoom);
   return (
     <>
       <Line
-        points={[0, 240 / 2 + 0.5, 320, 240 / 2 + 0.5]}
+        points={[0, height / 2 + 0.5, width, height / 2 + 0.5]}
         stroke="black"
         strokeWidth={1}
       ></Line>
       <Line
-        points={[320 / 2 + 0.5, 0, 320 / 2 + 0.5, 240]}
+        points={[width / 2 + 0.5, 0, width / 2 + 0.5, height]}
         stroke="black"
         strokeWidth={1}
       ></Line>
+      <Rect
+        x={320 / 2 + 0.5}
+        y={240 / 2 + 0.5}
+        width={320}
+        height={240}
+        stroke="black"
+        strokeWidth={1}
+      ></Rect>
     </>
   );
 }

@@ -10,7 +10,11 @@
     "preview": "Preview",
     "pattern": "Pattern",
     "bgColor": "Bg color",
-    "trColor": "Transparent"
+    "trColor": "Transparent",
+    "error": {
+      "width": "Width is wrong.",
+      "height": "Height is wrong."
+    }
   },
   "export": {
     "name": "Name",
@@ -40,7 +44,8 @@
     "bgImage": "Load bg image",
     "clear": "Clear",
     "border": "Show border",
-    "maxFrame": "Max frame"
+    "maxFrame": "Max frame",
+    "zoom": "Zoom"
   },
   "configs": {
     "timing": {
