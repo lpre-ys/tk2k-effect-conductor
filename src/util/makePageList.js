@@ -1,20 +1,25 @@
-export default function makePageList({ start, end, isRoundTrip }) {
+export default function makePageList({ start, end, isRoundTrip, isCustom, customPattern }) {
   const pageList = [];
-  if (start < end) {
-    for (let page = start; page <= end; page++) {
-      pageList.push(page);
+  if (isCustom) {
+    pageList.push(...customPattern);
+    if (pageList.length < 1) {
+      pageList.push(1);
     }
   } else {
-    for (let page = start; page >= end; page--) {
-      pageList.push(page);
+    if (start < end) {
+      for (let page = start; page <= end; page++) {
+        pageList.push(page);
+      }
+    } else {
+      for (let page = start; page >= end; page--) {
+        pageList.push(page);
+      }
     }
   }
 
   // 反転時追加でページリストに入れる
   if (isRoundTrip) {
-    for (let i = pageList.length - 2; i > 0; i--) {
-      pageList.push(pageList[i]);
-    }
+    pageList.push(...pageList.slice(0, -1).reverse());
   }
 
   return pageList;

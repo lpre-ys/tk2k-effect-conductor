@@ -6,8 +6,14 @@ import { Player } from "./Player";
 jest.mock("react-konva", () => {
   return {
     __esModule: true,
-    Stage: ({ children }) => {
-      return <div data-testid="mock-stage">{children}</div>;
+    Stage: ({ scaleX, scaleY, children }) => {
+      return (
+        <div data-testid="mock-stage">
+          {scaleX && <p>scaleX: {scaleX}</p>}
+          {scaleY && <p>scaleY: {scaleY}</p>}
+          {children}
+        </div>
+      );
     },
     Layer: ({ children }) => {
       return <div data-testid="mock-layer">{children}</div>;
@@ -29,6 +35,15 @@ jest.mock("react-konva", () => {
   };
 });
 
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
+
 jest.mock("use-image", () => {
   return {
     __esModule: true.valueOf,
@@ -44,15 +59,6 @@ jest.mock("use-image", () => {
 });
 
 describe("ViewSettings", () => {
-  test("change bgColor, then update bgColor", () => {
-    const mockFn = jest.fn();
-    renderWithProviders(<Player setBgColor={mockFn} celList={[]} />);
-
-    const target = screen.getByLabelText("背景色:");
-
-    fireEvent.change(target, { target: { value: "red" } });
-    expect(mockFn).lastCalledWith('red');
-  });
   test("INIT isShowCelBorder is false", () => {
     renderWithProviders(<Player celList={[]} />);
 
@@ -218,6 +224,21 @@ describe("Info", () => {
     userEvent.click(target);
 
     expect(screen.getByText("INFO")).toBeInTheDocument();
+  });
+});
+
+describe("zoom", () => {
+  test("Stage.scaleX is props.zoom", () => {
+    renderWithProviders(<Player celList={[]} zoom={4} />);
+
+    const target = screen.getByText("scaleX: 4");
+    expect(target).toBeInTheDocument();
+  });
+  test("Stage.scaleY is props.zoom", () => {
+    renderWithProviders(<Player celList={[]} zoom={3} />);
+
+    const target = screen.getByText("scaleY: 3");
+    expect(target).toBeInTheDocument();
   });
 });
 

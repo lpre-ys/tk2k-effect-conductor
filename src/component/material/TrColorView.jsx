@@ -3,12 +3,14 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTrColor } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
 
 export function TrColorView({ image, trColor, changeTrColor }) {
   const [isShowTrInput, setIsShowTrInput] = useState(false);
+  const { t } = useTranslation();
   const [r, setR] = useState(trColor.r);
   const [g, setG] = useState(trColor.g);
   const [b, setB] = useState(trColor.b);
@@ -60,7 +62,7 @@ export function TrColorView({ image, trColor, changeTrColor }) {
         css={styles.trColorLabel}
         data-testid="trcv-label-wrapper"
       >
-        透過色:
+        {t("material.trColor")}:
       </span>
       <span
         style={{ color: `rgb(${trColor.r}, ${trColor.g}, ${trColor.b})` }}

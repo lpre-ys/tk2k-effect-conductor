@@ -9,67 +9,44 @@ const {
 const path = require("path");
 const fs = require("fs");
 const { tk2k, getEmptyData, write, read, parser } = require("tk2k-clipdata");
+const i18n = require("../electron/configs/i18next.config");
+const menuTemplate = require("../electron/menuTemplate");
+const ElectronStore = require("electron-store");
 
+const store = new ElectronStore();
 let mainWindow;
-let prePath = false;
 
-const template = Menu.buildFromTemplate([
-  {
-    label: "ファイル",
-    submenu: [
-      {
-        label: "新規作成",
-        click: () => {
-          mainWindow.webContents.send("new", {});
+const openFile = () => {
+  dialog
+    .showOpenDialog(mainWindow, {
+      properties: ["openFile"],
+      defaultPath: store.get("savePath", app.getPath("documents")),
+      filters: [
+        {
+          name: "Effect Data",
+          extensions: ["json"],
         },
-      },
-      { type: "separator" },
-      {
-        label: "開く",
-        accelerator: "Ctrl+O",
-        click: () => {
-          dialog
-            .showOpenDialog(mainWindow, {
-              properties: ["openFile"],
-              defaultPath: prePath ? prePath : app.getPath("documents"),
-              filters: [
-                {
-                  name: "Effect Data",
-                  extensions: ["json"],
-                },
-              ],
-            })
-            .then(({ canceled, filePaths }) => {
-              if (canceled) {
-                return;
-              }
-              prePath = path.dirname(filePaths[0]);
-              loadFile(filePaths[0]);
-            });
-        },
-      },
-      {
-        label: "保存",
-        accelerator: "Ctrl+S",
-        click: () => {
-          mainWindow.webContents.send("save", {});
-        },
-      },
-      { type: "separator" },
-      { role: "close", label: "終了" },
-    ],
-  },
-]);
-
-Menu.setApplicationMenu(template);
-
+      ],
+    })
+    .then(({ canceled, filePaths }) => {
+      if (canceled) {
+        return;
+      }
+      store.set("savePath", path.dirname(filePaths[0]));
+      loadFile(filePaths[0]);
+    });
+};
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 1080,
     useContentSize: true,
+    title: "Effect Conductor",
     webPreferences: {
       preload: path.resolve(__dirname, "../electron/preload.js"),
+      additionalArguments: [
+        `storedLanguage=${store.get("lang", "ja")}`
+      ]
     },
     icon: path.resolve(__dirname, "../asset/icon.png"),
   });
@@ -90,10 +67,25 @@ app.whenReady().then(createWindow);
 
 app.once("window-all-closed", () => app.quit());
 
+// i18n関連
+const preLang = store.get("lang", "ja");
+i18n.on("loaded", (loaded) => {
+  i18n.changeLanguage(preLang);
+  i18n.off("loaded");
+});
+
+i18n.on("languageChanged", (lng) => {
+  const menu = Menu.buildFromTemplate(
+    menuTemplate(app, mainWindow, i18n, openFile)
+  );
+  Menu.setApplicationMenu(menu);
+  store.set("lang", lng);
+});
+
 ipcMain.handle("save-state-data", (event, data) => {
   dialog
     .showSaveDialog(mainWindow, {
-      defaultPath: prePath ? prePath : app.getPath("documents"),
+      defaultPath: store.get("savePath", app.getPath("documents")),
       properties: ["openFile"],
       filters: [{ name: "Effect Data", extensions: ["json"] }],
     })
@@ -101,7 +93,7 @@ ipcMain.handle("save-state-data", (event, data) => {
       if (canceled) {
         return;
       }
-      prePath = path.dirname(filePath);
+      store.set("savePath", path.dirname(filePath));
       // ファイル保存処理
       writeFile(filePath, JSON.stringify(data));
     });

@@ -1,20 +1,38 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { memo } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfigOption } from "../../hook/useConfigOption";
 import { updatePattern } from "../../slice/celListSlice";
+import { Header } from "./Header";
+import { Options } from "./Pattern/Options";
 import PatternImage from "./Pattern/PatternImage";
 
 export function PatternConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [end, setEnd] = useState(config.end);
   const [isRoundTrip, setIsRoundTrip] = useState(config.isRoundTrip);
+  const [align, setAlign] = useState(config.align);
+  const [isCustom, setIsCustom] = useState(config.isCustom);
+  const [customPattern, setCustomPattern] = useState(
+    config.customPattern.join(",")
+  );
+  const { t } = useTranslation();
+
+  const hasOption = () => {
+    return config.isCustom;
+  };
+  const reset = () => {
+    setStart(config.start);
+    setEnd(config.end);
+    setCustomPattern(config.customPattern.join(","));
+  };
+  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
@@ -23,6 +41,21 @@ export function PatternConfig({ config, update }) {
   const validateEnd = (start, end) => {
     const num = parseInt(end);
     return validate(num);
+  };
+  const validateCustomPattern = (pattern) => {
+    const joined = pattern.replace(/\n/g, ",");
+    if (!/^[0-9, ]*$/.test(joined)) {
+      return false;
+    }
+    return joined.split(",").every((elem) => {
+      const trimed = elem.trim();
+      if (trimed === "") {
+        // 空文字の場合スキップするので、ここではtrueにしておく
+        return true;
+      }
+      const num = parseInt(trimed);
+      return !Number.isNaN(num) && num > 0 && num < 26;
+    });
   };
 
   const validateConfig = useCallback(({ start, end }) => {
@@ -33,42 +66,90 @@ export function PatternConfig({ config, update }) {
     return (
       newConfig.start !== oldConfig.start ||
       newConfig.end !== oldConfig.end ||
-      newConfig.isRoundTrip !== oldConfig.isRoundTrip
+      newConfig.isRoundTrip !== oldConfig.isRoundTrip ||
+      newConfig.align !== oldConfig.align ||
+      newConfig.isCustom !== oldConfig.isCustom ||
+      JSON.stringify(newConfig.customPattern) !==
+        JSON.stringify(oldConfig.customPattern)
     );
   }
 
   useEffect(() => {
+    // バリデーションNGの場合、更新しない
+    if (!validateCustomPattern(customPattern)) {
+      return;
+    }
+    // customPattern をArrayに変換
+    const arrayCustomPattern = customPattern
+      .replace(/\n/g, ",")
+      .split(",")
+      .map((elem) => {
+        return parseInt(elem.trim());
+      })
+      .filter((elem) => {
+        return !Number.isNaN(elem);
+      });
+
     const newConfig = {
       start: parseInt(start),
       end: parseInt(end),
-      isRoundTrip: isRoundTrip,
+      isRoundTrip,
+      align,
+      isCustom,
+      customPattern: arrayCustomPattern,
     };
     if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  }, [start, end, isRoundTrip, update, validateConfig, config]);
+  }, [
+    start,
+    end,
+    isRoundTrip,
+    align,
+    update,
+    validateConfig,
+    config,
+    customPattern,
+    isCustom,
+  ]);
+
+  const alignList = {
+    loop: t("configs.pattern.loop"),
+    even: t("configs.pattern.even"),
+    start: t("configs.pattern.head"),
+    end: t("configs.pattern.last"),
+    center: t("configs.pattern.center"),
+  };
 
   return (
     <div>
-      <h2>
-        パターン
-        {!validateConfig({ start, end }) && (
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            css={styles.exIcon}
-            onClick={() => {
-              // RESET
-              setStart(config.start);
-              setEnd(config.end);
-            }}
-            data-testid="pattern-config-icon"
-          />
-        )}
-      </h2>
+      <Header
+        name={t("configs.pattern.label")}
+        isValid={
+          validateConfig({ start, end }) && validateCustomPattern(customPattern)
+        }
+        {...headerProps}
+      />
       <div css={styles.container}>
         <PatternImage config={config} />
         <div css={styles.wrapper}>
           <div>
+            <label css={[styles.label, styles.alignList]}>
+              <select
+                value={align}
+                onChange={({ target }) => {
+                  setAlign(target.value);
+                }}
+              >
+                {Object.keys(alignList).map((key) => {
+                  return (
+                    <option value={key} key={key}>
+                      {alignList[key]}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
             <label css={[styles.label, styles.checkbox]}>
               <input
                 name="round-trip"
@@ -80,12 +161,12 @@ export function PatternConfig({ config, update }) {
                   setIsRoundTrip(target.checked);
                 }}
               />
-              :&nbsp;往復
+              :&nbsp;{t("configs.roundTrip")}
             </label>
           </div>
           <div>
             <label css={styles.label}>
-              開始:&nbsp;
+              {t("configs.pattern.start")}:&nbsp;
               <input
                 type="number"
                 data-testid="pattern-config-start"
@@ -97,11 +178,12 @@ export function PatternConfig({ config, update }) {
                 onChange={({ target }) => {
                   setStart(target.value);
                 }}
+                disabled={isCustom}
               />
             </label>
             <br />
             <label css={styles.label}>
-              終了:&nbsp;
+              {t("configs.pattern.end")}:&nbsp;
               <input
                 type="number"
                 data-testid="pattern-config-end"
@@ -110,11 +192,19 @@ export function PatternConfig({ config, update }) {
                 onChange={({ target }) => {
                   setEnd(target.value);
                 }}
+                disabled={isCustom}
               />
             </label>
           </div>
         </div>
       </div>
+      <Options
+        isCustom={isCustom}
+        setIsCustom={setIsCustom}
+        customPattern={customPattern}
+        setCustomPattern={setCustomPattern}
+        {...optionProps}
+      />
     </div>
   );
 }
@@ -150,6 +240,9 @@ const styles = {
   `,
   number: css`
     width: 3em;
+    :disabled {
+      text-decoration-line: line-through;
+    }
   `,
   error: css`
     color: #b71c1c;
@@ -169,6 +262,9 @@ const styles = {
   `,
   checkbox: css`
     cursor: pointer;
+  `,
+  alignList: css`
+    margin-right: 1em;
   `,
 };
 

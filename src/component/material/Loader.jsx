@@ -3,12 +3,14 @@
 import { css } from "@emotion/react";
 import { memo } from "react";
 import { useDropzone } from "react-dropzone";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { setImage } from "../../slice/infoSlice";
 import { loadOriginalImage } from "../../slice/materialSlice";
 import makeTransparentImage from "../../util/makeTransparentImage";
 
 export function Loader({ setMsg, loadOriginalImage, setImageName }) {
+  const { t } = useTranslation();
   const loadImage = (dataUrl, name) => {
     makeTransparentImage(dataUrl)
       .then(({ transparent, maxPage, trColor }) => {
@@ -18,10 +20,10 @@ export function Loader({ setMsg, loadOriginalImage, setImageName }) {
       })
       .catch((error) => {
         if (error.message === "width") {
-          setMsg("画像の横幅が、規格とは異なっています。");
+          setMsg(t("material.error.width"));
         }
         if (error.message === "height") {
-          setMsg("画像の縦幅が、規格とは異なっています。");
+          setMsg(t("material.error.height"));
         }
       });
   };

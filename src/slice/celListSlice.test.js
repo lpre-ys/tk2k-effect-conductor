@@ -14,6 +14,9 @@ test("return Initial state", () => {
 });
 
 describe("loadCelList", () => {
+  test("change check", () => {
+    // TODO
+  });
   test("Ver1.0.2 add parameter", () => {
     const data = {
       celIndex: 0,
@@ -24,14 +27,14 @@ describe("loadCelList", () => {
       { frame: {} },
       { name: "test", frame: { isHideLast: true } },
       { frame: { isLoopBack: true } },
-      { name: "test2", frame: { isLoopBack: true } }
+      { name: "", frame: { isLoopBack: true } }
     );
     const state = reducer(undefined, loadCelList(data));
     expect(state.list).toHaveLength(4);
     expect(state.list[0].name).toBe("セル1");
     expect(state.list[1].name).toBe("test");
     expect(state.list[2].name).toBe("セル3");
-    expect(state.list[3].name).toBe("test2");
+    expect(state.list[3].name).toBe("");
     expect(state.list[0].frame).toMatchObject({ isLoopBack: false });
     expect(state.list[1].frame).toMatchObject({
       isLoopBack: false,
@@ -39,6 +42,54 @@ describe("loadCelList", () => {
     });
     expect(state.list[2].frame).toMatchObject({ isLoopBack: true });
     expect(state.list[3].frame).toMatchObject({ isLoopBack: true });
+  });
+  test("Ver1.1.0 add parameter", () => {
+    const data = {
+      celIndex: 0,
+      drawKey: Date.now(),
+      list: [],
+    };
+    data.list.push(
+      {
+        pattern: {
+          start: 3,
+          end: 5,
+          isRoundTrip: true,
+          align: "center",
+          customPattern: [2, 2, 4],
+          isCustom: true,
+        },
+      },
+      {
+        pattern: {
+          start: 4,
+          end: 6,
+          isRoundTrip: false,
+        },
+      }
+    );
+    const state = reducer(undefined, loadCelList(data));
+    expect(state.list).toHaveLength(2);
+    expect(state.list[0]).toMatchObject({
+      pattern: {
+        start: 3,
+        end: 5,
+        isRoundTrip: true,
+        align: "center",
+        customPattern: [2, 2, 4],
+        isCustom: true,
+      },
+    });
+    expect(state.list[1]).toMatchObject({
+      pattern: {
+        start: 4,
+        end: 6,
+        isRoundTrip: false,
+      },
+    });
+    expect(state.list[1].pattern.align).toBe('loop');
+    expect(state.list[1].pattern.customPattern).toEqual([]);
+    expect(state.list[1].pattern.isCustom).toBe(false);
   });
 });
 describe("setCelName", () => {

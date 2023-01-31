@@ -8,14 +8,16 @@ import MaterialImage from "./material/MaterialImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 export function Material({ originalImage, trImage }) {
   const [isShowImage, setIsShowImage] = useState(false);
   const [msg, setMsg] = useState("");
+  const { t } = useTranslation();
 
   return (
     <div className="material" css={styles.component}>
-      <h1 css={styles.header}>素材データ</h1>
+      <h1 css={styles.header}>{t("material.header")}</h1>
       <section css={styles.loader} className="loader">
         <Loader setMsg={setMsg} />
         {originalImage && (
@@ -29,7 +31,7 @@ export function Material({ originalImage, trImage }) {
               data-testid="material-toggle-is-show-image"
             >
               <FontAwesomeIcon icon={faImage} css={styles.icon} />
-              プレビュー
+              {t("material.preview")}
             </button>
             <MaterialImage isShow={isShowImage}></MaterialImage>
           </>
@@ -43,7 +45,7 @@ export function Material({ originalImage, trImage }) {
       {trImage && (
         <>
           <section className="patterns">
-            <h2>パターン</h2>
+            <h2>{t("material.pattern")}</h2>
             <Patterns />
           </section>
         </>

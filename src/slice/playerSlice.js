@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   bgImage: null,
   bgColor: "transparent",
+  zoom: 2
 }
 export const playerSlice = createSlice({
   name: "player",
@@ -17,6 +18,9 @@ export const playerSlice = createSlice({
     },
     setBgColor: (state, action) => {
       state.bgColor = action.payload;
+    },
+    setZoom: (state, action) => {
+      state.zoom = action.payload;
     }
   }
 })
@@ -25,7 +29,8 @@ export const {
   resetPlayer,
   loadPlayer,
   setBgImage,
-  setBgColor
+  setBgColor,
+  setZoom
 } = playerSlice.actions;
 
 export default playerSlice.reducer;

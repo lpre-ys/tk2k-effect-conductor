@@ -1,42 +1,87 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import ViewSettings from "./ViewSettings";
+import { ViewSettings } from "./ViewSettings";
+
+jest.mock("react-color", () => {
+  return {
+    __esModule: true,
+    SketchPicker: () => {
+      return <div data-testid="mock-sketch-picker"></div>;
+    },
+  };
+});
 
 const handler = jest.fn();
 
 describe("bg color", () => {
-  test("INIT then value is props.background", () => {
+  test("INIT then value is props.bgColor", () => {
     render(
       <ViewSettings
-        background="testbgcolor"
+        bgColor="white"
         setBgColor={handler}
         setBgImage={handler}
         setIsShowCelBorder={handler}
       />
     );
 
-    const target = screen.getByLabelText("背景色:");
+    const target = screen.getByTestId("colorpicker-color");
 
     expect(target).toBeInTheDocument();
-    expect(target).toHaveValue("testbgcolor");
+    expect(target).toHaveStyle({ backgroundColor: "white" });
   });
 
-  test("change, then call setBgColor with value", () => {
+  test("has ColorPicker component", () => {
+    render(
+      <ViewSettings
+        bgColor="white"
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+      />
+    );
+    const target = screen.getByTestId("colorpicker-component");
+
+    expect(target).toBeInTheDocument();
+  });
+  test("ColorPicker.label is 背景色", () => {
+    render(
+      <ViewSettings
+        bgColor="white"
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+      />
+    );
+    const target = screen.getByText(/背景色/);
+
+    expect(target).toBeInTheDocument();
+  });
+  test("ColorPicker.color is bgColor", () => {
+    render(
+      <ViewSettings
+        bgColor="green"
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+      />
+    );
+    const target = screen.getByTestId("colorpicker-color");
+    expect(target).toHaveStyle({ backgroundColor: "green" });
+  });
+  test("ColorPicker.setColor is setBgColor", () => {
     const mockFn = jest.fn();
     render(
       <ViewSettings
-        background="testbgcolor"
+        bgColor="transparent"
         setBgColor={mockFn}
         setBgImage={handler}
         setIsShowCelBorder={handler}
       />
     );
 
-    const target = screen.getByLabelText("背景色:");
+    userEvent.click(screen.getByTestId("colorpicker-color"));
 
-    fireEvent.change(target, { target: { value: "testchange" } });
-
-    expect(mockFn).toBeCalledWith("testchange");
+    expect(mockFn).toBeCalledWith("#FFFFFF");
   });
 });
 
@@ -150,5 +195,69 @@ describe("show Border", () => {
     userEvent.click(target);
 
     expect(mockFn).toBeCalledWith(false);
+  });
+});
+
+describe("zoom", () => {
+  test("label is ズーム", () => {
+    render(
+      <ViewSettings
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+        isShowCelBorder={true}
+      />
+    );
+    const target = screen.getByLabelText(/ズーム/);
+
+    expect(target).toBeInTheDocument();
+  });
+  test("options is 2x, 1x", () => {
+    render(
+      <ViewSettings
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+        isShowCelBorder={true}
+      />
+    );
+    const targets = screen.getAllByRole("option");
+
+    expect(targets).toHaveLength(2);
+    expect(targets[0]).toHaveTextContent("2x");
+    expect(targets[1]).toHaveTextContent("1x");
+  });
+  test("selected is props.zoom", () => {
+    render(
+      <ViewSettings
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+        isShowCelBorder={true}
+        zoom={1}
+      />
+    );
+    const target = screen.getByRole("option", {
+      selected: true,
+    });
+
+    expect(target).toHaveTextContent("1x");
+  });
+  test("change, then call setZoom", () => {
+    const mockFn = jest.fn();
+    render(
+      <ViewSettings
+        setBgColor={handler}
+        setBgImage={handler}
+        setIsShowCelBorder={handler}
+        isShowCelBorder={true}
+        zoom={1}
+        setZoom={mockFn}
+      />
+    );
+
+    userEvent.selectOptions(screen.getByRole("combobox"), ["2"]);
+
+    expect(mockFn).toBeCalledWith("2");
   });
 });

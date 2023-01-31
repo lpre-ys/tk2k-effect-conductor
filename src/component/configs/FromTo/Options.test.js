@@ -9,13 +9,13 @@ const defaultConfig = {
 
 describe("Visible", () => {
   test("not visible, then empty", () => {
-    render(<Options visible={false} config={defaultConfig} />);
+    render(<Options isOption={false} config={defaultConfig} />);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
   test("is visible, then show Options", () => {
-    render(<Options visible={true} config={defaultConfig} />);
+    render(<Options isOption={true} config={defaultConfig} />);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe("Visible", () => {
 describe("Cycle", () => {
   test("init value is config.cycle", () => {
     render(
-      <Options visible={true} config={{ cycle: 45, isRoundTrip: false }} />
+      <Options isOption={true} config={{ cycle: 45, isRoundTrip: false }} />
     );
 
     const target = screen.getByTestId("from-to-options-cycle");
@@ -33,7 +33,7 @@ describe("Cycle", () => {
   });
   test("cycle is 0, then empty", () => {
     render(
-      <Options visible={true} config={{ cycle: 0, isRoundTrip: false }} />
+      <Options isOption={true} config={{ cycle: 0, isRoundTrip: false }} />
     );
 
     const target = screen.getByTestId("from-to-options-cycle");
@@ -43,7 +43,7 @@ describe("Cycle", () => {
     const mockFn = jest.fn();
     render(
       <Options
-        visible={true}
+        isOption={true}
         type="testType"
         config={{ cycle: 0, isRoundTrip: false }}
         update={mockFn}
@@ -62,7 +62,7 @@ describe("Cycle", () => {
       const mockFn = jest.fn();
       render(
         <Options
-          visible={true}
+          isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
           update={mockFn}
@@ -78,7 +78,7 @@ describe("Cycle", () => {
       const mockFn = jest.fn();
       render(
         <Options
-          visible={true}
+          isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
           update={mockFn}
@@ -94,7 +94,7 @@ describe("Cycle", () => {
       const mockFn = jest.fn();
       render(
         <Options
-          visible={true}
+          isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
           update={mockFn}
@@ -110,7 +110,7 @@ describe("Cycle", () => {
       const mockFn = jest.fn();
       render(
         <Options
-          visible={true}
+          isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
           update={mockFn}
@@ -128,14 +128,14 @@ describe("Cycle", () => {
 describe("RoundTrip", () => {
   test("config.isRoundTrip is false, then not checked", () => {
     render(
-      <Options visible={true} config={{ cycle: 0, isRoundTrip: false }} />
+      <Options isOption={true} config={{ cycle: 0, isRoundTrip: false }} />
     );
 
     const target = screen.getByTestId("from-to-options-round-trip");
     expect(target).not.toBeChecked();
   });
   test("config.isRoundTrip is true, then checked", () => {
-    render(<Options visible={true} config={{ cycle: 0, isRoundTrip: true }} />);
+    render(<Options isOption={true} config={{ cycle: 0, isRoundTrip: true }} />);
     const target = screen.getByTestId("from-to-options-round-trip");
     expect(target).toBeChecked();
   });
@@ -143,7 +143,7 @@ describe("RoundTrip", () => {
     const mockFn = jest.fn();
     render(
       <Options
-        visible={true}
+        isOption={true}
         config={{ cycle: 0, isRoundTrip: false }}
         type="test"
         update={mockFn}
@@ -158,7 +158,7 @@ describe("RoundTrip", () => {
     const mockFn = jest.fn();
     render(
       <Options
-        visible={true}
+        isOption={true}
         config={{ cycle: 0, isRoundTrip: true }}
         type="test"
         update={mockFn}

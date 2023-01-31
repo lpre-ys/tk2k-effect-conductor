@@ -1,5 +1,12 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+contextBridge.exposeInMainWorld("initArgs", {
+  "lang": () => {
+    const arg = process.argv.find((arg) => /storedLanguage=/.test(arg));
+    return arg ? arg.split('=').pop() : false;
+  }
+});
+
 contextBridge.exposeInMainWorld("tk2k", {
   writeData: async (args) => {
     return await ipcRenderer.invoke("write-anime", args);
@@ -22,6 +29,11 @@ contextBridge.exposeInMainWorld("appMenu", {
   },
   onReceiveLoad: (listener) => {
     ipcRenderer.on("load", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  onReceiveLanguage: (listener) => {
+    ipcRenderer.on("lang", (event, ...arg) => {
       listener(...arg);
     });
   },

@@ -1,10 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateByType } from "../../../slice/celListSlice";
 
-export function Options({ type, visible, config, update }) {
+export function Options({ type, isOption, config, update }) {
+  const { t } = useTranslation();
   const handleChangeCycle = ({ target }) => {
     let value = parseInt(target.value);
     if (Number.isNaN(value) || value < 0) {
@@ -21,11 +23,11 @@ export function Options({ type, visible, config, update }) {
     update(type, newConfig);
   };
 
-  if (visible) {
+  if (isOption) {
     return (
       <div data-testid="from-to-options" css={styles.container}>
         <label css={styles.label}>
-          周期:&nbsp;
+          {t("configs.cycle")}:&nbsp;
           <input
             type="number"
             data-testid="from-to-options-cycle"
@@ -43,7 +45,7 @@ export function Options({ type, visible, config, update }) {
             value="true"
             onChange={handleChangeRoundTrip}
           />
-          :&nbsp;往復
+          :&nbsp;{t("configs.roundTrip")}
         </label>
       </div>
     );

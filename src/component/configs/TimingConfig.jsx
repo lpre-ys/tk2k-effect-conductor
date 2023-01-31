@@ -1,19 +1,33 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfigOption } from "../../hook/useConfigOption";
 import { updateFrame } from "../../slice/celListSlice";
+import { Header } from "./Header";
+import { Options } from "./Timing/Options";
 
 export function TimingConfig({ config, update }) {
   const [start, setStart] = useState(config.start);
   const [volume, setVolume] = useState(config.volume);
   const [isHideLast, setIsHideLast] = useState(config.isHideLast);
   const [isLoopBack, setIsLoopBack] = useState(config.isLoopBack);
+  const { t } = useTranslation();
+
+  const hasOption = () => {
+    return config.isHideLast || config.isLoopBack;
+  };
+  const reset = () => {
+    setStart(config.start);
+    setVolume(config.volume);
+    setIsHideLast(config.isHideLast);
+    setIsLoopBack(config.isLoopBack);
+  };
+  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -56,26 +70,13 @@ export function TimingConfig({ config, update }) {
     }
   }, [start, update, volume, config, validateConfig, isHideLast, isLoopBack]);
 
-  const handleReset = () => {
-    setStart(config.start);
-    setVolume(config.volume);
-    setIsHideLast(config.isHideLast);
-    setIsLoopBack(config.isLoopBack);
-  };
-
   return (
     <div>
-      <h2>
-        表示タイミング
-        {!validateConfig({ start, volume }) && (
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            css={styles.exIcon}
-            onClick={handleReset}
-            data-testid="timing-config-icon"
-          />
-        )}
-      </h2>
+      <Header
+        name={t("configs.timing.label")}
+        isValid={validateConfig({ start, volume })}
+        {...headerProps}
+      />
       <div css={styles.wrapper}>
         <input
           type="number"
@@ -95,7 +96,7 @@ export function TimingConfig({ config, update }) {
           disabled={true}
         />
         <label css={styles.label}>
-          フレーム数: &nbsp;
+          {t("configs.timing.frame")}: &nbsp;
           <input
             type="number"
             data-testid="timing-volume"
@@ -107,34 +108,13 @@ export function TimingConfig({ config, update }) {
           />
         </label>
       </div>
-      <div>
-        <label css={[styles.label, styles.checkbox]}>
-          <input
-            name="is-hide-last"
-            data-testid="timing-is-hide-last"
-            type="checkbox"
-            checked={isHideLast}
-            value="true"
-            onChange={({ target }) => {
-              setIsHideLast(target.checked);
-            }}
-          />
-          :&nbsp;最終フレームを非表示
-        </label>
-        <label css={[styles.label, styles.checkbox]}>
-          <input
-            name="is-loop-back"
-            data-testid="timing-is-hide-last"
-            type="checkbox"
-            checked={isLoopBack}
-            value="true"
-            onChange={({ target }) => {
-              setIsLoopBack(target.checked);
-            }}
-          />
-          :&nbsp;終端でループ
-        </label>
-      </div>
+      <Options
+        isHideLast={isHideLast}
+        setIsHideLast={setIsHideLast}
+        isLoopBack={isLoopBack}
+        setIsLoopBack={setIsLoopBack}
+        {...optionProps}
+      />
     </div>
   );
 }
@@ -180,10 +160,5 @@ const styles = {
       font-size: 1.1em;
       color: #e53935;
     }
-  `,
-  checkbox: css`
-    cursor: pointer;
-    display: block;
-    padding-top: 0.3rem;
   `,
 };

@@ -8,11 +8,14 @@ import { useSelector } from "react-redux";
 import useImage from "use-image";
 import calcFrameValue from "../../util/calcFrameValue";
 
-const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
+const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
   const { trImage, maxPage } = useSelector((state) => state.material);
 
   const frame = useSelector((state) => state.frame.frame);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
+
+  const width = 320 * (2 / zoom);
+  const height = 240 * (2 / zoom);
 
   const [imgElement] = useImage(trImage);
 
@@ -59,8 +62,8 @@ const Cel = ({ config, isShowCelBorder, id, setMsg }) => {
 
   return (
     <Group
-      x={data.x + 320 / 2}
-      y={data.y + 240 / 2}
+      x={data.x + width / 2}
+      y={data.y + height / 2}
       onClick={() => {
         setMsg(
           [
