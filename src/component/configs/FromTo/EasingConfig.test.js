@@ -6,7 +6,7 @@ test("Option list is const easingList", () => {
   render(<EasingConfig config={{ easing: "easeLinear" }} />);
 
   const target = screen.getAllByRole("option");
-  expect(target).toHaveLength(10);
+  expect(target).toHaveLength(13);  // Easing x 10, Other x 3
 });
 
 test("config.easing is easeLiner, then not has addSelect", () => {
@@ -21,7 +21,12 @@ test("config.easing is easeBack, then has addSelect", () => {
   const target = screen.queryByTestId("from-to-easing-select-add");
   expect(target).toBeInTheDocument();
 });
+test("config.easing is fixed, then not has addSelect", () => {
+  render(<EasingConfig config={{ easing: "fixed" }} />);
 
+  const target = screen.queryByTestId("from-to-easing-select-add");
+  expect(target).not.toBeInTheDocument();
+});
 test("change Easing, then new Config add is In and call update", () => {
   const mockFn = jest.fn();
   render(

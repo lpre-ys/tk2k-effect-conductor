@@ -4,14 +4,12 @@ import { css } from "@emotion/react";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useConfigOption } from "../../hook/useConfigOption";
-import { updateByType } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 import { Header } from "./Header";
 
-export function FromToConfig({ type, name, config, update }) {
+export default function FromToConfig({ type, name, config, update }) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
 
@@ -75,29 +73,12 @@ export function FromToConfig({ type, name, config, update }) {
             }}
           />
         </label>
-        <EasingConfig type={type} />
+        <EasingConfig type={type} config={config} />
         <Options type={type} {...optionProps} />
       </div>
     </div>
   );
 }
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex][props.type]
-  );
-  const dispatch = useDispatch();
-  const _props = {
-    config,
-    update: (type, newConfig) => {
-      dispatch(updateByType({ type, data: newConfig }));
-    },
-    ...props,
-  };
-
-  return <FromToConfig {..._props} />;
-};
 
 const styles = {
   wrapper: css`

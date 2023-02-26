@@ -65,6 +65,9 @@
       "end": "End ",
       "custom": "Custom Pattern"
     },
+    "parameter": {
+      "fixed": "fixed"
+    },
     "x": "X",
     "y": "Y",
     "scale": "Scale",

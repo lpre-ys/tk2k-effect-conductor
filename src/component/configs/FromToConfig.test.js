@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../util/renderWithProviders";
-import { FromToConfig } from "./FromToConfig";
+import FromToConfig from "./FromToConfig";
 
 const defaultConfig = {
   from: 0,

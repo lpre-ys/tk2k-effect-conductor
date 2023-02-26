@@ -828,3 +828,29 @@ describe("calcFrameValue", () => {
     });
   });
 });
+describe('easingType is Fixed', () => {
+  const cel = Object.assign({}, DEFAULT_CEL_CONFIG);
+  const MAX_FRAME = 20;
+  beforeEach(() => {
+    cel.frame.volume = 10;
+    cel.frame.isLoopBack = true;
+    cel.x.easing = "fixed";
+    cel.x.from = 100;
+    cel.x.to = 200;
+  });
+  test("frame is 0, then return from", () => {
+    const result = calcFrameValue(0, MAX_FRAME, cel);
+    expect(result).toBeTruthy();
+    expect(result.x).toBe(100);
+  });
+  test("frame is 1, then return from", () => {
+    const result = calcFrameValue(1, MAX_FRAME, cel);
+    expect(result).toBeTruthy();
+    expect(result.x).toBe(100);
+  });
+  test("frame is 19, then return from", () => {
+    const result = calcFrameValue(19, MAX_FRAME, cel);
+    expect(result).toBeTruthy();
+    expect(result.x).toBe(100);
+  });
+});

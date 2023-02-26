@@ -119,8 +119,9 @@ function calcPageIndexByPosition(config, pageList, localFrame, volume) {
 }
 
 function calcParameter(localFrame, config, frameConfig) {
+  // TODO 最初にeasingNameを見て、fixedならfromを返す仕様にしたい
   const from = parseFloat(config.from);
-  const to = parseFloat(config.to);
+  const to = config.easing === "fixed" ? from : parseFloat(config.to);
   let t;
   const cycle = config.cycle > 0 ? config.cycle : frameConfig.volume;
   let position = localFrame % cycle;
@@ -132,9 +133,17 @@ function calcParameter(localFrame, config, frameConfig) {
   }
   t = (1.0 / (cycle - 1)) * position; // MAXはcycle - 1にする（右端まで行くように）
   let easingName = config.easing;
+  if (config.easing === "fixed") {
+    easingName = "easeLinear";
+  }
+  // TODO
+  if (easingName === "sin" || easingName === "cos") {
+    easingName = "easeLinear";
+  }
   if (easingName !== "easeLinear") {
     easingName += config.easingAdd;
   }
+
   const weight = d3[easingName](t);
 
   const result = (to - from) * weight + from;
