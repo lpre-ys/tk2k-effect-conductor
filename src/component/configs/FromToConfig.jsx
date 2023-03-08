@@ -9,7 +9,7 @@ import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 import { Header } from "./Header";
 
-export default function FromToConfig({ type, name, config, update }) {
+export default function FromToConfig({ type, name, config, update, isSub }) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
 
@@ -49,9 +49,10 @@ export default function FromToConfig({ type, name, config, update }) {
       <Header
         name={name}
         isValid={validateConfig({ from, to })}
+        isSub={isSub}
         {...headerProps}
       />
-      <div css={styles.wrapper}>
+      <div css={[styles.wrapper, isSub && styles.sub]}>
         <label css={styles.label}>
           <input
             type="number"
@@ -73,8 +74,8 @@ export default function FromToConfig({ type, name, config, update }) {
             }}
           />
         </label>
-        <EasingConfig type={type} config={config} />
-        <Options type={type} {...optionProps} />
+        <EasingConfig type={type} config={config} update={update} />
+        <Options type={type} config={config} update={update} {...optionProps} />
       </div>
     </div>
   );
@@ -92,5 +93,8 @@ const styles = {
   `,
   error: css`
     color: #b71c1c;
+  `,
+  sub: css`
+    font-size: 0.9em;
   `,
 };

@@ -3,20 +3,25 @@
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateByType } from "../../slice/celListSlice";
-import { ConstConfig } from "./ConstConfig";
+import FixedConfig from "./FixedConfig";
 import FromToConfig from "./FromToConfig";
+import SinCosConfig from "./SinCosConfig";
 
 export function ParameterConfig({ name, type, config, update }) {
   const returnConfig = () => {
     if (config.easing === "fixed") {
       return (
-        <ConstConfig name={name} type={type} config={config} update={update} />
-      );
-    } else {
-      return (
-        <FromToConfig name={name} type={type} config={config} update={update} />
+        <FixedConfig name={name} type={type} config={config} update={update} />
       );
     }
+    if (["sin", "cos"].includes(config.easing)) {
+      return (
+        <SinCosConfig name={name} type={type} config={config} update={update} />
+      );
+    }
+    return (
+      <FromToConfig name={name} type={type} config={config} update={update} />
+    );
   };
   return <div css={styles.wrapper}>{returnConfig()}</div>;
 }

@@ -13,7 +13,7 @@ const defaultConfig = {
 };
 
 test("has EasingConfig component", () => {
-  renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+  renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
   const target = screen.getByTestId("from-to-easing");
   expect(target).toBeInTheDocument();
@@ -21,13 +21,13 @@ test("has EasingConfig component", () => {
 
 describe("Options", () => {
   test("INIT, then no component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
   test("click header once, then has component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -36,7 +36,7 @@ describe("Options", () => {
     expect(target).toBeInTheDocument();
   });
   test("click header twice, then no component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -127,7 +127,7 @@ describe("Header", () => {
   });
   describe('Angle icon', () => {
     test('No Cycle and No RoundTrip, then header icon is gray', () => {
-      renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#9e9e9e' });
@@ -135,7 +135,7 @@ describe("Header", () => {
     test('has Cycle, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.cycle = 3;
-      renderWithProviders(<FromToConfig type="x" config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
@@ -143,7 +143,7 @@ describe("Header", () => {
     test('on RoundTrip, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.isRoundTrip = true;
-      renderWithProviders(<FromToConfig type="x" config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });

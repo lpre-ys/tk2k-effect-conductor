@@ -1,12 +1,19 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import EasingConfig from "./FromTo/EasingConfig";
+import { Header } from "./Header";
 
-export function ConstConfig({ type, name, config, update }) {
+export default function FixedConfig({
+  type,
+  name,
+  note,
+  config,
+  update,
+  isSub,
+  isHideEasing,
+}) {
   const [from, setFrom] = useState(config.from);
 
   const reset = () => {
@@ -36,62 +43,46 @@ export function ConstConfig({ type, name, config, update }) {
 
   return (
     <div>
-      <h2 css={[styles.header]}>
-        {name}
-        {!validate(from) && (
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            css={styles.exIcon}
-            onClick={reset}
-            data-testid="config-header-icon-error"
-          />
-        )}
-      </h2>
-      <div css={styles.wrapper}>
+      <Header
+        name={name}
+        note={note}
+        isValid={validate(from)}
+        reset={reset}
+        isSub={isSub}
+      />
+      <div
+        css={[styles.wrapper, isSub && styles.sub]}
+        data-testid="const-config-params-wrapper"
+      >
         <input
           type="number"
           data-testid="const-config-params-from"
-          css={styles.number}
+          css={[styles.number, isSub && styles.numberSub]}
           value={from}
           onChange={({ target }) => {
             setFrom(target.value);
           }}
         />
-        <EasingConfig type={type} config={config} />
+        {!isHideEasing && (
+          <EasingConfig type={type} config={config} update={update} />
+        )}
       </div>
     </div>
   );
 }
 
 const styles = {
-  header: css`
-    cursor: pointer;
-    position: relative;
-    padding-left: 1.2em;
-    user-select: none;
-  `,
-  headerIcon: css`
-    // color: #0097a7;
-    position: absolute;
-    top: 0.55em;
-    left: 0.4em;
-    font-size: 1rem;
-  `,
-  exIcon: css`
-    color: #b71c1c;
-    cursor: pointer;
-    margin-left: 0.2em;
-    :hover {
-      font-size: 1.1em;
-      color: #e53935;
-    }
-    width: 1em;
-  `,
   wrapper: css`
     margin: 0 0.5em;
   `,
   number: css`
     width: 3em;
     margin-right: 78px;
+  `,
+  sub: css`
+    font-size: 0.9em;
+  `,
+  numberSub: css`
+    margin-right: 71px;
   `,
 };

@@ -119,7 +119,14 @@ function calcPageIndexByPosition(config, pageList, localFrame, volume) {
 }
 
 function calcParameter(localFrame, config, frameConfig) {
-  // TODO 最初にeasingNameを見て、fixedならfromを返す仕様にしたい
+  let easingName = config.easing;
+  // 特別なeasingNameの場合、処理を別メソッドに移す
+  if (easingName === "fixed") {
+    return calcFixedParameter(config);
+  }
+  if (["sin", "cos"].includes(easingName)) {
+    return calcTrigParameter(localFrame, config, frameConfig);
+  }
   const from = parseFloat(config.from);
   const to = config.easing === "fixed" ? from : parseFloat(config.to);
   let t;
@@ -132,14 +139,7 @@ function calcParameter(localFrame, config, frameConfig) {
     }
   }
   t = (1.0 / (cycle - 1)) * position; // MAXはcycle - 1にする（右端まで行くように）
-  let easingName = config.easing;
-  if (config.easing === "fixed") {
-    easingName = "easeLinear";
-  }
-  // TODO
-  if (easingName === "sin" || easingName === "cos") {
-    easingName = "easeLinear";
-  }
+
   if (easingName !== "easeLinear") {
     easingName += config.easingAdd;
   }
@@ -149,4 +149,27 @@ function calcParameter(localFrame, config, frameConfig) {
   const result = (to - from) * weight + from;
 
   return Math.round(result);
+}
+
+function calcFixedParameter(config) {
+  return parseInt(config.from);
+}
+
+function calcTrigParameter(localFrame, config, frameConfig) {
+  const funcName = config.easing;
+  const amp = calcParameter(localFrame, config.trig.amp, frameConfig);
+  const center = calcParameter(localFrame, config.trig.center, frameConfig);
+
+  let cycle = calcParameter(localFrame, config.trig.cycle, frameConfig);
+  if (cycle === 0) {
+    cycle = frameConfig.volume;
+  }
+
+  const start = calcParameter(localFrame, config.trig.start, frameConfig);
+  const radian = start * (Math.PI / 180);
+  return (
+    Math.round(
+      Math[funcName](((Math.PI * 2) / cycle) * localFrame + radian) * amp
+    ) + center
+  );
 }

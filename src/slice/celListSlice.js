@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { DEFAULT_CEL, INIT_MAX_FRAME } from "../util/const";
+import { DEFAULT_CEL, DEFAULT_TRIG, INIT_MAX_FRAME } from "../util/const";
 import i18n from "../i18n/config";
 import merge from "deepmerge";
 
@@ -131,9 +131,24 @@ export const celListSlice = createSlice({
     },
     updateByType: (state, action) => {
       const { type, data } = action.payload;
+
+      const types = type.split(".");
       state.list = state.list.map((cel, index) => {
         if (index === state.celIndex) {
-          cel[type] = data;
+          // easingが三角関数系かつ、trigパラメータが無い場合、作成する
+          if (
+            ["sin", "cos"].includes(data.easing) &&
+            typeof data.trig === "undefined"
+          ) {
+            data.trig = merge(DEFAULT_TRIG, {});
+            data.trig.center = merge(cel[type], {});
+          }
+          if (types.length === 1) {
+            cel[type] = data;
+          } else {
+            // 現時点では、三角関数しか無い
+            cel[types[0]][types[1]][types[2]] = data;
+          }
         }
         return cel;
       });

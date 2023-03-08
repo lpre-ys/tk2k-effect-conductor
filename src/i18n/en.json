@@ -68,6 +68,15 @@
     "parameter": {
       "fixed": "fixed"
     },
+    "trig": {
+      "center": "Origin point",
+      "amp": "Radius",
+      "cycle": "Cycle",
+      "start": {
+        "name": "Start angle",
+        "note": "*unit: degree"
+      }
+    },
     "x": "X",
     "y": "Y",
     "scale": "Scale",

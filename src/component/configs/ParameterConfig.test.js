@@ -2,14 +2,26 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../util/renderWithProviders";
 import { ParameterConfig } from "./ParameterConfig";
 
-test("type Fixed then show ConstConfig", () => {
-  renderWithProviders(<ParameterConfig config={{ easing: "fixed" }} />);
+test("type Fixed then show FixedConfig", () => {
+  renderWithProviders(<ParameterConfig type="test" config={{ easing: "fixed" }} />);
 
   const target = screen.getByTestId("const-config-params-from");
   expect(target).toBeInTheDocument();
 });
+test("type Sin then show SinCosConfig", () => {
+  renderWithProviders(<ParameterConfig type="test" config={{ easing: "sin" }} />);
+
+  const target = screen.getByTestId("sincos-config-wrapper");
+  expect(target).toBeInTheDocument();
+});
+test("type Cos then show SinCosConfig", () => {
+  renderWithProviders(<ParameterConfig type="test" config={{ easing: "cos" }} />);
+
+  const target = screen.getByTestId("sincos-config-wrapper");
+  expect(target).toBeInTheDocument();
+});
 test("type Easing then show FromToConfig", () => {
-  renderWithProviders(<ParameterConfig config={{ easing: "easeLinear" }} />);
+  renderWithProviders(<ParameterConfig type="test" config={{ easing: "easeLinear" }} />);
 
   const target = screen.getByTestId("from-to-config-from");
   expect(target).toBeInTheDocument();

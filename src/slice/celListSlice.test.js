@@ -1,3 +1,4 @@
+import merge from "deepmerge";
 import reducer, {
   addCel,
   copyCel,
@@ -6,6 +7,7 @@ import reducer, {
   setCelIndex,
   setCelName,
   moveCel,
+  updateByType,
 } from "./celListSlice";
 
 test("return Initial state", () => {
@@ -14,9 +16,6 @@ test("return Initial state", () => {
 });
 
 describe("loadCelList", () => {
-  test("change check", () => {
-    // TODO
-  });
   test("Ver1.0.2 add parameter", () => {
     const data = {
       celIndex: 0,
@@ -87,7 +86,7 @@ describe("loadCelList", () => {
         isRoundTrip: false,
       },
     });
-    expect(state.list[1].pattern.align).toBe('loop');
+    expect(state.list[1].pattern.align).toBe("loop");
     expect(state.list[1].pattern.customPattern).toEqual([]);
     expect(state.list[1].pattern.isCustom).toBe(false);
   });
@@ -285,5 +284,121 @@ describe("moveCel", () => {
       expect(state.list).toEqual([1, 2, 3, 4, 5]);
       expect(state.celIndex).toBe(2);
     });
+  });
+});
+
+describe("updateByType", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+    baseState = reducer(baseState, addCel({ volume: 10, start: 0 }));
+  });
+  test("update target value", () => {
+    const state = reducer(
+      baseState,
+      updateByType({ type: "y", data: "test!" })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1].y).toBe("test!");
+  });
+  describe("Sin Cos Easing", () => {
+    let data;
+    beforeEach(() => {
+      data = merge({}, baseState.list[1].y);
+    });
+    test("easing is easeLinear and trig is undefined, then noop trig", () => {
+      data.easing = "easeLinear";
+      const state = reducer(baseState, updateByType({ type: "y", data: data }));
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).not.toHaveProperty("trig");
+    });
+    test("easing is sin and trig is undefined, then create it", () => {
+      data.easing = "sin";
+      const state = reducer(baseState, updateByType({ type: "y", data: data }));
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).toHaveProperty("trig");
+      expect(state.list[1].y.trig).toHaveProperty("center");
+      expect(state.list[1].y.trig).toHaveProperty("amp");
+      expect(state.list[1].y.trig).toHaveProperty("cycle");
+      expect(state.list[1].y.trig).toHaveProperty("start");
+    });
+    test("easing is cos and trig is undefined, then create it", () => {
+      data.easing = "cos";
+      const state = reducer(baseState, updateByType({ type: "y", data: data }));
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).toHaveProperty("trig");
+      expect(state.list[1].y.trig).toHaveProperty("center");
+      expect(state.list[1].y.trig).toHaveProperty("amp");
+      expect(state.list[1].y.trig).toHaveProperty("cycle");
+      expect(state.list[1].y.trig).toHaveProperty("start");
+    });
+    describe("init trig parameter", () => {
+      test("center is copy from state.parent", () => {
+        // まずは通常値でUPDATEしておく
+        const preData = {
+          from: 10,
+          to: 25,
+          cycle: 3,
+          isRoundTrip: true,
+          easing: "easeBack",
+          easingAdd: "Out",
+        };
+        const preState = reducer(
+          baseState,
+          updateByType({ type: "y", data: preData })
+        );
+        const newData = merge({}, preData);
+        newData.easing = "sin";
+        const state = reducer(
+          preState,
+          updateByType({ type: "y", data: newData })
+        );
+
+        expect(state.list[1].y.trig).toHaveProperty("center");
+        const target = state.list[1].y.trig.center;
+        expect(target).toEqual(preData);
+      });
+      test.each([
+        ["amp", 100, "easeLinear"],
+        ["cycle", 0, "fixed"],
+        ["start", 0, "fixed"],
+      ])(
+        "%s is FromTo: %i, Easing: %s, other is default",
+        (name, value, easing) => {
+          data.easing = "sin";
+          const state = reducer(
+            baseState,
+            updateByType({ type: "y", data: data })
+          );
+
+          expect(state.list[1].y.trig).toHaveProperty(name);
+          const target = state.list[1].y.trig[name];
+          expect(target.from).toBe(value);
+          expect(target.to).toBe(value);
+          expect(target.cycle).toBe(0);
+          expect(target.isRoundTrip).toBe(false);
+          expect(target.easing).toBe(easing);
+          expect(target.easingAdd).toBe("");
+        }
+      );
+    });
+  });
+  test("target is 'x.trig.amp', then update cel.x.trig.amp", () => {
+    // まずはtrigパラメータを作っておく
+    const trigData = merge({}, baseState.list[1].x);
+    trigData.easing = "sin";
+    let state = reducer(baseState, updateByType({ type: "x", data: trigData }));
+
+    // ampの更新
+    state = reducer(
+      state,
+      updateByType({ type: "x.trig.amp", data: "testAmp!!" })
+    );
+    const target = state.list[1].x.trig.amp;
+    expect(target).toBe("testAmp!!");
   });
 });

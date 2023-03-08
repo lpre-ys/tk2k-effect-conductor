@@ -2,10 +2,8 @@
 
 import { css } from "@emotion/react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { updateByType } from "../../../slice/celListSlice";
 
-export function Options({ type, isOption, config, update }) {
+export default function Options({ type, isOption, config, update }) {
   const { t } = useTranslation();
   const handleChangeCycle = ({ target }) => {
     let value = parseInt(target.value);
@@ -51,23 +49,6 @@ export function Options({ type, isOption, config, update }) {
     );
   }
 }
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
-  const config = useSelector((state) => {
-    return state.celList.list[state.celList.celIndex][props.type];
-  });
-  const dispatch = useDispatch();
-  const _props = {
-    config,
-    update: (type, newConfig) => {
-      dispatch(updateByType({ type, data: newConfig }));
-    },
-    ...props,
-  };
-
-  return <Options {..._props} />;
-};
 
 const styles = {
   label: css`

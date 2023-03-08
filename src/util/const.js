@@ -51,11 +51,40 @@ const DEFAULT_CEL = {
     isCustom: false
   },
 }
+const DEFAULT_TRIG = {
+  center: {
+  },
+  amp: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "easeLinear",
+    easingAdd: "",
+  },
+  cycle: {
+    from: 0,
+    to: 0,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  start: {
+    from: 0,
+    to: 0,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  }
+}
 
 export {
   FRAME_SIZE,
   TIMELINE_HEIGHT,
   INIT_MAX_FRAME,
   FRAME_SEC,
-  DEFAULT_CEL
+  DEFAULT_CEL,
+  DEFAULT_TRIG
 };

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../util/renderWithProviders";
-import { ConstConfig } from "./ConstConfig";
+import FixedConfig from "./FixedConfig";
 
 const defaultConfig = {
   from: 0,
@@ -13,16 +13,16 @@ const defaultConfig = {
 };
 
 test("init value is config.from", () => {
-  renderWithProviders(<ConstConfig type="x" config={{ from: 3, to: 6 }} />);
+  renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
 
   const target = screen.getByTestId("const-config-params-from");
   expect(target).toBeInTheDocument();
 });
-describe('Form', () => {
+describe("Form", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <ConstConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FixedConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("const-config-params-from");
 
@@ -37,7 +37,7 @@ describe('Form', () => {
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <ConstConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FixedConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
     const target = screen.getByTestId("const-config-params-from");
 
@@ -46,22 +46,28 @@ describe('Form', () => {
     expect(mockFn).not.toBeCalled();
   });
 });
-describe('Header', () => {
+describe("Header", () => {
   test("Text is props.name", () => {
-    renderWithProviders(<ConstConfig type="x" config={defaultConfig} name="テストネーム" />);
+    renderWithProviders(
+      <FixedConfig type="x" config={defaultConfig} name="テストネーム" />
+    );
 
     const target = screen.getByRole("heading");
     expect(target).toHaveTextContent("テストネーム");
   });
   describe("Error icon", () => {
     test("no Error, then not show Error icon", () => {
-      renderWithProviders(<ConstConfig type="x" config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(
+        <FixedConfig type="x" config={defaultConfig} name="テストネーム" />
+      );
 
       const target = screen.queryByTestId("config-header-icon-error");
       expect(target).not.toBeInTheDocument();
     });
     test("from Error, then show Error icon", () => {
-      renderWithProviders(<ConstConfig type="x" config={defaultConfig} name="テストネーム" />);
+      renderWithProviders(
+        <FixedConfig type="x" config={defaultConfig} name="テストネーム" />
+      );
 
       fireEvent.change(screen.getByTestId("const-config-params-from"), {
         target: { value: "" },
@@ -72,7 +78,11 @@ describe('Header', () => {
     });
     test("ckick Icon, then reset value to config", () => {
       renderWithProviders(
-        <ConstConfig type="x" config={{ from: 12, to: 34 }} name="テストネーム" />
+        <FixedConfig
+          type="x"
+          config={{ from: 12, to: 34 }}
+          name="テストネーム"
+        />
       );
 
       const from = screen.getByTestId("const-config-params-from");
@@ -85,4 +95,35 @@ describe('Header', () => {
       expect(from).toHaveValue(12);
     });
   });
-})
+});
+describe("isSub", () => {
+  describe("not sub", () => {
+    test("wrapper do not have sub style", () => {
+      renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
+
+      const target = screen.getByTestId("const-config-params-wrapper");
+      expect(target).not.toHaveStyle({ fontSize: "0.9em" });
+    });
+    test("input do not have sub style", () => {
+      renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
+
+      const target = screen.getByTestId("const-config-params-from");
+      expect(target).not.toHaveStyle({ marginRight: "71px" });
+    });
+  });
+  describe('is sub', () => {
+    test("wrapper have sub style", () => {
+      renderWithProviders(<FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />);
+
+      const target = screen.getByTestId("const-config-params-wrapper");
+      expect(target).toHaveStyle({ fontSize: "0.9em" });
+    });
+    test("input have sub style", () => {
+      renderWithProviders(<FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />);
+
+      const target = screen.getByTestId("const-config-params-from");
+      expect(target).toHaveStyle({ marginRight: "71px" });
+    });
+
+  })
+});

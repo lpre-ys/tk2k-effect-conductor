@@ -68,6 +68,15 @@
     "parameter": {
       "fixed": "固定"
     },
+    "trig": {
+      "center": "中心",
+      "amp": "振幅",
+      "cycle": "周期",
+      "start": {
+        "name": "開始角度",
+        "note": "※単位: 度"
+      }
+    },
     "x": "X座標",
     "y": "Y座標",
     "scale": "拡大率",

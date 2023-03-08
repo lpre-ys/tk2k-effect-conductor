@@ -2,10 +2,8 @@
 
 import { css } from "@emotion/react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
-import { updateByType } from "../../../slice/celListSlice";
 
-export function EasingConfig({ type, config, update }) {
+export default function EasingConfig({ type, config, update }) {
   const { t } = useTranslation();
 
   const changeEasing = ({ target }) => {
@@ -23,7 +21,7 @@ export function EasingConfig({ type, config, update }) {
   let add = <></>;
   if (
     typeof config !== "undefined" &&
-    !["easeLinear", "fixed"].includes(config.easing)
+    !["easeLinear", "fixed", "sin", "cos"].includes(config.easing)
   ) {
     add = (
       <select
@@ -64,30 +62,22 @@ export function EasingConfig({ type, config, update }) {
           <option value="fixed" key="fixed">
             {t("configs.parameter.fixed")}
           </option>
-          <option value="sin" key="sin">
-            sin
-          </option>
-          <option value="cos" key="cos">
-            cos
-          </option>
+          {!type.includes("trig") && (
+            <>
+              <option value="sin" key="sin">
+                sin
+              </option>
+              <option value="cos" key="cos">
+                cos
+              </option>
+            </>
+          )}
         </optgroup>
       </select>
       {add}
     </label>
   );
 }
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export default (props) => {
-  const dispatch = useDispatch();
-  const _props = {
-    update: (type, newConfig) => {
-      dispatch(updateByType({ type, data: newConfig }));
-    },
-    ...props,
-  };
-  return <EasingConfig {..._props} />;
-};
 
 const easingList = [
   "easeLinear",
