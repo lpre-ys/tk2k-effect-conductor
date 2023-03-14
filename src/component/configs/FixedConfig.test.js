@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../util/renderWithProviders";
-import FixedConfig from "./FixedConfig";
+import { FixedConfig } from "./FixedConfig";
 
 const defaultConfig = {
   from: 0,
@@ -22,22 +22,22 @@ describe("Form", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FixedConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FixedConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("const-config-params-from");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
-    expect(mockFn).toBeCalledWith("x", { from: 8, to: 6 });
+    expect(mockFn).toBeCalledWith("x", 8, 6);
     // マイナスもOK
     fireEvent.change(target, { target: { value: -111 } });
     expect(target).toHaveValue(-111);
-    expect(mockFn).toBeCalledWith("x", { from: -111, to: 6 });
+    expect(mockFn).toBeCalledWith("x", -111, 6);
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FixedConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FixedConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("const-config-params-from");
 

@@ -79,6 +79,13 @@ const DEFAULT_TRIG = {
     easingAdd: "",
   }
 }
+const EASING_OPTION_LIST = {
+  easePoly: [
+    {
+      key: "exponent",
+    }
+  ]
+}
 
 export {
   FRAME_SIZE,
@@ -86,5 +93,6 @@ export {
   INIT_MAX_FRAME,
   FRAME_SEC,
   DEFAULT_CEL,
-  DEFAULT_TRIG
+  DEFAULT_TRIG,
+  EASING_OPTION_LIST
 };

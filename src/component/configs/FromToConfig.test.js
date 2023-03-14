@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../util/renderWithProviders";
-import FromToConfig from "./FromToConfig";
+import { FromToConfig } from "./FromToConfig";
 
 const defaultConfig = {
   from: 0,
@@ -58,17 +58,17 @@ describe("From", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-from");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
-    expect(mockFn).toBeCalledWith("x", { from: 8, to: 6 });
+    expect(mockFn).toBeCalledWith("x", 8, 6);
     // マイナスもOK
     fireEvent.change(target, { target: { value: -111 } });
     expect(target).toHaveValue(-111);
-    expect(mockFn).toBeCalledWith("x", { from: -111, to: 6 });
+    expect(mockFn).toBeCalledWith("x", -111, 6);
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
@@ -93,17 +93,17 @@ describe("To", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-to");
 
     fireEvent.change(target, { target: { value: 2 } });
     expect(target).toHaveValue(2);
-    expect(mockFn).toBeCalledWith("x", { from: 3, to: 2 });
+    expect(mockFn).toBeCalledWith("x", 3, 2);
     // マイナスもOK
     fireEvent.change(target, { target: { value: -29 } });
     expect(target).toHaveValue(-29);
-    expect(mockFn).toBeCalledWith("x", { from: 3, to: -29 });
+    expect(mockFn).toBeCalledWith("x", 3, -29);
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();

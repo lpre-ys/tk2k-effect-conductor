@@ -1,22 +1,21 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { updateEasing } from "../../../slice/celListSlice";
 
-export default function EasingConfig({ type, config, update }) {
+export function EasingConfig({ type, config, updateEasing }) {
   const { t } = useTranslation();
 
   const changeEasing = ({ target }) => {
     const newConfig = Object.assign({}, config);
     newConfig.easing = target.value;
     // addの初期値はInが良い
-    newConfig.easingAdd = "In";
-    update(type, newConfig);
+    updateEasing(type, target.value, "In");
   };
   const changeAdd = ({ target }) => {
-    const newConfig = Object.assign({}, config);
-    newConfig.easingAdd = target.value;
-    update(type, newConfig);
+    updateEasing(type, config.easing, target.value);
   };
   let add = <></>;
   if (
@@ -78,6 +77,29 @@ export default function EasingConfig({ type, config, update }) {
     </label>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector((state) => {
+    const cel = state.celList.list[state.celList.celIndex];
+    const keys = props.type.split(".");
+    if (keys.includes("trig")) {
+      return cel[keys[0]][keys[1]][keys[2]];
+    } else {
+      return cel[props.type];
+    }
+  });
+  const dispatch = useDispatch();
+  const _props = {
+    updateEasing: (type, easing, easingAdd) => {
+      dispatch(updateEasing({ type, easing, easingAdd }));
+    },
+    config,
+    ...props,
+  };
+
+  return <EasingConfig {..._props} />;
+};
 
 const easingList = [
   "easeLinear",

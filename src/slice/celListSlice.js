@@ -129,10 +129,88 @@ export const celListSlice = createSlice({
         return cel;
       });
     },
+    updateFromTo: (state, action) => {
+      const { type, from, to } = action.payload;
+      state.list = state.list.map((cel, index) => {
+        if (index === state.celIndex) {
+          const keys = type.split(".");
+          if (keys.length === 1) {
+            cel[type].from = from;
+            cel[type].to = to;
+          } else if (keys[1] === "trig") {
+            // trig系
+            cel[keys[0]][keys[1]][keys[2]].from = from;
+            cel[keys[0]][keys[1]][keys[2]].to = to;
+          }
+        }
+        return cel;
+      });
+    },
+    updateCycle: (state, action) => {
+      const { type, value } = action.payload;
+      state.list = state.list.map((cel, index) => {
+        if (index === state.celIndex) {
+          const keys = type.split(".");
+          if (keys.length === 1) {
+            cel[type].cycle = value;
+          } else if (keys[1] === "trig") {
+            // trig系
+            cel[keys[0]][keys[1]][keys[2]].cycle = value;
+          }
+        }
+        return cel;
+      });
+    },
+    updateIsRoundTrip: (state, action) => {
+      const { type, value } = action.payload;
+      state.list = state.list.map((cel, index) => {
+        if (index === state.celIndex) {
+          const keys = type.split(".");
+          if (keys.length === 1) {
+            cel[type].isRoundTrip = value;
+          } else if (keys[1] === "trig") {
+            // trig系
+            cel[keys[0]][keys[1]][keys[2]].isRoundTrip = value;
+          }
+        }
+        return cel;
+      });
+    },
+    updateEasing: (state, action) => {
+      const { type, easing, easingAdd } = action.payload;
+      state.list = state.list.map((cel, index) => {
+        if (index === state.celIndex) {
+          const keys = type.split(".");
+          if (keys.length === 1) {
+            // easingがSinCosかつ、trigパラメータが無い場合、作成する
+            if (
+              ["sin", "cos"].includes(easing) &&
+              typeof cel[type].trig === "undefined"
+            ) {
+              const center = merge({}, cel[type]); // 先にcenterを作ってから
+              cel[type].trig = merge({}, DEFAULT_TRIG);
+              cel[type].trig.center = center;
+            }
+
+            // trig系の処理完了後、easingを更新する
+            cel[type].easing = easing;
+            cel[type].easingAdd = !!easingAdd ? easingAdd : "";
+          } else if (keys[1] === "trig") {
+            // trig系
+            cel[keys[0]][keys[1]][keys[2]].easing = easing;
+            cel[keys[0]][keys[1]][keys[2]].easingAdd = !!easingAdd
+              ? easingAdd
+              : "";
+          }
+        }
+        return cel;
+      });
+    },
     updateByType: (state, action) => {
       const { type, data } = action.payload;
 
-      const types = type.split(".");
+      const keys = type.split(".");
+
       state.list = state.list.map((cel, index) => {
         if (index === state.celIndex) {
           // easingが三角関数系かつ、trigパラメータが無い場合、作成する
@@ -143,18 +221,27 @@ export const celListSlice = createSlice({
             data.trig = merge(DEFAULT_TRIG, {});
             data.trig.center = merge(cel[type], {});
           }
-          if (types.length === 1) {
-            cel[type] = data;
-          } else {
-            // 現時点では、三角関数しか無い
-            cel[types[0]][types[1]][types[2]] = data;
-          }
+          setData(cel, keys, data);
         }
         return cel;
       });
     },
   },
 });
+
+const setData = (cel, keys, data) => {
+  const key = keys.shift();
+  if (keys.length === 0) {
+    // 最後の要素だった場合、cel.keyに代入
+    cel[key] = data;
+  } else {
+    // そうじゃないなら、辿っていく
+    if (typeof cel[key] === "undefined") {
+      cel[key] = {};
+    }
+    setData(cel[key], keys, data);
+  }
+};
 
 export const {
   resetCelList,
@@ -168,6 +255,10 @@ export const {
   updateFrame,
   updatePattern,
   updateByType,
+  updateFromTo,
+  updateCycle,
+  updateEasing,
+  updateIsRoundTrip,
 } = celListSlice.actions;
 export default celListSlice.reducer;
 

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Options from "./Options";
+import { Options } from "./Options";
 // import userEvent from "@testing-library/user-event";
 const defaultConfig = {
   cycle: 0,
@@ -46,16 +46,13 @@ describe("Cycle", () => {
         isOption={true}
         type="testType"
         config={{ cycle: 0, isRoundTrip: false }}
-        update={mockFn}
+        updateCycle={mockFn}
       />
     );
 
     const target = screen.getByTestId("from-to-options-cycle");
     fireEvent.change(target, { target: { value: "16" } });
-    expect(mockFn).toBeCalledWith("testType", {
-      cycle: 16,
-      isRoundTrip: false,
-    });
+    expect(mockFn).toBeCalledWith("testType", 16);
   });
   describe("Input", () => {
     test("is Empty, then config is 0", () => {
@@ -65,14 +62,14 @@ describe("Cycle", () => {
           isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
-          update={mockFn}
+          updateCycle={mockFn}
         />
       );
 
       const target = screen.getByTestId("from-to-options-cycle");
       fireEvent.change(target, { target: { value: "" } });
 
-      expect(mockFn).toBeCalledWith("test", { cycle: 0, isRoundTrip: false });
+      expect(mockFn).toBeCalledWith("test", 0);
     });
     test("is -1, then config is 0", () => {
       const mockFn = jest.fn();
@@ -81,14 +78,14 @@ describe("Cycle", () => {
           isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
-          update={mockFn}
+          updateCycle={mockFn}
         />
       );
 
       const target = screen.getByTestId("from-to-options-cycle");
       fireEvent.change(target, { target: { value: -1 } });
 
-      expect(mockFn).toBeCalledWith("test", { cycle: 0, isRoundTrip: false });
+      expect(mockFn).toBeCalledWith("test", 0);
     });
     test("is 0, then config is 0", () => {
       const mockFn = jest.fn();
@@ -97,14 +94,14 @@ describe("Cycle", () => {
           isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
-          update={mockFn}
+          updateCycle={mockFn}
         />
       );
 
       const target = screen.getByTestId("from-to-options-cycle");
       fireEvent.change(target, { target: { value: 0 } });
 
-      expect(mockFn).toBeCalledWith("test", { cycle: 0, isRoundTrip: false });
+      expect(mockFn).toBeCalledWith("test", 0);
     });
     test("is 1, then config is 1", () => {
       const mockFn = jest.fn();
@@ -113,14 +110,14 @@ describe("Cycle", () => {
           isOption={true}
           type="test"
           config={{ cycle: 3, isRoundTrip: false }}
-          update={mockFn}
+          updateCycle={mockFn}
         />
       );
 
       const target = screen.getByTestId("from-to-options-cycle");
       fireEvent.change(target, { target: { value: 1 } });
 
-      expect(mockFn).toBeCalledWith("test", { cycle: 1, isRoundTrip: false });
+      expect(mockFn).toBeCalledWith("test", 1);
     });
   });
 });
@@ -135,7 +132,9 @@ describe("RoundTrip", () => {
     expect(target).not.toBeChecked();
   });
   test("config.isRoundTrip is true, then checked", () => {
-    render(<Options isOption={true} config={{ cycle: 0, isRoundTrip: true }} />);
+    render(
+      <Options isOption={true} config={{ cycle: 0, isRoundTrip: true }} />
+    );
     const target = screen.getByTestId("from-to-options-round-trip");
     expect(target).toBeChecked();
   });
@@ -146,13 +145,13 @@ describe("RoundTrip", () => {
         isOption={true}
         config={{ cycle: 0, isRoundTrip: false }}
         type="test"
-        update={mockFn}
+        updateIsRoundTrip={mockFn}
       />
     );
 
     const target = screen.getByTestId("from-to-options-round-trip");
     userEvent.click(target);
-    expect(mockFn).toBeCalledWith('test', { cycle: 0, isRoundTrip: true });
+    expect(mockFn).toBeCalledWith("test", true);
   });
   test("change to False, then call update", () => {
     const mockFn = jest.fn();
@@ -161,12 +160,12 @@ describe("RoundTrip", () => {
         isOption={true}
         config={{ cycle: 0, isRoundTrip: true }}
         type="test"
-        update={mockFn}
+        updateIsRoundTrip={mockFn}
       />
     );
 
     const target = screen.getByTestId("from-to-options-round-trip");
     userEvent.click(target);
-    expect(mockFn).toBeCalledWith('test', { cycle: 0, isRoundTrip: false });
+    expect(mockFn).toBeCalledWith("test", false);
   });
 });

@@ -1,6 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import SinCosConfig from "./SinCosConfig";
+import { renderWithProviders } from "../../util/renderWithProviders";
+import FromToConfig from "./FromToConfig";
+import { SinCosConfig } from "./SinCosConfig";
 
 const DEFAULT_CONFIG = {
   easing: "sin",
@@ -42,13 +44,13 @@ const DEFAULT_CONFIG = {
 
 describe("title", () => {
   test("easing is sin, then title is sin", () => {
-    render(<SinCosConfig type="x" config={{ easing: "sin" }} />);
+    renderWithProviders(<SinCosConfig type="x" config={{ easing: "sin" }} />);
 
     const target = screen.getByTestId("sincos-config-title");
     expect(target.textContent).toBe("A+Bsin((2π/C)t+D)");
   });
   test("easing is cos, then title is cos", () => {
-    render(<SinCosConfig type="x" config={{ easing: "cos" }} />);
+    renderWithProviders(<SinCosConfig type="x" config={{ easing: "cos" }} />);
 
     const target = screen.getByTestId("sincos-config-title");
     expect(target.textContent).toBe("A+Bcos((2π/C)t+D)");
@@ -56,7 +58,7 @@ describe("title", () => {
 });
 
 test("has EasingConfig for main", () => {
-  render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+  renderWithProviders(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
 
   // sin Optionがある≒メイン用のEasingConfigがある
   const target = screen.getByText("sin");
@@ -65,55 +67,91 @@ test("has EasingConfig for main", () => {
 
 describe("options", () => {
   test("INIT then hide Options", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
 
     const target = screen.queryByTestId("sincos-config-options");
     expect(target).not.toBeInTheDocument();
   });
   test("click Header, then show Options", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
     const target = screen.queryByTestId("sincos-config-options");
     expect(target).toBeInTheDocument();
   });
   test("Options has center params", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
     const target = screen.getByText("A. 中心");
     expect(target).toBeInTheDocument();
   });
   test("Options has amp params", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
-    const target = screen.getByText("B. 振幅");
+    const target = screen.getByText("B. 振幅 (半径)");
     expect(target).toBeInTheDocument();
   });
   test("Options has cycle params", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
     const target = screen.getByText("C. 周期");
     expect(target).toBeInTheDocument();
   });
   test("Options has start params", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
     const target = screen.getByText("D. 開始角度");
     expect(target).toBeInTheDocument();
   });
   test("start params has note", () => {
-    render(<SinCosConfig type="x" config={DEFAULT_CONFIG} />);
+    renderWithProviders(<>
+      <FromToConfig type="x" />
+      <SinCosConfig type="x" config={DEFAULT_CONFIG} />
+    </>);
+    const select = screen.getAllByTestId('from-to-easing-select');
+    userEvent.selectOptions(select[0], "sin");
 
-    userEvent.click(screen.getByRole("heading", { level: 2 }));
+    const headers = screen.getAllByRole("heading", { level: 2 });
+    userEvent.click(headers[1]);
 
     const target = screen.getByText("※単位: 度");
     expect(target).toBeInTheDocument();

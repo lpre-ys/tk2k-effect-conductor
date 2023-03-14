@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import EasingConfig from "./EasingConfig";
+import { EasingConfig } from "./EasingConfig";
 import userEvent from "@testing-library/user-event";
 
 test("Option list is const easingList", () => {
@@ -21,18 +21,14 @@ test("change Easing, then new Config add is In and call update", () => {
     <EasingConfig
       config={{ easing: "easeLinear", test: 123 }}
       type="ABC"
-      update={mockFn}
+      updateEasing={mockFn}
     />
   );
 
   const target = screen.getByTestId("from-to-easing-select");
   userEvent.selectOptions(target, "easeCircle");
 
-  expect(mockFn).toBeCalledWith("ABC", {
-    easing: "easeCircle",
-    easingAdd: "In",
-    test: 123,
-  });
+  expect(mockFn).toBeCalledWith("ABC", "easeCircle", "In");
 });
 
 test("Change Add, then call update", () => {
@@ -41,18 +37,14 @@ test("Change Add, then call update", () => {
     <EasingConfig
       config={{ easing: "easeCubic", easingAdd: "All", test: 456 }}
       type="DEF"
-      update={mockFn}
+      updateEasing={mockFn}
     />
   );
 
   const target = screen.getByTestId("from-to-easing-select-add");
   userEvent.selectOptions(target, "Out");
 
-  expect(mockFn).toBeCalledWith("DEF", {
-    easing: "easeCubic",
-    easingAdd: "Out",
-    test: 456,
-  });
+  expect(mockFn).toBeCalledWith("DEF", "easeCubic", "Out");
 });
 
 describe("Add select", () => {

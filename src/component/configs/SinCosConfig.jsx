@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useConfigOption } from "../../hook/useConfigOption";
 import FixedConfig from "./FixedConfig";
@@ -8,7 +9,7 @@ import EasingConfig from "./FromTo/EasingConfig";
 import FromToConfig from "./FromToConfig";
 import { Header } from "./Header";
 
-export default function SinCosConfig({ type, name, config, update }) {
+export function SinCosConfig({ type, name, config }) {
   const hasOption = () => {
     // sincosは常に何らかの設定があるので
     return true;
@@ -25,20 +26,15 @@ export default function SinCosConfig({ type, name, config, update }) {
             <b>A</b>+<b>B</b>
             {config.easing}((2π/<b>C</b>)t+<b>D</b>)
           </p>
-          <EasingConfig type={type} config={config} update={update} />
+          <EasingConfig type={type} />
         </div>
-        <Options
-          type={type}
-          config={config.trig}
-          update={update}
-          {...optionProps}
-        />
+        <Options type={type} config={config.trig} {...optionProps} />
       </div>
     </div>
   );
 }
 
-function Options({ type, config, update, isOption }) {
+function Options({ type, config, isOption }) {
   const { t } = useTranslation();
   if (isOption) {
     return (
@@ -46,28 +42,24 @@ function Options({ type, config, update, isOption }) {
         <Params
           name={`A. ${t("configs.trig.center")}`}
           type={`${type}.trig.center`}
-          config={config.center}
-          update={update}
+          easing={config.center.easing}
         />
         <Params
           name={`B. ${t("configs.trig.amp")}`}
           type={`${type}.trig.amp`}
-          config={config.amp}
-          update={update}
+          easing={config.amp.easing}
         />
         <Params
           name={`C. ${t("configs.trig.cycle")}`}
           type={`${type}.trig.cycle`}
-          config={config.cycle}
-          update={update}
+          easing={config.cycle.easing}
           isHideEasing={true}
         />
         <Params
           name={`D. ${t("configs.trig.start.name")}`}
           note={t("configs.trig.start.note")}
           type={`${type}.trig.start`}
-          config={config.start}
-          update={update}
+          easing={config.start.easing}
           isHideEasing={true}
         />
       </div>
@@ -75,32 +67,37 @@ function Options({ type, config, update, isOption }) {
   }
 }
 
-function Params({ name, note, type, config, update, isHideEasing }) {
+function Params({ name, note, type, easing, isHideEasing }) {
   return (
     <div css={styles.params}>
-      {config.easing === "fixed" ? (
+      {easing === "fixed" ? (
         <FixedConfig
           name={name}
           note={note}
           type={type}
-          config={config}
-          update={update}
           isSub={true}
           isHideEasing={isHideEasing}
         />
       ) : (
-        <FromToConfig
-          name={name}
-          note={note}
-          type={type}
-          config={config}
-          update={update}
-          isSub={true}
-        />
+        <FromToConfig name={name} note={note} type={type} isSub={true} />
       )}
     </div>
   );
 }
+
+// eslint-disable-next-line import/no-anonymous-default-export
+export default (props) => {
+  const config = useSelector((state) => {
+    const cel = state.celList.list[state.celList.celIndex];
+    // SinCosにはtrigが来る事は無いので
+    return cel[props.type];
+  });
+  const _props = {
+    config,
+    ...props,
+  };
+  return <SinCosConfig {..._props} />;
+};
 
 const styles = {
   wrapper: css`
