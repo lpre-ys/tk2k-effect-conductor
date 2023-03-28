@@ -206,42 +206,37 @@ export const celListSlice = createSlice({
         return cel;
       });
     },
-    updateByType: (state, action) => {
-      const { type, data } = action.payload;
-
-      const keys = type.split(".");
-
+    updateEasingOptions: (state, action) => {
+      const { type, easing, value } = action.payload;
+      // type: x.trig.amp みたいなやつ
+      // easing: easePoly
+      // value: Objectが来るはず
       state.list = state.list.map((cel, index) => {
         if (index === state.celIndex) {
-          // easingが三角関数系かつ、trigパラメータが無い場合、作成する
-          if (
-            ["sin", "cos"].includes(data.easing) &&
-            typeof data.trig === "undefined"
-          ) {
-            data.trig = merge(DEFAULT_TRIG, {});
-            data.trig.center = merge(cel[type], {});
+          const keys = type.split(".");
+          let target = false;
+          if (keys.length === 1) {
+            target = cel[type];
+
+          } else if (keys[1] === "trig") {
+            // trig系
+            target = cel[keys[0]][keys[1]][keys[2]];
           }
-          setData(cel, keys, data);
+          if (!target) {
+            throw new Error("Unsupported key.");
+          }
+
+          // もし、easingOptionsが無ければ作る
+          if (!Object.keys(target).includes("easingOptions")) {
+            target.easingOptions = {};
+          }
+          target.easingOptions[easing] = value;
         }
         return cel;
       });
     },
   },
 });
-
-const setData = (cel, keys, data) => {
-  const key = keys.shift();
-  if (keys.length === 0) {
-    // 最後の要素だった場合、cel.keyに代入
-    cel[key] = data;
-  } else {
-    // そうじゃないなら、辿っていく
-    if (typeof cel[key] === "undefined") {
-      cel[key] = {};
-    }
-    setData(cel[key], keys, data);
-  }
-};
 
 export const {
   resetCelList,
@@ -254,11 +249,11 @@ export const {
   moveCel,
   updateFrame,
   updatePattern,
-  updateByType,
   updateFromTo,
   updateCycle,
-  updateEasing,
   updateIsRoundTrip,
+  updateEasing,
+  updateEasingOptions,
 } = celListSlice.actions;
 export default celListSlice.reducer;
 

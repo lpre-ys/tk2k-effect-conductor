@@ -20,7 +20,7 @@ export const playerSlice = createSlice({
       state.bgColor = action.payload;
     },
     setZoom: (state, action) => {
-      state.zoom = action.payload;
+      state.zoom = parseInt(action.payload);
     }
   }
 })

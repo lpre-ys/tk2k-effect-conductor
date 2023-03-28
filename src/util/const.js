@@ -48,12 +48,11 @@ const DEFAULT_CEL = {
     isRoundTrip: false,
     align: "loop",
     customPattern: [],
-    isCustom: false
+    isCustom: false,
   },
-}
+};
 const DEFAULT_TRIG = {
-  center: {
-  },
+  center: {},
   amp: {
     from: 100,
     to: 100,
@@ -77,15 +76,8 @@ const DEFAULT_TRIG = {
     isRoundTrip: false,
     easing: "fixed",
     easingAdd: "",
-  }
-}
-const EASING_OPTION_LIST = {
-  easePoly: [
-    {
-      key: "exponent",
-    }
-  ]
-}
+  },
+};
 
 export {
   FRAME_SIZE,
@@ -94,5 +86,4 @@ export {
   FRAME_SEC,
   DEFAULT_CEL,
   DEFAULT_TRIG,
-  EASING_OPTION_LIST
 };

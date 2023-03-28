@@ -14,6 +14,7 @@ import { updateFromTo } from "../../slice/celListSlice";
 export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
+  const [optionIsValid, setOptionIsValid] = useState(true);
 
   const hasOption = () => {
     return config.cycle !== 0 || config.isRoundTrip;
@@ -50,7 +51,7 @@ export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
     <div>
       <Header
         name={name}
-        isValid={validateConfig(from, to)}
+        isValid={validateConfig(from, to) && optionIsValid}
         isSub={isSub}
         {...headerProps}
       />
@@ -77,7 +78,7 @@ export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
           />
         </label>
         <EasingConfig type={type} />
-        <Options type={type} {...optionProps} />
+        <Options type={type} setIsValid={setOptionIsValid} {...optionProps} />
       </div>
     </div>
   );

@@ -3,11 +3,14 @@
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { EASING_OPTION_LIST } from "../../../util/const";
 import { updateCycle, updateIsRoundTrip } from "../../../slice/celListSlice";
+import EasePolyParams from "./EasingParams/EasePolyParams";
+import EaseBackParams from "./EasingParams/EaseBackParams";
+import EaseElasticParams from "./EasingParams/EaseElasticParams";
 
 export function Options({
   type,
+  setIsValid,
   isOption,
   config,
   updateCycle,
@@ -25,16 +28,6 @@ export function Options({
   const handleChangeRoundTrip = ({ target }) => {
     updateIsRoundTrip(type, !!target.checked);
   };
-  // const handleChangeEasingOption = ({ target }) => {
-  //   let value = parseFloat(target.value);
-  //   // TODO バリデーションとかなんかいろいろ
-  //   if (Number.isNaN(value) || value < 0) {
-  //     // 空文字、マイナスは0に変換しておく
-  //     value = 0;
-  //   }
-  //   // 新しい値を作る
-  //   // TODO ちゃんと、保存先データの形を考えておかないとダメ！！！！！！！
-  // };
 
   if (isOption) {
     return (
@@ -60,28 +53,26 @@ export function Options({
           />
           :&nbsp;{t("configs.roundTrip")}
         </label>
-        <EasingOption easing={config.easing} />
+        <EasingParams
+          type={type}
+          easing={config.easing}
+          setIsValid={setIsValid}
+        />
       </div>
     );
   }
 }
 
-function EasingOption({ easing }) {
-  if (Object.keys(EASING_OPTION_LIST).includes(easing)) {
-    return (
-      <>
-        <h3 css={styles.appendsHeader}>{toUcCase(easing)}&nbsp;追加設定</h3>
-        <label css={styles.label}>
-          指数&nbsp;<small>(exponent)</small>:&nbsp;
-          <input type="number" step="0.01" css={styles.appends} />
-        </label>
-      </>
-    );
+function EasingParams({ type, easing, setIsValid }) {
+  if (easing === "easePoly") {
+    return <EasePolyParams type={type} setIsValid={setIsValid} />;
   }
-}
-
-function toUcCase(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  if (easing === "easeBack") {
+    return <EaseBackParams type={type} setIsValid={setIsValid} />;
+  }
+  if (easing === "easeElastic") {
+    return <EaseElasticParams type={type} setIsValid={setIsValid} />;
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -122,15 +113,5 @@ const styles = {
   `,
   checkbox: css`
     cursor: pointer;
-  `,
-  appends: css`
-    width: 4em;
-  `,
-  appendsHeader: css`
-    font-size: 1.1em;
-    font-weight: normal;
-    margin: 1em 0 0.5em;
-    padding-bottom: 0.1em;
-    border-bottom: 1px solid #00bcd4;
   `,
 };

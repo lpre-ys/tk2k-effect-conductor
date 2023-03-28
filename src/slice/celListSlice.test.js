@@ -10,6 +10,7 @@ import reducer, {
   updateEasing,
   updateCycle,
   updateIsRoundTrip,
+  updateEasingOptions,
 } from "./celListSlice";
 
 test("return Initial state", () => {
@@ -614,7 +615,11 @@ describe("updateEasing", () => {
       // 適当な値で更新
       state = reducer(
         state,
-        updateEasing({ type: "y.trig.amp", easing: "easeBack", easingAdd: "Out" })
+        updateEasing({
+          type: "y.trig.amp",
+          easing: "easeBack",
+          easingAdd: "Out",
+        })
       );
       // sin -> cosへ変更
       state = reducer(state, updateEasing({ type: "y", easing: "cos" }));
@@ -691,4 +696,76 @@ describe("updateEasing", () => {
       );
     });
   });
+});
+describe("updateEasingOptions", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+  });
+  test("first update, then create easingOptions object", () => {
+    const state = reducer(
+      baseState,
+      updateEasingOptions({
+        type: "x",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+
+    expect(state.list[0]).toHaveProperty("x.easingOptions");
+
+    const target = state.list[0].x.easingOptions;
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  });
+  test("2nd update, then not create easingOptions object", () => {
+    let state = reducer(
+      baseState,
+      updateEasingOptions({
+        type: "x",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+    state = reducer(
+      state,
+      updateEasingOptions({
+        type: "x",
+        easing: "easeBack",
+        value: { overshoot: 1.0 },
+      })
+    );
+
+    expect(state.list[0]).toHaveProperty("x.easingOptions");
+
+    const target = state.list[0].x.easingOptions;
+    expect(target).toHaveProperty("easeBack.overshoot");
+    expect(target.easeBack.overshoot).toBe(1.0);
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  });
+  test('target is x.trig.amp, then update x.trig.amp.easingOptions', () => {
+    // まず、Easingをsinにして、trigオブジェクトを作っておく
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "x",
+        easing: "sin",
+      })
+    );
+
+    state = reducer(
+      state,
+      updateEasingOptions({
+        type: "x.trig.amp",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+    expect(state.list[0]).toHaveProperty("x.trig.amp.easingOptions");
+
+    const target = state.list[0].x.trig.amp.easingOptions;
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  })
 });
