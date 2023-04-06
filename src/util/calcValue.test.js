@@ -313,3 +313,70 @@ describe("cycle", () => {
     });
   });
 });
+
+describe("isRoundTrip", () => {
+  beforeEach(() => {
+    config.easing = "easeLinear";
+    config.from = 0;
+    config.to = 100;
+    config.isRoundTrip = true;
+    frameConfig.volume = 20;
+  });
+  describe("cycle is 5", () => {
+    beforeEach(() => {
+      config.cycle = 5;
+    });
+    test.each([
+      [0, 0],
+      [1, 25],
+      [3, 75],
+      [4, 100],
+      [5, 100],
+      [6, 75],
+      [8, 25],
+      [9, 0],
+      [18, 25],
+      [19, 0],
+    ])("localFrame is %i, then return %i", (frame, ex) => {
+      const result = calcValue(frame, config, frameConfig);
+      expect(result).toBe(ex);
+    });
+  });
+  describe("cycle is 0", () => {
+    describe("volume is 20", () => {
+      beforeEach(() => {
+        frameConfig.volume = 20;
+      });
+      test.each([
+        [0, 0],
+        [1, 11],
+        [8, 89],
+        [9, 100],
+        [10, 100],
+        [11, 89],
+        [18, 11],
+        [19, 0],
+      ])("localFrame is %i, then return %i", (frame, ex) => {
+        const result = calcValue(frame, config, frameConfig);
+        expect(result).toBe(ex);
+      });
+    });
+    describe("volume is 19", () => {
+      beforeEach(() => {
+        frameConfig.volume = 19;
+      });
+      test.each([
+        [0, 0],
+        [1, 11],
+        [8, 89],
+        [9, 100],
+        [10, 89],
+        [17, 11],
+        [18, 0],
+      ])("localFrame is %i, then return %i", (frame, ex) => {
+        const result = calcValue(frame, config, frameConfig);
+        expect(result).toBe(ex);
+      });
+    });
+  });
+});

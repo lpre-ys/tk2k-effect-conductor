@@ -11,16 +11,31 @@ export default function calcValue(localFrame, config, frameConfig) {
   }
   const from = parseFloat(config.from);
   const to = config.easing === "fixed" ? from : parseFloat(config.to);
+  const isNoCycle = config.cycle < 1;
   let t;
-  const cycle = config.cycle > 0 ? config.cycle : frameConfig.volume;
+  let cycle = config.cycle;
+
+  if (isNoCycle) {
+    // cycle指定が無い場合、全体で1サイクルとする
+    cycle = frameConfig.volume;
+    if (config.isRoundTrip) {
+      cycle = Math.ceil(cycle / 2);
+    }
+  }
+
+  // cycleが1の場合、fromを返す
   if (cycle === 1) {
     return from;
   }
+
   let position = localFrame % cycle;
   if (config.isRoundTrip) {
     // 周回する場合、cycleでlocalframeを割って、奇数ならpositionを反転
     if (Math.floor(localFrame / cycle) % 2 === 1) {
       position = cycle - position - 1;
+      if (isNoCycle && frameConfig.volume % 2 === 1) {
+        position -= 1;
+      }
     }
   }
   t = (1.0 / (cycle - 1)) * position; // MAXはcycle - 1にする（右端まで行くように）
