@@ -13,6 +13,9 @@ export default function calcValue(localFrame, config, frameConfig) {
   const to = config.easing === "fixed" ? from : parseFloat(config.to);
   let t;
   const cycle = config.cycle > 0 ? config.cycle : frameConfig.volume;
+  if (cycle === 1) {
+    return from;
+  }
   let position = localFrame % cycle;
   if (config.isRoundTrip) {
     // 周回する場合、cycleでlocalframeを割って、奇数ならpositionを反転

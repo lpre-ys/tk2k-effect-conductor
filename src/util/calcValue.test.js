@@ -236,14 +236,14 @@ describe("easeElasticIn, from is 0, to is 100, frameConfig.volume is 20", () => 
       expect(result).toBe(ex);
     });
   });
-  describe('amplitude', () => {
-    describe('is 1.0, then equal default', () => {
+  describe("amplitude", () => {
+    describe("is 1.0, then equal default", () => {
       beforeEach(() => {
         config.easingOptions = {
           easeElastic: {
-            amplitude: 1.0
-          }
-        }
+            amplitude: 1.0,
+          },
+        };
       });
       test.each([
         [0, 0],
@@ -267,13 +267,13 @@ describe("easeElasticIn, from is 0, to is 100, frameConfig.volume is 20", () => 
         expect(result).toBe(ex);
       });
     });
-    describe('is 2.0', () => {
+    describe("is 2.0", () => {
       beforeEach(() => {
         config.easingOptions = {
           easeElastic: {
-            amplitude: 2.0
-          }
-        }
+            amplitude: 2.0,
+          },
+        };
       });
       test.each([
         [0, 0],
@@ -292,6 +292,24 @@ describe("easeElasticIn, from is 0, to is 100, frameConfig.volume is 20", () => 
         const result = calcValue(frame, config, frameConfig);
         expect(result).toBe(ex);
       });
-    })
-  })
+    });
+  });
+});
+
+describe("cycle", () => {
+  beforeEach(() => {
+    config.easing = "easeLinear";
+    config.from = 0;
+    config.to = 100;
+    frameConfig.volume = 20;
+  });
+  describe("cycle is 1", () => {
+    beforeEach(() => {
+      config.cycle = 1;
+    });
+    test.each([0, 1, 18, 19])("localFrame is %i, then return 0", (frame) => {
+      const result = calcValue(frame, config, frameConfig);
+      expect(result).toBe(0);
+    });
+  });
 });
