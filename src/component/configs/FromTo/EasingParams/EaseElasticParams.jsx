@@ -4,11 +4,13 @@ import { css } from "@emotion/react";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
 import toFloatOrNull from "../../../../util/toFloatOrNull";
 
 export function EaseElasticParams({ type, params, setIsValid, update }) {
+  const { t } = useTranslation();
   const [amplitude, setAmplitude] = useState(
     !!params.amplitude ? params.amplitude : ""
   );
@@ -56,10 +58,14 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
 
   return (
     <>
-      <h3 css={styles.header}>EaseElastic&nbsp;追加設定</h3>
+      <h3 css={styles.header}>
+        EaseElastic&nbsp;{t("configs.easing.options")}
+      </h3>
       <div css={styles.form}>
         <label css={styles.label}>
-          振幅&nbsp;<small>(amplitude)</small>:&nbsp;
+          {t("configs.easing.amplitude.label")}&nbsp;
+          <small>{t("configs.easing.amplitude.small")}</small>
+          :&nbsp;
           <input
             type="number"
             step="0.1"
@@ -76,7 +82,8 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
       </div>
       <div css={styles.form}>
         <label css={styles.label}>
-          期間&nbsp;<small>(period)</small>:&nbsp;
+          {t("configs.easing.period.label")}&nbsp;
+          <small>{t("configs.easing.period.small")}</small>:&nbsp;
           <input
             type="number"
             step="0.1"

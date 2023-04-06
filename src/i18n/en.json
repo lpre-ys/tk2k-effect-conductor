@@ -77,6 +77,25 @@
         "note": "*unit: degree"
       }
     },
+    "easing": {
+      "options": "options",
+      "overshoot": {
+        "label": "overshoot",
+        "small": ""
+      },
+      "exponent": {
+        "label": "exponent",
+        "small": ""
+      },
+      "amplitude": {
+        "label": "amplitude",
+        "small": ""
+      },
+      "period": {
+        "label": "period",
+        "small": ""
+      }
+    },
     "x": "X",
     "y": "Y",
     "scale": "Scale",

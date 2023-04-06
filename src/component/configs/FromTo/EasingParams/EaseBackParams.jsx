@@ -4,11 +4,13 @@ import { css } from "@emotion/react";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
 import toFloatOrNull from "../../../../util/toFloatOrNull";
 
 function EaseBackParams({ type, params, setIsValid, update }) {
+  const { t } = useTranslation();
   const [overshoot, setOvershoot] = useState(
     !!params.overshoot ? params.overshoot : ""
   );
@@ -42,9 +44,10 @@ function EaseBackParams({ type, params, setIsValid, update }) {
 
   return (
     <>
-      <h3 css={styles.header}>EaseBack&nbsp;追加設定</h3>
+      <h3 css={styles.header}>EaseBack&nbsp;{t("configs.easing.options")}</h3>
       <label css={styles.label}>
-        戻り量&nbsp;<small>(overshoot)</small>:&nbsp;
+        {t("configs.easing.overshoot.label")}&nbsp;
+        <small>{t("configs.easing.overshoot.small")}</small>:&nbsp;
         <input
           type="number"
           step="0.1"

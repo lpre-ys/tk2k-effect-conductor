@@ -4,11 +4,13 @@ import { css } from "@emotion/react";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
 import toFloatOrNull from "../../../../util/toFloatOrNull";
 
 function EasePolyParams({ type, params, setIsValid, update }) {
+  const { t } = useTranslation();
   const [exponent, setExponent] = useState(
     !!params.exponent ? params.exponent : ""
   );
@@ -43,9 +45,11 @@ function EasePolyParams({ type, params, setIsValid, update }) {
 
   return (
     <>
-      <h3 css={styles.header}>EasePoly&nbsp;追加設定</h3>
+      <h3 css={styles.header}>EasePoly&nbsp;{t("configs.easing.options")}</h3>
       <label css={styles.label}>
-        指数&nbsp;<small>(exponent)</small>:&nbsp;
+        {t("configs.easing.exponent.label")}&nbsp;
+        <small>{t("configs.easing.exponent.small")}</small>
+        :&nbsp;
         <input
           data-testid="easepoly-exponent"
           type="number"
