@@ -6,24 +6,28 @@ import { useCallback } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
+import toFloatOrNull from "../../../../util/toFloatOrNull";
 
-export function EaseBackParams({ type, params, setIsValid, update }) {
+function EaseBackParams({ type, params, setIsValid, update }) {
   const [overshoot, setOvershoot] = useState(
     !!params.overshoot ? params.overshoot : ""
   );
 
   const validate = useCallback(() => {
-    if (overshoot !== "" && Number.isNaN(parseFloat(overshoot))) {
+    if (overshoot === "") {
+      return true;
+    }
+    if (Number.isNaN(parseFloat(overshoot))) {
       return false;
     }
-    if (overshoot < 0) {
+    if (overshoot <= 0) {
       return false;
     }
     return true;
   }, [overshoot]);
 
   const isChange = useCallback(() => {
-    return params.overshoot !== overshoot;
+    return params.overshoot !== toFloatOrNull(overshoot);
   }, [overshoot, params.overshoot]);
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export function EaseBackParams({ type, params, setIsValid, update }) {
       return;
     }
     if (isChange()) {
-      update(type, { overshoot });
+      update(type, { overshoot: toFloatOrNull(overshoot) });
     }
   }, [overshoot, isChange, setIsValid, type, update, validate]);
 
@@ -45,6 +49,7 @@ export function EaseBackParams({ type, params, setIsValid, update }) {
           type="number"
           step="0.1"
           name="overshoot"
+          data-testid="easeback-overshoot"
           css={styles.number}
           onChange={({ target }) => {
             setOvershoot(target.value);

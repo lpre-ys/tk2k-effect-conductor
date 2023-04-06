@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
+import toFloatOrNull from "../../../../util/toFloatOrNull";
 
 export function EaseElasticParams({ type, params, setIsValid, update }) {
   const [amplitude, setAmplitude] = useState(
@@ -18,7 +19,7 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
       if (Number.isNaN(parseFloat(amplitude))) {
         return false;
       }
-      if (amplitude < 0) {
+      if (amplitude < 1.0) {
         return false;
       }
     }
@@ -34,7 +35,10 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
   }, [amplitude, period]);
 
   const isChange = useCallback(() => {
-    return params.amplitude !== amplitude || params.period !== period;
+    return (
+      params.amplitude !== toFloatOrNull(amplitude) ||
+      params.period !== toFloatOrNull(period)
+    );
   }, [amplitude, params.amplitude, params.period, period]);
 
   useEffect(() => {
@@ -43,7 +47,10 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
       return;
     }
     if (isChange()) {
-      update(type, { amplitude, period });
+      update(type, {
+        amplitude: toFloatOrNull(amplitude),
+        period: toFloatOrNull(period),
+      });
     }
   }, [amplitude, isChange, period, setIsValid, type, update, validate]);
 
@@ -57,6 +64,7 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
             type="number"
             step="0.1"
             name="amplitude"
+            data-testid="easeelastic-amplitude"
             css={styles.number}
             onChange={({ target }) => {
               setAmplitude(target.value);
@@ -73,6 +81,7 @@ export function EaseElasticParams({ type, params, setIsValid, update }) {
             type="number"
             step="0.1"
             name="period"
+            data-testid="easeelastic-period"
             css={styles.number}
             onChange={({ target }) => {
               setPeriod(target.value);

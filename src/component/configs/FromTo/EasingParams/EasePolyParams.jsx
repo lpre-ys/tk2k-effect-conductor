@@ -6,24 +6,29 @@ import { useCallback } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateEasingOptions } from "../../../../slice/celListSlice";
+import toFloatOrNull from "../../../../util/toFloatOrNull";
 
-export function EasePolyParams({ type, params, setIsValid, update }) {
+function EasePolyParams({ type, params, setIsValid, update }) {
   const [exponent, setExponent] = useState(
     !!params.exponent ? params.exponent : ""
   );
 
   const validate = useCallback(() => {
-    if (exponent !== "" && Number.isNaN(parseFloat(exponent))) {
+    if (exponent === "") {
+      // 空文字の場合、無条件でOKとする
+      return true;
+    }
+    if (Number.isNaN(parseFloat(exponent))) {
       return false;
     }
-    if (exponent < 0) {
+    if (exponent <= 0) {
       return false;
     }
     return true;
   }, [exponent]);
 
   const isChange = useCallback(() => {
-    return params.exponent !== exponent;
+    return params.exponent !== toFloatOrNull(exponent);
   }, [exponent, params.exponent]);
 
   useEffect(() => {
@@ -32,7 +37,7 @@ export function EasePolyParams({ type, params, setIsValid, update }) {
       return;
     }
     if (isChange()) {
-      update(type, { exponent });
+      update(type, { exponent: toFloatOrNull(exponent) });
     }
   }, [exponent, isChange, setIsValid, type, update, validate]);
 
@@ -42,6 +47,7 @@ export function EasePolyParams({ type, params, setIsValid, update }) {
       <label css={styles.label}>
         指数&nbsp;<small>(exponent)</small>:&nbsp;
         <input
+          data-testid="easepoly-exponent"
           type="number"
           step="0.1"
           name="exponent"
