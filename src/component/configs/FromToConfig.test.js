@@ -13,7 +13,7 @@ const defaultConfig = {
 };
 
 test("has EasingConfig component", () => {
-  renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+  renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
   const target = screen.getByTestId("from-to-easing");
   expect(target).toBeInTheDocument();
@@ -21,13 +21,13 @@ test("has EasingConfig component", () => {
 
 describe("Options", () => {
   test("INIT, then no component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
   test("click header once, then has component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -36,7 +36,7 @@ describe("Options", () => {
     expect(target).toBeInTheDocument();
   });
   test("click header twice, then no component", () => {
-    renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+    renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
     userEvent.click(header);
@@ -58,17 +58,17 @@ describe("From", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-from");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
-    expect(mockFn).toBeCalledWith("x", { from: 8, to: 6 });
+    expect(mockFn).toBeCalledWith("x", 8, 6);
     // マイナスもOK
     fireEvent.change(target, { target: { value: -111 } });
     expect(target).toHaveValue(-111);
-    expect(mockFn).toBeCalledWith("x", { from: -111, to: 6 });
+    expect(mockFn).toBeCalledWith("x", -111, 6);
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
@@ -93,17 +93,17 @@ describe("To", () => {
   test("change to Number, then value is update and call update", () => {
     const mockFn = jest.fn();
     renderWithProviders(
-      <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
+      <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
     const target = screen.getByTestId("from-to-config-to");
 
     fireEvent.change(target, { target: { value: 2 } });
     expect(target).toHaveValue(2);
-    expect(mockFn).toBeCalledWith("x", { from: 3, to: 2 });
+    expect(mockFn).toBeCalledWith("x", 3, 2);
     // マイナスもOK
     fireEvent.change(target, { target: { value: -29 } });
     expect(target).toHaveValue(-29);
-    expect(mockFn).toBeCalledWith("x", { from: 3, to: -29 });
+    expect(mockFn).toBeCalledWith("x", 3, -29);
   });
   test("change to empty, then value is empty and not call update", () => {
     const mockFn = jest.fn();
@@ -127,7 +127,7 @@ describe("Header", () => {
   });
   describe('Angle icon', () => {
     test('No Cycle and No RoundTrip, then header icon is gray', () => {
-      renderWithProviders(<FromToConfig type="x" config={defaultConfig} />);
+      renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#9e9e9e' });
@@ -135,7 +135,7 @@ describe("Header", () => {
     test('has Cycle, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.cycle = 3;
-      renderWithProviders(<FromToConfig type="x" config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });
@@ -143,7 +143,7 @@ describe("Header", () => {
     test('on RoundTrip, then header icon is blue', () => {
       const config = Object.assign({}, defaultConfig);
       config.isRoundTrip = true;
-      renderWithProviders(<FromToConfig type="x" config={config} />);
+      renderWithProviders(<FromToConfig type="x" config={config} name="テストネーム" />);
 
       const target = screen.getByTestId('config-header-icon-right');
       expect(target).toHaveStyle({ color: '#00838F' });

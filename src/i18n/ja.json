@@ -65,6 +65,37 @@
       "end": "終了",
       "custom": "カスタムパターン"
     },
+    "parameter": {
+      "fixed": "固定"
+    },
+    "trig": {
+      "center": "中心",
+      "amp": "振幅 (半径)",
+      "cycle": "周期",
+      "start": {
+        "name": "開始角度",
+        "note": "※単位: 度"
+      }
+    },
+    "easing": {
+      "options": "追加設定",
+      "overshoot": {
+        "label": "戻り量",
+        "small": "(overshoot)"
+      },
+      "exponent": {
+        "label": "指数",
+        "small": "(exponent)"
+      },
+      "amplitude": {
+        "label": "振幅",
+        "small": "(amplitude)"
+      },
+      "period": {
+        "label": "波長",
+        "small": "(period)"
+      }
+    },
     "x": "X座標",
     "y": "Y座標",
     "scale": "拡大率",

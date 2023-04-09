@@ -1,19 +1,20 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useCallback } from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useConfigOption } from "../../hook/useConfigOption";
-import { updateByType } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 import { Header } from "./Header";
+import { updateFromTo } from "../../slice/celListSlice";
 
-export function FromToConfig({ type, name, config, update }) {
+export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
+  const [optionIsValid, setOptionIsValid] = useState(true);
 
   const hasOption = () => {
     return config.cycle !== 0 || config.isRoundTrip;
@@ -28,32 +29,33 @@ export function FromToConfig({ type, name, config, update }) {
     return !Number.isNaN(parseInt(value));
   };
 
-  const validateConfig = useCallback(({ from, to }) => {
+  const validateConfig = useCallback((from, to) => {
     return validate(from) && validate(to);
   }, []);
 
-  const isChangeConfig = (newConfig, oldConfig) => {
-    return newConfig.from !== oldConfig.from || newConfig.to !== oldConfig.to;
+  const isChangeConfig = (config, from, to) => {
+    return config.from !== from || config.to !== to;
   };
 
   useEffect(() => {
-    const newConfig = Object.assign({}, config);
-    newConfig.from = parseInt(from);
-    newConfig.to = parseInt(to);
-
-    if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
-      update(type, newConfig);
+    if (validateConfig(from, to)) {
+      const intFrom = parseInt(from);
+      const intTo = parseInt(to);
+      if (isChangeConfig(config, intFrom, intTo)) {
+        updateFromTo(type, intFrom, intTo);
+      }
     }
-  }, [config, from, to, type, update, validateConfig]);
+  }, [config, from, to, type, updateFromTo, validateConfig]);
 
   return (
     <div>
       <Header
         name={name}
-        isValid={validateConfig({ from, to })}
+        isValid={validateConfig(from, to) && optionIsValid}
+        isSub={isSub}
         {...headerProps}
       />
-      <div css={styles.wrapper}>
+      <div css={[styles.wrapper, isSub && styles.sub]}>
         <label css={styles.label}>
           <input
             type="number"
@@ -76,7 +78,7 @@ export function FromToConfig({ type, name, config, update }) {
           />
         </label>
         <EasingConfig type={type} />
-        <Options type={type} {...optionProps} />
+        <Options type={type} setIsValid={setOptionIsValid} {...optionProps} />
       </div>
     </div>
   );
@@ -84,14 +86,20 @@ export function FromToConfig({ type, name, config, update }) {
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (props) => {
-  const config = useSelector(
-    (state) => state.celList.list[state.celList.celIndex][props.type]
-  );
+  const config = useSelector((state) => {
+    const cel = state.celList.list[state.celList.celIndex];
+    const keys = props.type.split(".");
+    if (keys.length === 1) {
+      return cel[props.type];
+    } else if (keys[1] === "trig") {
+      return cel[keys[0]][keys[1]][keys[2]];
+    }
+  });
   const dispatch = useDispatch();
   const _props = {
     config,
-    update: (type, newConfig) => {
-      dispatch(updateByType({ type, data: newConfig }));
+    updateFromTo: (type, from, to) => {
+      dispatch(updateFromTo({ type, from, to }));
     },
     ...props,
   };
@@ -111,5 +119,8 @@ const styles = {
   `,
   error: css`
     color: #b71c1c;
+  `,
+  sub: css`
+    font-size: 0.9em;
   `,
 };

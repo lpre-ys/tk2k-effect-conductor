@@ -6,6 +6,11 @@ import reducer, {
   setCelIndex,
   setCelName,
   moveCel,
+  updateFromTo,
+  updateEasing,
+  updateCycle,
+  updateIsRoundTrip,
+  updateEasingOptions,
 } from "./celListSlice";
 
 test("return Initial state", () => {
@@ -14,9 +19,6 @@ test("return Initial state", () => {
 });
 
 describe("loadCelList", () => {
-  test("change check", () => {
-    // TODO
-  });
   test("Ver1.0.2 add parameter", () => {
     const data = {
       celIndex: 0,
@@ -87,7 +89,7 @@ describe("loadCelList", () => {
         isRoundTrip: false,
       },
     });
-    expect(state.list[1].pattern.align).toBe('loop');
+    expect(state.list[1].pattern.align).toBe("loop");
     expect(state.list[1].pattern.customPattern).toEqual([]);
     expect(state.list[1].pattern.isCustom).toBe(false);
   });
@@ -286,4 +288,484 @@ describe("moveCel", () => {
       expect(state.celIndex).toBe(2);
     });
   });
+});
+describe("updateFromTo", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+    baseState = reducer(baseState, addCel({ volume: 10, start: 0 }));
+  });
+  test("target is scale, then update from and to", () => {
+    const state = reducer(
+      baseState,
+      updateFromTo({
+        type: "scale",
+        from: 12,
+        to: 34,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("scale");
+
+    const target = state.list[1].scale;
+
+    expect(target.from).toBe(12);
+    expect(target.to).toBe(34);
+
+    // その他は変更なし
+    expect(target.cycle).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+    expect(target.easing).toBe("easeLinear");
+    expect(target.easingAdd).toBe("");
+  });
+  test("target is y.trig.amp, then update from and to", () => {
+    // 一度easingをsinにして、trig系のパラメータを作る
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "y",
+        easing: "sin",
+      })
+    );
+    state = reducer(
+      state,
+      updateFromTo({
+        type: "y.trig.amp",
+        from: 12,
+        to: 34,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("y.trig.amp");
+
+    const target = state.list[1].y.trig.amp;
+
+    expect(target.from).toBe(12);
+    expect(target.to).toBe(34);
+  });
+});
+describe("updateCycle", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+    baseState = reducer(baseState, addCel({ volume: 10, start: 0 }));
+  });
+  test("target is x, then update cycle", () => {
+    const state = reducer(
+      baseState,
+      updateCycle({
+        type: "x",
+        value: 7,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("x");
+
+    const target = state.list[1].x;
+
+    expect(target.cycle).toBe(7);
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+    expect(target.easing).toBe("easeLinear");
+    expect(target.easingAdd).toBe("");
+  });
+  test("target is x.trig.cycle, then update cycle", () => {
+    // 一度easingをsinにして、trig系のパラメータを作る
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "x",
+        easing: "sin",
+      })
+    );
+    state = reducer(
+      state,
+      updateCycle({
+        type: "x.trig.cycle",
+        value: 7,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("x.trig.cycle");
+
+    const target = state.list[1].x.trig.cycle;
+
+    expect(target.cycle).toBe(7);
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+    expect(target.easing).toBe("fixed");
+    expect(target.easingAdd).toBe("");
+  });
+});
+describe("updateIsRoundTrip", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+    baseState = reducer(baseState, addCel({ volume: 10, start: 0 }));
+  });
+  test("target is opacity, then update cycle", () => {
+    const state = reducer(
+      baseState,
+      updateIsRoundTrip({
+        type: "opacity",
+        value: true,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("opacity");
+
+    const target = state.list[1].opacity;
+    expect(target.isRoundTrip).toBe(true);
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.cycle).toBe(0);
+    expect(target.easing).toBe("easeLinear");
+    expect(target.easingAdd).toBe("");
+  });
+  test("target is opacity.trig.start, then update isRoundTrip", () => {
+    // 一度easingをsinにして、trig系のパラメータを作る
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "opacity",
+        easing: "sin",
+      })
+    );
+    state = reducer(
+      state,
+      updateIsRoundTrip({
+        type: "opacity.trig.start",
+        value: true,
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("opacity.trig.start");
+
+    const target = state.list[1].opacity.trig.start;
+    expect(target.isRoundTrip).toBe(true);
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.cycle).toBe(0);
+    expect(target.easing).toBe("fixed");
+    expect(target.easingAdd).toBe("");
+  });
+});
+describe("updateEasing", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+    baseState = reducer(baseState, addCel({ volume: 10, start: 0 }));
+  });
+  test("target is opacity, then update easing, easingAdd", () => {
+    const state = reducer(
+      baseState,
+      updateEasing({
+        type: "opacity",
+        easing: "easePoly",
+        easingAdd: "In",
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("opacity");
+
+    const target = state.list[1].opacity;
+
+    expect(target.easing).toBe("easePoly");
+    expect(target.easingAdd).toBe("In");
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.cycle).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+  });
+  test("action.easingAdd is undefined, then easingAdd is empty string", () => {
+    const state = reducer(
+      baseState,
+      updateEasing({
+        type: "opacity",
+        easing: "fixed",
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("opacity");
+
+    const target = state.list[1].opacity;
+
+    expect(target.easing).toBe("fixed");
+    expect(target.easingAdd).toBe("");
+
+    // その他は変更なし
+    expect(target.from).toBe(0);
+    expect(target.to).toBe(0);
+    expect(target.cycle).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+  });
+  test("target is opacity.trig.amp, then update easing, easingAdd", () => {
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "opacity",
+        easing: "sin",
+      })
+    );
+    state = reducer(
+      state,
+      updateEasing({
+        type: "opacity.trig.amp",
+        easing: "easeElastic",
+        easingAdd: "All",
+      })
+    );
+
+    expect(state.list).toHaveLength(2);
+    expect(state.list[1]).toHaveProperty("opacity.trig.amp");
+
+    const target = state.list[1].opacity.trig.amp;
+
+    expect(target.easing).toBe("easeElastic");
+    expect(target.easingAdd).toBe("All");
+
+    // その他は変更なし
+    expect(target.from).toBe(100);
+    expect(target.to).toBe(100);
+    expect(target.cycle).toBe(0);
+    expect(target.isRoundTrip).toBe(false);
+
+    const parent = state.list[1].opacity;
+    // 親も変更なし
+    expect(parent.from).toBe(0);
+    expect(parent.to).toBe(0);
+    expect(parent.cycle).toBe(0);
+    expect(parent.isRoundTrip).toBe(false);
+    expect(parent.easing).toBe("sin");
+    expect(parent.easingAdd).toBe("");
+  });
+  describe("trig", () => {
+    test("easing is easeLinear and trig is undefined, then noop trig", () => {
+      const state = reducer(
+        baseState,
+        updateEasing({
+          type: "y",
+          easing: "easeLinear",
+        })
+      );
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).not.toHaveProperty("trig");
+    });
+    test("easing is sin and trig is undefined, then create it", () => {
+      const state = reducer(
+        baseState,
+        updateEasing({
+          type: "y",
+          easing: "sin",
+        })
+      );
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).toHaveProperty("trig");
+      expect(state.list[1].y.trig).toHaveProperty("center");
+      expect(state.list[1].y.trig).toHaveProperty("amp");
+      expect(state.list[1].y.trig).toHaveProperty("cycle");
+      expect(state.list[1].y.trig).toHaveProperty("start");
+    });
+    test("easing is cos and trig is undefined, then create it", () => {
+      const state = reducer(
+        baseState,
+        updateEasing({
+          type: "y",
+          easing: "cos",
+        })
+      );
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1].y).toHaveProperty("trig");
+      expect(state.list[1].y.trig).toHaveProperty("center");
+      expect(state.list[1].y.trig).toHaveProperty("amp");
+      expect(state.list[1].y.trig).toHaveProperty("cycle");
+      expect(state.list[1].y.trig).toHaveProperty("start");
+    });
+    test("easing is cos and trig is Object, then noop", () => {
+      // まずは一度sinにして作る
+      let state = reducer(
+        baseState,
+        updateEasing({
+          type: "y",
+          easing: "sin",
+        })
+      );
+      // 適当な値で更新
+      state = reducer(
+        state,
+        updateEasing({
+          type: "y.trig.amp",
+          easing: "easeBack",
+          easingAdd: "Out",
+        })
+      );
+      // sin -> cosへ変更
+      state = reducer(state, updateEasing({ type: "y", easing: "cos" }));
+
+      expect(state.list).toHaveLength(2);
+      expect(state.list[1]).toHaveProperty("y.trig.amp");
+
+      const target = state.list[1].y.trig.amp;
+      expect(target.easing).toBe("easeBack");
+      expect(target.easingAdd).toBe("Out");
+    });
+    describe("init trig parameter", () => {
+      test("center is copy from state.parent", () => {
+        let preState = reducer(
+          baseState,
+          updateFromTo({
+            type: "y",
+            from: 10,
+            to: 25,
+          })
+        );
+        preState = reducer(
+          preState,
+          updateEasing({
+            type: "y",
+            easing: "easeBack",
+            easingAdd: "Out",
+          })
+        );
+        preState = reducer(preState, updateCycle({ type: "y", value: 3 }));
+        preState = reducer(
+          preState,
+          updateIsRoundTrip({ type: "y", value: true })
+        );
+        const state = reducer(
+          preState,
+          updateEasing({
+            type: "y",
+            easing: "sin",
+          })
+        );
+
+        expect(state.list[1]).toHaveProperty("y.trig.center");
+        const target = state.list[1].y.trig.center;
+
+        expect(target.from).toBe(10);
+        expect(target.to).toBe(25);
+        expect(target.cycle).toBe(3);
+        expect(target.isRoundTrip).toBe(true);
+        expect(target.easing).toBe("easeBack");
+        expect(target.easingAdd).toBe("Out");
+      });
+      test.each([
+        ["amp", 100, "easeLinear"],
+        ["cycle", 0, "fixed"],
+        ["start", 0, "fixed"],
+      ])(
+        "%s is FromTo: %i, Easing: %s, other is default",
+        (name, value, easing) => {
+          const state = reducer(
+            baseState,
+            updateEasing({ type: "y", easing: "sin" })
+          );
+
+          expect(state.list[1].y.trig).toHaveProperty(name);
+          const target = state.list[1].y.trig[name];
+          expect(target.from).toBe(value);
+          expect(target.to).toBe(value);
+          expect(target.cycle).toBe(0);
+          expect(target.isRoundTrip).toBe(false);
+          expect(target.easing).toBe(easing);
+          expect(target.easingAdd).toBe("");
+        }
+      );
+    });
+  });
+});
+describe("updateEasingOptions", () => {
+  let baseState;
+  beforeEach(() => {
+    baseState = reducer({}, resetCelList());
+  });
+  test("first update, then create easingOptions object", () => {
+    const state = reducer(
+      baseState,
+      updateEasingOptions({
+        type: "x",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+
+    expect(state.list[0]).toHaveProperty("x.easingOptions");
+
+    const target = state.list[0].x.easingOptions;
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  });
+  test("2nd update, then not create easingOptions object", () => {
+    let state = reducer(
+      baseState,
+      updateEasingOptions({
+        type: "x",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+    state = reducer(
+      state,
+      updateEasingOptions({
+        type: "x",
+        easing: "easeBack",
+        value: { overshoot: 1.0 },
+      })
+    );
+
+    expect(state.list[0]).toHaveProperty("x.easingOptions");
+
+    const target = state.list[0].x.easingOptions;
+    expect(target).toHaveProperty("easeBack.overshoot");
+    expect(target.easeBack.overshoot).toBe(1.0);
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  });
+  test('target is x.trig.amp, then update x.trig.amp.easingOptions', () => {
+    // まず、Easingをsinにして、trigオブジェクトを作っておく
+    let state = reducer(
+      baseState,
+      updateEasing({
+        type: "x",
+        easing: "sin",
+      })
+    );
+
+    state = reducer(
+      state,
+      updateEasingOptions({
+        type: "x.trig.amp",
+        easing: "easePoly",
+        value: { exponent: 3.5 },
+      })
+    );
+    expect(state.list[0]).toHaveProperty("x.trig.amp.easingOptions");
+
+    const target = state.list[0].x.trig.amp.easingOptions;
+    expect(target).toHaveProperty("easePoly.exponent");
+    expect(target.easePoly.exponent).toBe(3.5);
+  })
 });

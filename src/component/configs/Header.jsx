@@ -7,29 +7,52 @@ import {
   faAngleRight,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-export function Header({ name, color, isValid, reset, isOption, setIsOption }) {
+export function Header({
+  name,
+  note,
+  color,
+  isValid,
+  isSub,
+  reset,
+  isOption,
+  setIsOption,
+}) {
+  const Heading = `h${isSub ? 3 : 2}`;
+  const isUseOption = typeof setIsOption === "function";
+  const optionIcon = isOption ? (
+    <FontAwesomeIcon
+      icon={faAngleDown}
+      css={[styles.headerIcon, isSub && styles.headerIconSubFix]}
+      style={color}
+      data-testid="config-header-icon-down"
+    />
+  ) : (
+    <FontAwesomeIcon
+      icon={faAngleRight}
+      css={[styles.headerIcon, isSub && styles.headerIconSubFix]}
+      style={color}
+      data-testid="config-header-icon-right"
+    />
+  );
+  const normalIcon = (
+    <span
+      css={[styles.headerDotIcon, isSub && styles.headerDotIconSubFix]}
+      data-testid="config-header-icon-dot"
+    >
+      ・
+    </span>
+  );
   return (
-    <h2
-      css={[styles.header]}
+    <Heading
+      css={[styles.header, isSub && styles.subHeader]}
+      style={{ cursor: isUseOption ? "pointer" : "default" }}
       onClick={() => {
-        setIsOption(!isOption);
+        if (isUseOption) {
+          setIsOption(!isOption);
+        }
       }}
     >
-      {isOption ? (
-        <FontAwesomeIcon
-          icon={faAngleDown}
-          css={styles.headerIcon}
-          style={color}
-          data-testid="config-header-icon-down"
-        />
-      ) : (
-        <FontAwesomeIcon
-          icon={faAngleRight}
-          css={styles.headerIcon}
-          style={color}
-          data-testid="config-header-icon-right"
-        />
-      )}
+      {isUseOption ? optionIcon : normalIcon}
       {name}
       {!isValid && (
         <FontAwesomeIcon
@@ -39,16 +62,23 @@ export function Header({ name, color, isValid, reset, isOption, setIsOption }) {
           data-testid="config-header-icon-error"
         />
       )}
-    </h2>
+      <span css={styles.note}>{note}</span>
+    </Heading>
   );
 }
 
 const styles = {
   header: css`
-    cursor: pointer;
     position: relative;
     padding-left: 1.2em;
     user-select: none;
+  `,
+  subHeader: css`
+    font-size: 1.1em;
+    font-weight: normal;
+    margin: 1em 0 0.5em;
+    padding-bottom: 0.1em;
+    border-bottom: 1px solid #00bcd4;
   `,
   headerIcon: css`
     // color: #0097a7;
@@ -56,6 +86,21 @@ const styles = {
     top: 0.55em;
     left: 0.4em;
     font-size: 1rem;
+  `,
+  headerIconSubFix: css`
+    top: 0.15em;
+    left: 0.3em;
+  `,
+  headerDotIcon: css`
+    position: absolute;
+    top: 0.3em;
+    left: 0.2em;
+    font-size: 1em;
+    color: #9e9e9e;
+  `,
+  headerDotIconSubFix: css`
+    top: 0em;
+    left: 0.15em;
   `,
   exIcon: css`
     color: #b71c1c;
@@ -66,5 +111,11 @@ const styles = {
       color: #e53935;
     }
     width: 1em;
+  `,
+  note: css`
+    font-size: 0.8em;
+    position: absolute;
+    right: 1em;
+    top: 0.2em;
   `,
 };

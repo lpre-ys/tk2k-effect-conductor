@@ -3,9 +3,9 @@
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 
-import FromToConfig from "./configs/FromToConfig";
 import PatternConfig from "./configs/PatternConfig";
 import TimingConfig from "./configs/TimingConfig";
+import ParameterConfig from "./configs/ParameterConfig";
 import { setCelName } from "../slice/celListSlice";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -50,10 +50,13 @@ export function Configs({ name, setCelName }) {
       )}
       <TimingConfig />
       <PatternConfig />
-      <FromToConfig type="x" name={t("configs.x")} />
-      <FromToConfig type="y" name={t("configs.y")} />
+      <ParameterConfig type="x" name={t("configs.x")} />
+      <ParameterConfig type="y" name={t("configs.y")} />
+      <ParameterConfig type="scale" name={t("configs.scale")} />
+      <ParameterConfig type="opacity" name={t("configs.opacity")} />
+      {/* <FromToConfig type="y" name={t("configs.y")} />
       <FromToConfig type="scale" name={t("configs.scale")} />
-      <FromToConfig type="opacity" name={t("configs.opacity")} />
+      <FromToConfig type="opacity" name={t("configs.opacity")} /> */}
     </div>
   );
 }
