@@ -65,9 +65,14 @@ export default async function makeTransparentImage(originalSrc, trColor) {
     const r = data[i],
       g = data[i + 1],
       b = data[i + 2];
+    // 透過色の場合、透過させる
     if (r === trColor.r && g === trColor.g && b === trColor.b) {
       data[i + 3] = 0;
     }
+    // RGB565での表示と同じになるよう、色を変換する
+    data[i] = normalize5Bit(r);
+    data[i + 1] = normalize6Bit(g);
+    data[i + 2] = normalize5Bit(b);
   }
   ctx.putImageData(imageData, 0, 0);
   const transparent = canvas.toDataURL();
@@ -82,4 +87,14 @@ function loadImage(src) {
     img.onerror = (e) => reject(e);
     img.src = src;
   });
+}
+
+export function normalize5Bit(c) {
+  c = c >> 3;
+  return (c << 3) | (c >> 2);
+}
+
+export function normalize6Bit(c) {
+  c = c >> 2;
+  return (c << 2) | (c >> 4);
 }
