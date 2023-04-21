@@ -12,6 +12,22 @@ jest.mock("react-color", () => {
   };
 });
 
+
+jest.mock("./component/player/Cel.jsx", () => ({ id, setMsg }) => {
+  return (
+    <div data-testid="mock-cel">
+      <p>id: {id}</p>
+      <button
+        type="button"
+        title="mock-set-msg"
+        onClick={() => {
+          setMsg("TEST MESSAGE");
+        }}
+      />
+    </div>
+  );
+});
+
 // * Material *
 test("has Material component", () => {
   renderWithProviders(<App />);
