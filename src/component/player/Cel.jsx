@@ -1,18 +1,21 @@
 /** @jsxImportSource @emotion/react */
 
 // import { css } from "@emotion/react";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
-import { Group, Rect, Sprite, Text } from "react-konva";
+import { Group, Rect, Text } from "react-konva";
 import { useSelector } from "react-redux";
 import useImage from "use-image";
 import calcFrameValue from "../../util/calcFrameValue";
+import TkColorSprite from "./TkColorSprite";
 
 const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
   const { trImage, maxPage } = useSelector((state) => state.material);
 
   const frame = useSelector((state) => state.frame.frame);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
+
+  const groupRef = useRef(null);
 
   const width = 320 * (2 / zoom);
   const height = 240 * (2 / zoom);
@@ -76,8 +79,9 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
           ].join(" ")
         );
       }}
+      ref={groupRef}
     >
-      <Sprite
+      <TkColorSprite
         x={calcScale(-96 / 2, data.scale)}
         y={calcScale(-96 / 2, data.scale)}
         image={imgElement}
@@ -89,6 +93,11 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
         opacity={(100 - data.opacity) / 100}
         scaleX={data.scale / 100}
         scaleY={data.scale / 100}
+        group={groupRef.current}
+        // tkRed={}
+        // tkGreen={}
+        // tkBlue={}
+        // tkSat={}
       />
       {isShowCelBorder && (
         <>
