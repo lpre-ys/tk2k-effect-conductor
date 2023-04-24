@@ -29,6 +29,11 @@ export function getDataByLocalFrame(localFrame, config) {
   const y = calcValue(localFrame, config.y, config.frame);
   const scale = calcValue(localFrame, config.scale, config.frame);
   const opacity = calcValue(localFrame, config.opacity, config.frame);
+  const red = calcValue(localFrame, config.red, config.frame);
+  const green = calcValue(localFrame, config.green, config.frame);
+  const blue = calcValue(localFrame, config.blue, config.frame);
+  // 色計算用の彩度と、tkool側の彩度を区別している
+  const sat = calcValue(localFrame, config.tkSat, config.frame);
   // フレームの決定
   const pageIndex = calcPageIndex(
     localFrame,
@@ -40,6 +45,10 @@ export function getDataByLocalFrame(localFrame, config) {
     y,
     scale,
     opacity,
+    red,
+    green,
+    blue,
+    sat,
     pageIndex,
   };
 }

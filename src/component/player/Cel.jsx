@@ -46,6 +46,10 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
     y: 0,
     scale: 100,
     opacity: 100,
+    red: 100,
+    green: 100,
+    blue: 100,
+    sat: 100,
     pageIndex: 0,
   };
 
@@ -76,6 +80,8 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
             `y: ${data.y}`,
             `拡大率: ${data.scale}%`,
             `透明度: ${data.opacity}%`,
+            `RGB: (${data.red}%, ${data.green}%, ${data.blue}%)`,
+            `彩度: ${data.sat}%`,
           ].join(" ")
         );
       }}
@@ -94,10 +100,10 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
         scaleX={data.scale / 100}
         scaleY={data.scale / 100}
         group={groupRef.current}
-        // tkRed={}
-        // tkGreen={}
-        // tkBlue={}
-        // tkSat={}
+        tkRed={data.red}
+        tkGreen={data.green}
+        tkBlue={data.blue}
+        tkSat={data.sat}
       />
       {isShowCelBorder && (
         <>
