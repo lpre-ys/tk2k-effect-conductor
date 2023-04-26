@@ -2,14 +2,24 @@
 
 import { useRef } from "react";
 import useImage from "use-image";
-import { Layer, Rect, Sprite, Stage } from "react-konva";
+import { Layer, Rect, Stage } from "react-konva";
 import TrBg from "../../../tr2x.png";
 import { css } from "@emotion/react";
 import { useSelector } from "react-redux";
 import makePageList from "../../../util/makePageList";
+import TkColorSprite from "../../player/TkColorSprite";
 
-export function PatternImage({ config, trImage, bgColor }) {
+export function PatternImage({
+  config,
+  trImage,
+  bgColor,
+  red = 100,
+  green = 100,
+  blue = 100,
+  sat = 100,
+}) {
   const spriteRef = useRef();
+  const layerRef = useRef();
   const [trBgImage] = useImage(TrBg);
   const [imgElement] = useImage(trImage);
 
@@ -28,16 +38,16 @@ export function PatternImage({ config, trImage, bgColor }) {
             }
           }}
         >
-          <Layer>
+          <Layer ref={layerRef}>
             <Rect
               x={0}
               y={0}
-              width={320}
-              height={240}
+              width={96}
+              height={96}
               fillPatternImage={trBgImage}
             ></Rect>
-            <Rect x={0} y={0} width={320} height={240} fill={bgColor}></Rect>
-            <Sprite
+            <Rect x={0} y={0} width={96} height={96} fill={bgColor}></Rect>
+            <TkColorSprite
               x={0}
               y={0}
               image={imgElement}
@@ -46,6 +56,11 @@ export function PatternImage({ config, trImage, bgColor }) {
               frameRate={30}
               frameIndex={0}
               ref={spriteRef}
+              parent={layerRef.current}
+              tkRed={red}
+              tkGreen={green}
+              tkBlue={blue}
+              tkSat={sat}
             />
           </Layer>
         </Stage>
@@ -96,5 +111,17 @@ const styles = {
   `,
   pattern: css`
     cursor: pointer;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+    canvas {
+      font-smooth: never;
+      -webkit-font-smoothing: none;
+    }
+    width: 96px;
+    height: 96px;
   `,
 };

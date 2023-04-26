@@ -101,7 +101,12 @@
     "scale": "拡大率",
     "opacity": "透明度",
     "cycle": "周期",
-    "roundTrip": "往復"
+    "roundTrip": "往復",
+    "red": "赤",
+    "green": "緑",
+    "blue": "青",
+    "satulation": "彩度",
+    "preview": "プレビュー"
   },
   "other": {
     "cel": "セル",

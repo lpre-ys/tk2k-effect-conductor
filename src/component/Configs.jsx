@@ -9,10 +9,12 @@ import ParameterConfig from "./configs/ParameterConfig";
 import { setCelName } from "../slice/celListSlice";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import TargetTab from "./configs/TargetTab";
+import ColorPreview from "./configs/ColorPreview";
 
 export function Configs({ name, setCelName }) {
   const [isInput, setIsInput] = useState(false);
-  const { t } = useTranslation();
+  const [target, setTarget] = useState("normal");
   const ref = useRef();
 
   useEffect(() => {
@@ -48,18 +50,39 @@ export function Configs({ name, setCelName }) {
           {name ? name : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"}
         </h1>
       )}
+      <TargetTab target={target} setTarget={setTarget} />
+      {target === "normal" ? <NormalConfigs /> : <ColorConfigs />}
+    </div>
+  );
+}
+
+const NormalConfigs = () => {
+  const { t } = useTranslation();
+  return (
+    <>
       <TimingConfig />
       <PatternConfig />
       <ParameterConfig type="x" name={t("configs.x")} />
       <ParameterConfig type="y" name={t("configs.y")} />
       <ParameterConfig type="scale" name={t("configs.scale")} />
       <ParameterConfig type="opacity" name={t("configs.opacity")} />
-      {/* <FromToConfig type="y" name={t("configs.y")} />
-      <FromToConfig type="scale" name={t("configs.scale")} />
-      <FromToConfig type="opacity" name={t("configs.opacity")} /> */}
-    </div>
+    </>
   );
-}
+};
+
+const ColorConfigs = () => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <ColorPreview />
+      <ParameterConfig type="red" name={t("configs.red")} />
+      <ParameterConfig type="green" name={t("configs.green")} />
+      <ParameterConfig type="blue" name={t("configs.blue")} />
+      <ParameterConfig type="tkSat" name={t("configs.satulation")} />
+    </>
+  );
+};
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (props) => {

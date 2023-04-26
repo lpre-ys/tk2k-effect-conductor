@@ -3,22 +3,22 @@ import { forwardRef } from "react";
 
 import KonvaTkColorSprite from "../../konva/KonvaTkColorSprite";
 
-const TkColorSprite = ({ group, ...props }, ref) => {
+const TkColorSprite = ({ parent, ...props }, ref) => {
   const spriteRef = useRef(null);
   useEffect(() => {
-    if (group) {
+    if (parent) {
       spriteRef.current = new KonvaTkColorSprite({ ...props });
       if (ref) {
         ref.current = spriteRef.current;
       }
-      group.add(spriteRef.current);
+      parent.add(spriteRef.current);
 
       return () => {
         spriteRef.current.destroy();
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [group, ref]);
+  }, [parent, ref]);
 
   useEffect(() => {
     if (spriteRef.current) {

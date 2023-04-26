@@ -117,7 +117,7 @@ export default class KonvaTkColorSprite extends Konva.Sprite {
         );
       } else {
         // 色調変更が無い場合、そのままimageを描画
-        context.drawImage(image, 0, 0, width, height, 0, 0, width, height);
+        context.drawImage(image, x, y, width, height, 0, 0, width, height);
       }
     }
   }

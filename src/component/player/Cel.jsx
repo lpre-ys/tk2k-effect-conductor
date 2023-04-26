@@ -99,7 +99,7 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
         opacity={(100 - data.opacity) / 100}
         scaleX={data.scale / 100}
         scaleY={data.scale / 100}
-        group={groupRef.current}
+        parent={groupRef.current}
         tkRed={data.red}
         tkGreen={data.green}
         tkBlue={data.blue}
