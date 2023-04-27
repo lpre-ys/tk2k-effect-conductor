@@ -11,7 +11,14 @@ import Options from "./FromTo/Options";
 import { Header } from "./Header";
 import { updateFromTo } from "../../slice/celListSlice";
 
-export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
+export function FromToConfig({
+  type,
+  name,
+  config,
+  updateFromTo,
+  isSub,
+  note,
+}) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
   const [optionIsValid, setOptionIsValid] = useState(true);
@@ -53,6 +60,7 @@ export function FromToConfig({ type, name, config, updateFromTo, isSub }) {
         name={name}
         isValid={validateConfig(from, to) && optionIsValid}
         isSub={isSub}
+        note={note}
         {...headerProps}
       />
       <div css={[styles.wrapper, isSub && styles.sub]}>

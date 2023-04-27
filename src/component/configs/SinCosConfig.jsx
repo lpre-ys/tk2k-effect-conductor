@@ -9,7 +9,7 @@ import EasingConfig from "./FromTo/EasingConfig";
 import FromToConfig from "./FromToConfig";
 import { Header } from "./Header";
 
-export function SinCosConfig({ type, name, config }) {
+export function SinCosConfig({ type, name, config, isSub }) {
   const hasOption = () => {
     // sincosは常に何らかの設定があるので
     return true;
@@ -19,7 +19,7 @@ export function SinCosConfig({ type, name, config }) {
 
   return (
     <div>
-      <Header name={name} isValid={true} {...headerProps} />
+      <Header name={name} isValid={true} isSub={isSub} {...headerProps} />
       <div css={styles.wrapper} data-testid="sincos-config-wrapper">
         <div css={styles.title}>
           <p css={styles.p} data-testid="sincos-config-title">

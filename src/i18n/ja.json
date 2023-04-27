@@ -106,7 +106,8 @@
     "green": "緑",
     "blue": "青",
     "satulation": "彩度",
-    "preview": "プレビュー"
+    "preview": "プレビュー",
+    "hsvMode": "HSVモード"
   },
   "other": {
     "cel": "セル",

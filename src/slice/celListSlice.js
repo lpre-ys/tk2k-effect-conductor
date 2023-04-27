@@ -3,6 +3,7 @@ import { DEFAULT_CEL, INIT_MAX_FRAME } from "../util/const";
 import i18n from "../i18n/config";
 import merge from "deepmerge";
 import * as celParamReducers from "../reducers/celParamReducers";
+import * as celHSVReducers from "../reducers/celHSVReducers";
 
 const initialState = {
   celIndex: 0,
@@ -130,7 +131,8 @@ export const celListSlice = createSlice({
         return cel;
       });
     },
-    ...celParamReducers
+    ...celParamReducers,
+    ...celHSVReducers
   },
 });
 
@@ -150,6 +152,8 @@ export const {
   updateIsRoundTrip,
   updateEasing,
   updateEasingOptions,
+  updateHSVMin,
+  updateHSVMax
 } = celListSlice.actions;
 export default celListSlice.reducer;
 

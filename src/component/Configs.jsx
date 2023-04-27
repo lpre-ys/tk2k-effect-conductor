@@ -11,6 +11,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TargetTab from "./configs/TargetTab";
 import ColorPreview from "./configs/ColorPreview";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
+import HSVColorConfig from "./configs/HSVColorConfig";
 
 export function Configs({ name, setCelName }) {
   const [isInput, setIsInput] = useState(false);
@@ -72,14 +75,40 @@ const NormalConfigs = () => {
 
 const ColorConfigs = () => {
   const { t } = useTranslation();
+  const [isHSV, setIsHSV] = useState(false);
 
   return (
     <>
+      <button
+        css={[styles.button, isHSV && styles.buttonOn]}
+        onClick={() => {
+          setIsHSV(!isHSV);
+        }}
+      >
+        <FontAwesomeIcon
+          icon={isHSV ? faToggleOn : faToggleOff}
+          css={styles.icon}
+        />
+        {t("configs.hsvMode")}:&nbsp;{isHSV ? "ON" : "OFF"}
+      </button>
       <ColorPreview />
-      <ParameterConfig type="red" name={t("configs.red")} />
-      <ParameterConfig type="green" name={t("configs.green")} />
-      <ParameterConfig type="blue" name={t("configs.blue")} />
-      <ParameterConfig type="tkSat" name={t("configs.satulation")} />
+      {isHSV ? (
+        <>
+          <HSVColorConfig />
+          <ParameterConfig
+            type="tkSat"
+            name={t("configs.satulation")}
+            note="※ツクール"
+          />
+        </>
+      ) : (
+        <>
+          <ParameterConfig type="red" name={t("configs.red")} />
+          <ParameterConfig type="green" name={t("configs.green")} />
+          <ParameterConfig type="blue" name={t("configs.blue")} />
+          <ParameterConfig type="tkSat" name={t("configs.satulation")} />
+        </>
+      )}
     </>
   );
 };
@@ -120,5 +149,34 @@ const styles = {
   `,
   input: css`
     width: 10em;
+  `,
+  button: css`
+    border: none;
+    padding: 0.3em 0.5em 0.3em 1.6em;
+    margin-top: 1em;
+    text-align: left;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    background: #e0e0e0;
+    color: #424242;
+    :hover {
+      background-color: #757575;
+      color: #fafafa;
+    }
+  `,
+  buttonOn: css`
+    background: #66bb6a;
+    color: #fafafa;
+    :hover {
+      background: #388e3c;
+    }
+  `,
+  icon: css`
+    position: absolute;
+    top: 0.4em;
+    left: 0.4em;
   `,
 };

@@ -60,6 +60,34 @@ const DEFAULT_CEL = {
     easing: "fixed",
     easingAdd: "",
   },
+  hsv: {
+    min: 0,
+    max: 100
+  },
+  hue: {
+    from: 0,
+    to: 0,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  sat: {
+    from: 0,
+    to: 0,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  val: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
   tkSat: {
     from: 100,
     to: 100,
