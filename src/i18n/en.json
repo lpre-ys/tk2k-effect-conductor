@@ -101,7 +101,21 @@
     "scale": "Scale",
     "opacity": "Opacity",
     "cycle": "Cycle",
-    "roundTrip": "Round trip"
+    "roundTrip": "Round trip",
+    "color": {
+      "red": "Red",
+      "green": "Green",
+      "blue": "Blue",
+      "satulation": "Satulation",
+      "satulationNote": "*RPG Maker value",
+      "preview": "Preview",
+      "hsvMode": "HSV Mode",
+      "hsvColor": "HSV Color",
+      "hsvHue": "Hue",
+      "hsvHueNote": "*range: 0–360",
+      "hsvSat": "Satulation",
+      "hsvVal": "Value"
+    }
   },
   "other": {
     "cel": "cell",

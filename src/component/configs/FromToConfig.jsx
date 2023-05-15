@@ -10,6 +10,7 @@ import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
 import { Header } from "./Header";
 import { updateFromTo } from "../../slice/celListSlice";
+import NumberInput from "./Input/NumberInput";
 
 export function FromToConfig({
   type,
@@ -18,6 +19,8 @@ export function FromToConfig({
   updateFromTo,
   isSub,
   note,
+  min,
+  max,
 }) {
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
@@ -64,25 +67,27 @@ export function FromToConfig({
         {...headerProps}
       />
       <div css={[styles.wrapper, isSub && styles.sub]}>
-        <label css={styles.label}>
-          <input
-            type="number"
-            data-testid="from-to-config-from"
-            css={styles.number}
-            value={from}
-            onChange={({ target }) => {
-              setFrom(target.value);
-            }}
+        <label>
+          <NumberInput
+            type={type}
+            isSub={isSub}
+            val={from}
+            setVal={setFrom}
+            testSuffix="-from"
+            min={min}
+            max={max}
           />
+        </label>
+        <label css={styles.label}>
           →
-          <input
-            type="number"
-            data-testid="from-to-config-to"
-            css={styles.number}
-            value={to}
-            onChange={({ target }) => {
-              setTo(target.value);
-            }}
+          <NumberInput
+            type={type}
+            isSub={isSub}
+            val={to}
+            setVal={setTo}
+            testSuffix="-to"
+            min={min}
+            max={max}
           />
         </label>
         <EasingConfig type={type} />

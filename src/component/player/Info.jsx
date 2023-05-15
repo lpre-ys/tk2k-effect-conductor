@@ -6,10 +6,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Info({ msg, setMsg }) {
   if (msg) {
+    const msgList = msg.split("\n");
     return (
       <div css={styles.container}>
         <div css={styles.window}>
-          <p css={styles.msg}>{msg}</p>
+          {msgList.map((value, i) => {
+            return (
+              <p css={styles.line} key={i}>
+                {value}
+              </p>
+            );
+          })}
         </div>
         <h3 css={styles.header}>INFO</h3>
         <FontAwesomeIcon
@@ -34,11 +41,11 @@ const styles = {
   window: css`
     border: 1px solid #9e9e9e;
     border-radius: 0.2em;
-    padding-top: 0.5em;
     position: absolute;
     top: 0.7em;
     left: 0;
     width: 100%;
+    padding: 0.7em 0 0.5em 0.5em;
   `,
   header: css`
     margin: 0;
@@ -50,6 +57,13 @@ const styles = {
   `,
   msg: css`
     margin: 0 0.5em 0.5em;
+  `,
+  line: css`
+    margin: 0;
+    padding: 0;
+    :nth-of-type(n + 2) {
+      margin-left: 2em;
+    }
   `,
   closeIcon: css`
     position: absolute;

@@ -35,6 +35,14 @@ jest.mock("use-image", () => {
     },
   };
 });
+
+jest.mock("./player/TkColorSprite.jsx", () => {
+  const { forwardRef } = jest.requireActual("react");
+
+  return forwardRef((props, ref) => {
+    return <div></div>;
+  });
+});
 describe("Header", () => {
   test("header text is name", () => {
     renderWithProviders(<Configs name="テストセル" />);

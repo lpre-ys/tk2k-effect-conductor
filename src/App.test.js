@@ -28,6 +28,13 @@ jest.mock("./component/player/Cel.jsx", () => ({ id, setMsg }) => {
   );
 });
 
+jest.mock("./component/configs/Pattern/PatternImage.jsx", () => () => {
+  return (
+    <div data-testid="mock-pattern-image">
+    </div>
+  );
+});
+
 // * Material *
 test("has Material component", () => {
   renderWithProviders(<App />);

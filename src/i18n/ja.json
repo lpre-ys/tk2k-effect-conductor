@@ -102,12 +102,20 @@
     "opacity": "透明度",
     "cycle": "周期",
     "roundTrip": "往復",
-    "red": "赤",
-    "green": "緑",
-    "blue": "青",
-    "satulation": "彩度",
-    "preview": "プレビュー",
-    "hsvMode": "HSVモード"
+    "color": {
+      "red": "赤",
+      "green": "緑",
+      "blue": "青",
+      "satulation": "彩度",
+      "satulationNote": "※ツクール側の値",
+      "preview": "プレビュー",
+      "hsvMode": "HSVモード",
+      "hsvColor": "HSVカラー",
+      "hsvHue": "H. 色相",
+      "hsvHueNote": "範囲: 0～360",
+      "hsvSat": "S. 彩度",
+      "hsvVal": "V. 明度"
+    }
   },
   "other": {
     "cel": "セル",

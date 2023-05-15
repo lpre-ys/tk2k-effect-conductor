@@ -1,70 +1,89 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { updateHSVMax, updateHSVMin } from "../../slice/celListSlice";
 
 import { Header } from "./Header";
+import NumberInput from "./Input/NumberInput";
 import ParameterConfig from "./ParameterConfig";
 
 export function HSVColorConfig({ config, updateMin, updateMax }) {
   const { t } = useTranslation();
-  const validateMinMax = (value) => {
-    if (isNaN(value)) {
-      return false;
-    }
-    if (value < 0) {
-      return false;
-    }
-    if (value > 200) {
-      return false;
-    }
+  const [min, setMin] = useState(config.min);
+  const [max, setMax] = useState(config.max);
 
-    return true;
-  };
+  useEffect(() => {
+    if (config.min !== min) {
+      updateMin(min);
+    }
+  }, [config.min, min, updateMin]);
+
+  useEffect(() => {
+    if (config.max !== max) {
+      updateMax(max);
+    }
+  }, [config.max, max, updateMax]);
+
   return (
     <div>
-      <Header name="HSVカラー" isValid={() => true} reset={() => {}} />
+      <Header
+        name={t("configs.color.hsvColor")}
+        isValid={() => true}
+        reset={() => {}}
+      />
       <div css={styles.minmaxContainer}>
         <label>
           Min:&nbsp;
-          <input
-            type="number"
-            css={styles.number}
-            value={config.min}
-            onChange={({ target }) => {
-              const value = parseInt(target.value);
-              if (validateMinMax(value)) {
-                updateMin(value);
-              }
+          <NumberInput
+            type="hsvMinMax"
+            val={min}
+            setVal={(value) => {
+              setMin(parseInt(value));
             }}
+            testSuffix="-hsv-min"
           />
         </label>
         <label>
           Max:&nbsp;
-          <input
-            type="number"
-            css={styles.number}
-            value={config.max}
-            onChange={({ target }) => {
-              const value = parseInt(target.value);
-              if (validateMinMax(value)) {
-                updateMax(value);
-              }
+          <NumberInput
+            type="hsvMinMax"
+            val={max}
+            setVal={(value) => {
+              setMax(parseInt(value));
             }}
+            testSuffix="-hsv-max"
           />
         </label>
       </div>
       <div css={styles.paramsContainer}>
         <ParameterConfig
-          name="H. 色相"
-          note="範囲: 0～360"
+          name={t("configs.color.hsvHue")}
+          note={t("configs.color.hsvHueNote")}
           type="hue"
           isSub={true}
+          min={0}
+          max={360}
         />
-        <ParameterConfig name="S. 彩度" note="(%)" type="sat" isSub={true} />
-        <ParameterConfig name="V. 明度" note="(%)" type="val" isSub={true} />
+        <ParameterConfig
+          name={t("configs.color.hsvSat")}
+          note="(%)"
+          type="sat"
+          isSub={true}
+          min={0}
+          max={100}
+        />
+        <ParameterConfig
+          name={t("configs.color.hsvVal")}
+          note="(%)"
+          type="val"
+          isSub={true}
+          min={0}
+          max={100}
+        />
       </div>
     </div>
   );

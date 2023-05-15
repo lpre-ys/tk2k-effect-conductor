@@ -153,7 +153,8 @@ export const {
   updateEasing,
   updateEasingOptions,
   updateHSVMin,
-  updateHSVMax
+  updateHSVMax,
+  setIsHsv
 } = celListSlice.actions;
 export default celListSlice.reducer;
 

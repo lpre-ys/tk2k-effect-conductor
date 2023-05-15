@@ -3,17 +3,14 @@
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 
-import PatternConfig from "./configs/PatternConfig";
-import TimingConfig from "./configs/TimingConfig";
-import ParameterConfig from "./configs/ParameterConfig";
-import { setCelName } from "../slice/celListSlice";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { setCelName } from "../slice/celListSlice";
+import ColorConfigs from "./configs/ColorConfigs";
+import ParameterConfig from "./configs/ParameterConfig";
+import PatternConfig from "./configs/PatternConfig";
 import TargetTab from "./configs/TargetTab";
-import ColorPreview from "./configs/ColorPreview";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faToggleOff, faToggleOn } from "@fortawesome/free-solid-svg-icons";
-import HSVColorConfig from "./configs/HSVColorConfig";
+import TimingConfig from "./configs/TimingConfig";
 
 export function Configs({ name, setCelName }) {
   const [isInput, setIsInput] = useState(false);
@@ -73,46 +70,6 @@ const NormalConfigs = () => {
   );
 };
 
-const ColorConfigs = () => {
-  const { t } = useTranslation();
-  const [isHSV, setIsHSV] = useState(false);
-
-  return (
-    <>
-      <button
-        css={[styles.button, isHSV && styles.buttonOn]}
-        onClick={() => {
-          setIsHSV(!isHSV);
-        }}
-      >
-        <FontAwesomeIcon
-          icon={isHSV ? faToggleOn : faToggleOff}
-          css={styles.icon}
-        />
-        {t("configs.hsvMode")}:&nbsp;{isHSV ? "ON" : "OFF"}
-      </button>
-      <ColorPreview />
-      {isHSV ? (
-        <>
-          <HSVColorConfig />
-          <ParameterConfig
-            type="tkSat"
-            name={t("configs.satulation")}
-            note="※ツクール"
-          />
-        </>
-      ) : (
-        <>
-          <ParameterConfig type="red" name={t("configs.red")} />
-          <ParameterConfig type="green" name={t("configs.green")} />
-          <ParameterConfig type="blue" name={t("configs.blue")} />
-          <ParameterConfig type="tkSat" name={t("configs.satulation")} />
-        </>
-      )}
-    </>
-  );
-};
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (props) => {
   const name = useSelector(
@@ -136,6 +93,7 @@ const styles = {
   container: css`
     flex-grow: 1;
     padding: 0 1em;
+    margin-bottom: 1em;
     height: 710px;
     overflow-y: scroll;
   `,
@@ -149,34 +107,5 @@ const styles = {
   `,
   input: css`
     width: 10em;
-  `,
-  button: css`
-    border: none;
-    padding: 0.3em 0.5em 0.3em 1.6em;
-    margin-top: 1em;
-    text-align: left;
-    text-decoration: none;
-    font-size: 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    position: relative;
-    background: #e0e0e0;
-    color: #424242;
-    :hover {
-      background-color: #757575;
-      color: #fafafa;
-    }
-  `,
-  buttonOn: css`
-    background: #66bb6a;
-    color: #fafafa;
-    :hover {
-      background: #388e3c;
-    }
-  `,
-  icon: css`
-    position: absolute;
-    top: 0.4em;
-    left: 0.4em;
   `,
 };

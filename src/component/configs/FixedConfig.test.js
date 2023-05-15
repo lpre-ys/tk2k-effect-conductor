@@ -15,7 +15,7 @@ const defaultConfig = {
 test("init value is config.from", () => {
   renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
 
-  const target = screen.getByTestId("const-config-params-from");
+  const target = screen.getByTestId("number-input-fixed");
   expect(target).toBeInTheDocument();
 });
 describe("Form", () => {
@@ -24,7 +24,7 @@ describe("Form", () => {
     renderWithProviders(
       <FixedConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
-    const target = screen.getByTestId("const-config-params-from");
+    const target = screen.getByTestId("number-input-fixed");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
@@ -39,7 +39,7 @@ describe("Form", () => {
     renderWithProviders(
       <FixedConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
-    const target = screen.getByTestId("const-config-params-from");
+    const target = screen.getByTestId("number-input-fixed");
 
     fireEvent.change(target, { target: { value: "" } });
     expect(target).not.toHaveValue();
@@ -69,7 +69,7 @@ describe("Header", () => {
         <FixedConfig type="x" config={defaultConfig} name="テストネーム" />
       );
 
-      fireEvent.change(screen.getByTestId("const-config-params-from"), {
+      fireEvent.change(screen.getByTestId("number-input-fixed"), {
         target: { value: "" },
       });
 
@@ -85,7 +85,7 @@ describe("Header", () => {
         />
       );
 
-      const from = screen.getByTestId("const-config-params-from");
+      const from = screen.getByTestId("number-input-fixed");
       fireEvent.change(from, { target: { value: "" } });
 
       const icon = screen.getByTestId("config-header-icon-error");
@@ -107,23 +107,36 @@ describe("isSub", () => {
     test("input do not have sub style", () => {
       renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
 
-      const target = screen.getByTestId("const-config-params-from");
+      const target = screen.getByTestId("number-input-fixed");
       expect(target).not.toHaveStyle({ marginRight: "71px" });
     });
   });
-  describe('is sub', () => {
+  describe("is sub", () => {
     test("wrapper have sub style", () => {
-      renderWithProviders(<FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />);
+      renderWithProviders(
+        <FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />
+      );
 
       const target = screen.getByTestId("const-config-params-wrapper");
       expect(target).toHaveStyle({ fontSize: "0.9em" });
     });
     test("input have sub style", () => {
-      renderWithProviders(<FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />);
+      renderWithProviders(
+        <FixedConfig isSub={true} type="x" config={{ from: 3, to: 6 }} />
+      );
 
-      const target = screen.getByTestId("const-config-params-from");
+      const target = screen.getByTestId("number-input-fixed");
       expect(target).toHaveStyle({ marginRight: "71px" });
     });
+  });
+});
 
-  })
+describe("for Color", () => {
+  // NumberInputのテストで詳しくは見ているので、ここでは、ColorRangeInputが出ればOK
+  test("type is red, then show ColorRangeInput", () => {
+    renderWithProviders(<FixedConfig type="red" config={defaultConfig} />);
+
+    const target = screen.getByTestId("color-range-input-number-fixed");
+    expect(target).toBeInTheDocument();
+  });
 });

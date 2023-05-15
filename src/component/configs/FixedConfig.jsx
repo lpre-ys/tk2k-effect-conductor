@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateFromTo } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
 import { Header } from "./Header";
-import { updateFromTo } from "../../slice/celListSlice";
+import NumberInput from "./Input/NumberInput";
 
 export function FixedConfig({
   type,
@@ -15,6 +16,8 @@ export function FixedConfig({
   updateFromTo,
   isSub,
   isHideEasing,
+  min,
+  max,
 }) {
   const [from, setFrom] = useState(config.from);
 
@@ -49,14 +52,15 @@ export function FixedConfig({
         css={[styles.wrapper, isSub && styles.sub]}
         data-testid="const-config-params-wrapper"
       >
-        <input
-          type="number"
-          data-testid="const-config-params-from"
-          css={[styles.number, isSub && styles.numberSub]}
-          value={from}
-          onChange={({ target }) => {
-            setFrom(target.value);
-          }}
+        <NumberInput
+          type={type}
+          isSub={isSub}
+          val={from}
+          setVal={setFrom}
+          numberStyle={isSub ? styles.numberSub : styles.number}
+          testSuffix="-fixed"
+          min={min}
+          max={max}
         />
         {!isHideEasing && <EasingConfig type={type} />}
       </div>
@@ -91,12 +95,11 @@ const styles = {
   wrapper: css`
     margin: 0 0.5em;
   `,
-  number: css`
-    width: 3em;
-    margin-right: 78px;
-  `,
   sub: css`
     font-size: 0.9em;
+  `,
+  number: css`
+    margin-right: 78px;
   `,
   numberSub: css`
     margin-right: 71px;

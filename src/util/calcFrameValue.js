@@ -1,4 +1,5 @@
 import calcValue from "./calcValue";
+import hsvToTkColor from "./hsvToTkColor";
 import makePageList from "./makePageList";
 
 export default function calcFrameValue(frame, maxFrame, config) {
@@ -29,11 +30,22 @@ export function getDataByLocalFrame(localFrame, config) {
   const y = calcValue(localFrame, config.y, config.frame);
   const scale = calcValue(localFrame, config.scale, config.frame);
   const opacity = calcValue(localFrame, config.opacity, config.frame);
-  const red = calcValue(localFrame, config.red, config.frame);
-  const green = calcValue(localFrame, config.green, config.frame);
-  const blue = calcValue(localFrame, config.blue, config.frame);
+  // 色計算
+  let red, green, blue;
+  if (config.hsv.isHsv) {
+    // HSVモードによる計算
+    const { min, max } = config.hsv;
+    const hue = calcValue(localFrame, config.hue, config.frame);
+    const sat = calcValue(localFrame, config.sat, config.frame);
+    const val = calcValue(localFrame, config.val, config.frame);
+    ({ red, green, blue } = hsvToTkColor(hue, sat, val, min, max));
+  } else {
+    red = calcValue(localFrame, config.red, config.frame);
+    green = calcValue(localFrame, config.green, config.frame);
+    blue = calcValue(localFrame, config.blue, config.frame);
+  }
   // 色計算用の彩度と、tkool側の彩度を区別している
-  const sat = calcValue(localFrame, config.tkSat, config.frame);
+  const tkSat = calcValue(localFrame, config.tkSat, config.frame);
   // フレームの決定
   const pageIndex = calcPageIndex(
     localFrame,
@@ -48,7 +60,7 @@ export function getDataByLocalFrame(localFrame, config) {
     red,
     green,
     blue,
-    sat,
+    tkSat,
     pageIndex,
   };
 }

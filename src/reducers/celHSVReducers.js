@@ -15,3 +15,12 @@ export const updateHSVMin = (state, action) => {
     return cel;
   });
 };
+
+export const setIsHsv = (state, action) => {
+  state.list = state.list.map((cel, index) => {
+    if (index === state.celIndex) {
+      cel.hsv.isHsv = action.payload;
+    }
+    return cel;
+  });
+}

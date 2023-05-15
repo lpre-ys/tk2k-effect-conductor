@@ -7,7 +7,7 @@ test("type Fixed then show FixedConfig", () => {
     <ParameterConfig type="x" easing="fixed" />
   );
 
-  const target = screen.getByTestId("const-config-params-from");
+  const target = screen.getByTestId("number-input-fixed");
   expect(target).toBeInTheDocument();
 });
 test("type Sin then show SinCosConfig", () => {
@@ -31,6 +31,6 @@ test("type Easing then show FromToConfig", () => {
     <ParameterConfig type="opacity" easing="easeLinear" />
   );
 
-  const target = screen.getByTestId("from-to-config-from");
+  const target = screen.getByTestId("number-input-from");
   expect(target).toBeInTheDocument();
 });

@@ -62,7 +62,8 @@ const DEFAULT_CEL = {
   },
   hsv: {
     min: 0,
-    max: 100
+    max: 100,
+    isHsv: false,
   },
   hue: {
     from: 0,

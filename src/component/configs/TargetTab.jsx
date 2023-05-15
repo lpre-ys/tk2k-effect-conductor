@@ -14,6 +14,7 @@ export default function TargetTab({ target, setTarget }) {
         const { label, icon } = targetList[key];
         return (
           <div
+            data-testid="target-tab"
             css={[styles.tab, key === target && styles.selected]}
             key={key}
             onClick={() => {

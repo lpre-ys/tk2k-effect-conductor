@@ -38,8 +38,41 @@ const DEFAULT_CEL_CONFIG = {
     easing: "easeLinear",
     easingAdd: "",
   },
+  red: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  green: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  blue: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
+  tkSat: {
+    from: 100,
+    to: 100,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
   frame: { start: 1, volume: 20, isLoopBack: false, isHideLast: false }, // 20: INIT_MAX_FRAME
   pattern: { start: 1, end: 1, isRoundTrip: false, align: "loop" },
+  hsv: { min: 0, max: 100, isHsv: false }
 };
 
 describe("pattern", () => {
