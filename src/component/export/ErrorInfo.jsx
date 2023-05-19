@@ -12,7 +12,7 @@ const ErrorInfo = () => {
   const [isShow, setIsShow] = useState(true);
   if (isShow) {
     return (
-      <div css={styles.container}>
+      <div css={styles.container} data-testid="export-error-info">
         <div>
           <p css={styles.msg}>
             <Trans i18nKey="export.error.message" />
@@ -28,6 +28,7 @@ const ErrorInfo = () => {
         </div>
         <div
           css={styles.closeIcon}
+          data-testid="export-error-info-close"
           onClick={() => {
             setIsShow(false);
           }}

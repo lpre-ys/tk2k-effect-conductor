@@ -76,6 +76,12 @@
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!(konva|d3-ease)).*\\.js$"
+    ],
+    "coveragePathIgnorePatterns": [
+      "./src/index.js",
+      "./src/reportWebVitals.js",
+      "./src/app/store.js",
+      "./src/konva/*"
     ]
   },
   "main": "public/electron.js",

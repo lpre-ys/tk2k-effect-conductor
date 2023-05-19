@@ -14,6 +14,7 @@ const Tips = () => {
     <>
       <span
         css={styles.icon}
+        data-testid="export-tips-icon"
         onMouseOver={() => {
           setIsShow(true);
         }}
@@ -23,7 +24,11 @@ const Tips = () => {
       >
         <FontAwesomeIcon icon={faCircleQuestion} />
       </span>
-      <div css={styles.dialog} style={{ display: isShow ? "block" : "none" }}>
+      <div
+        css={styles.dialog}
+        data-testid="export-tips-dialog"
+        style={{ display: isShow ? "block" : "none" }}
+      >
         {t("export.tips")}
       </div>
     </>

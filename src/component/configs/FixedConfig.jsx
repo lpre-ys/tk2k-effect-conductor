@@ -76,11 +76,10 @@ export default (props) => {
   const config = useSelector((state) => {
     const cel = state.celList.list[state.celList.celIndex];
     const keys = props.type.split(".");
-    if (keys.length === 1) {
-      return cel[props.type];
-    } else if (keys[1] === "trig") {
+    if (keys.length > 1 && keys[1] === "trig") {
       return cel[keys[0]][keys[1]][keys[2]];
     }
+    return cel[props.type];
   });
   const dispatch = useDispatch();
   const _props = {

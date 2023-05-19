@@ -54,6 +54,7 @@ export const Options = ({
     <div>
       <button
         type="button"
+        data-testid="export-options-button"
         onClick={() => {
           setIsShowOption(!isShowOption);
         }}
@@ -67,7 +68,10 @@ export const Options = ({
         {t("export.option")}
       </button>
       {isShowOption && (
-        <div css={styles.optionContainer}>
+        <div
+          css={styles.optionContainer}
+          data-testid="export-options-container"
+        >
           <div css={styles.loadContainer}>
             {isDisabled ? (
               <button css={styles.disabledLoadButton}>
@@ -90,6 +94,7 @@ export const Options = ({
             {t("export.target.label")}:&nbsp;
             <select
               value={target}
+              data-testid="export-options-target"
               onChange={({ target }) => {
                 setTarget(target.value);
               }}
@@ -102,6 +107,7 @@ export const Options = ({
             {t("export.yLine.label")}:&nbsp;
             <select
               value={yLine}
+              data-testid="export-options-yline"
               onChange={({ target }) => {
                 setYLine(target.value);
               }}
