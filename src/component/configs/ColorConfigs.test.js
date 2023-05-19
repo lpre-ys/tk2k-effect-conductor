@@ -38,5 +38,25 @@ test('HSV mode ON, then show HSV and tkSat form', () => {
   expect(screen.getByText('H. 色相')).toBeInTheDocument();
   expect(screen.getByText('S. 彩度')).toBeInTheDocument();
   expect(screen.getByText('V. 明度')).toBeInTheDocument();
-  expect(screen.getByText('※ツクール')).toBeInTheDocument();
-})
+  expect(screen.getByText('※ツクール側の値')).toBeInTheDocument();
+});
+
+test('change HSV min, then update HSV.min', () => {
+  renderWithProviders(<ColorConfigs isHSV={true} />);
+
+  const target = screen.getByTestId("color-range-input-number-hsv-min");
+  userEvent.clear(target);
+  userEvent.type(target, "34");
+
+  expect(target).toHaveValue(34);
+});
+
+test('change HSV max, then update HSV.max', () => {
+  renderWithProviders(<ColorConfigs isHSV={true} />);
+
+  const target = screen.getByTestId("color-range-input-number-hsv-max");
+  userEvent.clear(target);
+  userEvent.type(target, "156");
+
+  expect(target).toHaveValue(156);
+});

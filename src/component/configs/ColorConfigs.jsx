@@ -19,6 +19,7 @@ export function ColorConfigs({ isHSV, setIsHSV }) {
     <>
       <button
         css={[styles.button, isHSV && styles.buttonOn]}
+        data-testid="color-config-hsv-mode"
         onClick={() => {
           setIsHSV(!isHSV);
         }}

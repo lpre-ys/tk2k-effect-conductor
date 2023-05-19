@@ -58,7 +58,27 @@ describe("easeLinear", () => {
     });
   });
 });
-
+describe("fixed", () => {
+  beforeEach(() => {
+    config.easing = "fixed";
+  });
+  describe("from is 0, to is 100", () => {
+    beforeEach(() => {
+      config.from = 0;
+      config.to = 100;
+      frameConfig.volume = 10;
+    });
+    test.each([
+      [0, 0],
+      [1, 0],
+      [8, 0],
+      [9, 0],
+    ])("localFrame is %i, then return %i", (frame, ex) => {
+      const result = calcValue(frame, config, frameConfig);
+      expect(result).toBe(ex);
+    });
+  });
+});
 describe("easePolyIn, from is 0, to is 100, frameConfig.volume is 10", () => {
   beforeEach(() => {
     config.easing = "easePoly";
@@ -287,6 +307,64 @@ describe("easeElasticIn, from is 0, to is 100, frameConfig.volume is 20", () => 
         [16, -42],
         [17, 39],
         [18, 139],
+        [19, 100],
+      ])("localFrame is %i, then return %i", (frame, ex) => {
+        const result = calcValue(frame, config, frameConfig);
+        expect(result).toBe(ex);
+      });
+    });
+  });
+  describe("period", () => {
+    describe("is 0.3, then equal default", () => {
+      beforeEach(() => {
+        config.easingOptions = {
+          easeElastic: {
+            period: 0.3,
+          },
+        };
+      });
+      test.each([
+        [0, 0],
+        [1, 0],
+        [6, -0],
+        [7, 1],
+        [8, 2],
+        [9, 0],
+        [10, -3],
+        [11, -4],
+        [12, 1],
+        [13, 11],
+        [14, 12],
+        [15, -7],
+        [16, -33],
+        [17, -29],
+        [18, 31],
+        [19, 100],
+      ])("localFrame is %i, then return %i", (frame, ex) => {
+        const result = calcValue(frame, config, frameConfig);
+        expect(result).toBe(ex);
+      });
+    });
+    describe("is 0.5", () => {
+      beforeEach(() => {
+        config.easingOptions = {
+          easeElastic: {
+            amplitude: 0.5,
+          },
+        };
+      });
+      test.each([
+        [0, 0],
+        [1, 0],
+        [6, -0],
+        [7, 1],
+        [8, 2],
+        [9, 0],
+        [10, -3],
+        [15, -7],
+        [16, -33],
+        [17, -29],
+        [18, 31],
         [19, 100],
       ])("localFrame is %i, then return %i", (frame, ex) => {
         const result = calcValue(frame, config, frameConfig);

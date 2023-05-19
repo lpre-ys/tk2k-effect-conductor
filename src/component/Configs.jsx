@@ -30,7 +30,6 @@ export function Configs({ name, setCelName }) {
             type="text"
             value={name}
             css={styles.input}
-            style={{ display: isInput ? "block" : "none" }}
             onBlur={() => {
               setIsInput(false);
             }}

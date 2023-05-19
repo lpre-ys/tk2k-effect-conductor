@@ -100,6 +100,27 @@ describe("input:range", () => {
       expect(target.getAttribute("name")).toBeNull();
     });
   });
+  describe("isHue", () => {
+    test("isHue true, then --slide-color is localValue", () => {
+      render(<ColorRangeInput setVal={jest.fn()} value={44} isHue={true} />);
+      const input = screen.getByRole("spinbutton");
+      fireEvent.focus(input);
+
+      const target = screen.getByRole("slider");
+      expect(target).toHaveStyle(`--slider-color: hsl(44, 70%, 50%)`);
+
+      fireEvent.change(input, { target: { value: "123" } });
+      expect(target).toHaveStyle(`--slider-color: hsl(123, 70%, 50%)`);
+    });
+    test("isHue fals, then --slide-color is empty", () => {
+      render(<ColorRangeInput setVal={jest.fn()} value={44} isHue={false} />);
+      const input = screen.getByRole("spinbutton");
+      fireEvent.focus(input);
+
+      const target = screen.getByRole("slider");
+      expect(target).not.toHaveStyle(`--slider-color: hsl(44, 70%, 50%)`);
+    });
+  });
 });
 
 describe("focus", () => {
@@ -143,7 +164,7 @@ describe("focus", () => {
     userEvent.click(screen.getByRole("slider"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
   });
-  test.skip("focus Range to Other, then Range is hide", () => {
+  test("focus Range to Other, then Range is hide", () => {
     render(
       <>
         <ColorRangeInput setVal={jest.fn()} />
@@ -152,7 +173,9 @@ describe("focus", () => {
     );
     userEvent.click(screen.getByRole("spinbutton"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
-    userEvent.click(screen.getByRole("slider"));
+    userEvent.hover(screen.getByRole("slider"));
+    expect(screen.getByRole("slider")).toBeInTheDocument();
+    userEvent.unhover(screen.getByRole("slider"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
 
     userEvent.click(screen.getByRole("textbox"));
@@ -160,35 +183,35 @@ describe("focus", () => {
   });
 });
 
-describe('update', () => {
-  test('change Number, then call setVal', () => {
+describe("update", () => {
+  test("change Number, then call setVal", () => {
     const setVal = jest.fn();
     render(<ColorRangeInput setVal={setVal} value={42} />);
 
-    const target = screen.getByRole('spinbutton');
+    const target = screen.getByRole("spinbutton");
     fireEvent.change(target, { target: { value: 11 } });
 
     expect(setVal).toBeCalledWith("11");
   });
-  test('change Range and Draging, then not call setVal', () => {
+  test("change Range and Draging, then not call setVal", () => {
     const setVal = jest.fn();
 
     render(<ColorRangeInput setVal={setVal} value={42} />);
     userEvent.click(screen.getByRole("spinbutton"));
 
-    const target = screen.getByRole('slider');
+    const target = screen.getByRole("slider");
     fireEvent.mouseDown(target);
     fireEvent.change(target, { target: { value: 22 } });
 
     expect(setVal).not.toBeCalledWith("22");
   });
-  test('change Range and Dragend, then call setVal', () => {
+  test("change Range and Dragend, then call setVal", () => {
     const setVal = jest.fn();
 
     render(<ColorRangeInput setVal={setVal} value={42} />);
     userEvent.click(screen.getByRole("spinbutton"));
 
-    const target = screen.getByRole('slider');
+    const target = screen.getByRole("slider");
     fireEvent.mouseDown(target);
     fireEvent.change(target, { target: { value: 33 } });
     fireEvent.mouseUp(target);

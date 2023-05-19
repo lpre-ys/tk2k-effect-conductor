@@ -6,7 +6,7 @@ import { Layer, Rect, Stage } from "react-konva";
 import TrBg from "../../../tr2x.png";
 import { css } from "@emotion/react";
 import { useSelector } from "react-redux";
-import makePageList from "../../../util/makePageList";
+import makePageList from "../../../util/calcFrameValue/makePageList";
 import TkColorSprite from "../../player/TkColorSprite";
 
 export function PatternImage({

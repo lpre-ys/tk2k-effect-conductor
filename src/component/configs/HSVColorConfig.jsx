@@ -17,13 +17,13 @@ export function HSVColorConfig({ config, updateMin, updateMax }) {
   const [max, setMax] = useState(config.max);
 
   useEffect(() => {
-    if (config.min !== min) {
+    if (config.min !== min && !isNaN(min)) {
       updateMin(min);
     }
   }, [config.min, min, updateMin]);
 
   useEffect(() => {
-    if (config.max !== max) {
+    if (config.max !== max && !isNaN(max)) {
       updateMax(max);
     }
   }, [config.max, max, updateMax]);
@@ -32,7 +32,7 @@ export function HSVColorConfig({ config, updateMin, updateMax }) {
     <div>
       <Header
         name={t("configs.color.hsvColor")}
-        isValid={() => true}
+        isValid={true}
         reset={() => {}}
       />
       <div css={styles.minmaxContainer}>

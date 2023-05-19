@@ -92,7 +92,7 @@ describe("Header", () => {
       userEvent.click(icon);
 
       expect(icon).not.toBeInTheDocument();
-      expect(from).toHaveValue(12);
+      expect(screen.getByTestId("number-input-fixed")).toHaveValue(12);
     });
   });
 });

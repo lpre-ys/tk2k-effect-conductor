@@ -128,3 +128,23 @@ describe("FromTo Components", () => {
     expect(target).toBeInTheDocument();
   });
 });
+
+describe('Color components', () => {
+  test("has Color component", () => {
+    renderWithProviders(<Configs />);
+
+    userEvent.click(screen.getByText('色調'));
+
+    const target = screen.getByText("赤");
+    expect(target).toBeInTheDocument();
+  });
+  test('click HSV mode button, then HSV mode ON', () => {
+    renderWithProviders(<Configs />);
+
+    userEvent.click(screen.getByText('色調'));
+    userEvent.click(screen.getByTestId('color-config-hsv-mode'));
+
+    const target = screen.getByText('H. 色相');
+    expect(target).toBeInTheDocument();
+  })
+});

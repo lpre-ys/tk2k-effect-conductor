@@ -3,10 +3,12 @@
 import { css } from "@emotion/react";
 import { faBook, faPalette } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useTranslation } from "react-i18next";
 export default function TargetTab({ target, setTarget }) {
+  const { t } = useTranslation();
   const targetList = {
-    normal: { label: "基本", icon: faBook },
-    color: { label: "色調", icon: faPalette },
+    normal: { label: t("configs.tab.basic"), icon: faBook },
+    color: { label: t("configs.tab.color"), icon: faPalette },
   };
   return (
     <div css={styles.container}>

@@ -223,6 +223,7 @@ const styles = {
   `,
   loadContainer: css`
     padding-bottom: 0.2em;
+    position: relative;
   `,
   clear: css`
     text-decoration: underline;

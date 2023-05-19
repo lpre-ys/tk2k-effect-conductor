@@ -20,9 +20,11 @@ export function FixedConfig({
   max,
 }) {
   const [from, setFrom] = useState(config.from);
+  const [key, setKey] = useState(Date.now());
 
   const reset = () => {
     setFrom(config.from);
+    setKey(Date.now());
   };
 
   const validate = (value) => {
@@ -61,6 +63,7 @@ export function FixedConfig({
           testSuffix="-fixed"
           min={min}
           max={max}
+          key={key}
         />
         {!isHideEasing && <EasingConfig type={type} />}
       </div>
