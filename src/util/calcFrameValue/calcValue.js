@@ -10,7 +10,7 @@ export default function calcValue(localFrame, config, frameConfig) {
     return calcTrigParameter(localFrame, config, frameConfig);
   }
   const from = parseFloat(config.from);
-  const to = config.easing === "fixed" ? from : parseFloat(config.to);
+  const to = parseFloat(config.to);
   const isNoCycle = config.cycle < 1;
   let t;
   let cycle = config.cycle;

@@ -165,6 +165,10 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
       celObj.y.data = cel.y;
       celObj.scale.data = cel.scale;
       celObj.alpha.data = cel.opacity;
+      celObj.r.data = cel.red;
+      celObj.g.data = cel.green;
+      celObj.b.data = cel.blue;
+      celObj.sat.data = cel.tkSat;
       return { id: celIndex + 1, data: celObj };
     });
     const frame = getEmptyData(tk2k.ANIME_FRAME);

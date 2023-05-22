@@ -9,7 +9,7 @@ describe("Title", () => {
 
     const target = screen.getByLabelText("名前:");
     expect(target).toBeInTheDocument();
-    expect(target).toHaveValue('初期表示');
+    expect(target).toHaveValue("初期表示");
   });
 
   test("change, then call setTitle value", () => {
@@ -19,7 +19,7 @@ describe("Title", () => {
     const target = screen.getByLabelText("名前:");
     userEvent.type(target, "テストネーム");
 
-    expect(mockFn).toBeCalledWith('テストネーム');
+    expect(mockFn).toBeCalledWith("テストネーム");
   });
 });
 
@@ -29,7 +29,7 @@ describe("image name", () => {
 
     const target = screen.getByLabelText("素材ファイル:");
     expect(target).toBeInTheDocument();
-    expect(target).toHaveValue('素材初期表示');
+    expect(target).toHaveValue("素材初期表示");
   });
   test("change, then call setImage", () => {
     const mockFn = jest.fn();
@@ -38,7 +38,7 @@ describe("image name", () => {
     const target = screen.getByLabelText("素材ファイル:");
     userEvent.type(target, "テスト素材名");
 
-    expect(mockFn).toBeCalledWith('テスト素材名');
+    expect(mockFn).toBeCalledWith("テスト素材名");
   });
 });
 
@@ -86,4 +86,89 @@ describe("COPY button", () => {
     });
   });
   // TODO データの中身をチェックした方が良い
+});
+
+describe("Options", () => {
+  test("update target", () => {
+    renderWithProviders(<Export />);
+    const button = screen.getByTestId("export-options-button");
+    userEvent.click(button);
+
+    const target = screen.getByTestId("export-options-target");
+
+    userEvent.selectOptions(target, "0");
+    expect(target).toHaveValue("0");
+
+    userEvent.selectOptions(target, "1");
+    expect(target).toHaveValue("1");
+  });
+  test("update yLine", () => {
+    renderWithProviders(<Export />);
+    const button = screen.getByTestId("export-options-button");
+    userEvent.click(button);
+
+    const target = screen.getByTestId("export-options-yline");
+
+    userEvent.selectOptions(target, "0");
+    expect(target).toHaveValue("0");
+
+    userEvent.selectOptions(target, "1");
+    expect(target).toHaveValue("1");
+
+    userEvent.selectOptions(target, "2");
+    expect(target).toHaveValue("2");
+  });
+  test("load", async () => {
+    const testData = {
+      title: "test title",
+      image: "test image",
+      target: "1",
+      yLine: "2",
+      rawEffect: "test Raw Effect!!!",
+    };
+    window.tk2k = {
+      readInfo: jest.fn().mockResolvedValue(testData),
+    };
+    renderWithProviders(<Export />);
+
+    const button = screen.getByTestId("export-options-button");
+    userEvent.click(button);
+
+    const target = screen.getByText("クリップボードから読み込み");
+    userEvent.click(target);
+
+    await waitFor(() => {
+      expect(screen.getByText("クリップボードから読み込み")).toBeInTheDocument();
+    })
+    expect(screen.getByTestId("export-options-target")).toHaveValue("1");
+    expect(screen.getByTestId("export-options-yline")).toHaveValue("2");
+    expect(screen.getByText(/設定有り/)).toBeInTheDocument();
+  });
+  test('clear rawEffect', async () => {
+    const testData = {
+      title: "test title",
+      image: "test image",
+      target: "1",
+      yLine: "2",
+      rawEffect: "test Raw Effect!!!",
+    };
+    window.tk2k = {
+      readInfo: jest.fn().mockResolvedValue(testData),
+    };
+    renderWithProviders(<Export />);
+
+    const button = screen.getByTestId("export-options-button");
+    userEvent.click(button);
+
+    const loadButton = screen.getByText("クリップボードから読み込み");
+    userEvent.click(loadButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("クリップボードから読み込み")).toBeInTheDocument();
+    })
+    const target = screen.getByText('クリア');
+    userEvent.click(target);
+
+    expect(screen.getByText(/設定無し/)).toBeInTheDocument();
+  })
 });

@@ -52,7 +52,7 @@ describe("From", () => {
   test("init value is config.from", () => {
     renderWithProviders(<FromToConfig type="x" config={{ from: 3, to: 6 }} />);
 
-    const target = screen.getByTestId("from-to-config-from");
+    const target = screen.getByTestId("number-input-from");
     expect(target).toHaveValue(3);
   });
   test("change to Number, then value is update and call update", () => {
@@ -60,7 +60,7 @@ describe("From", () => {
     renderWithProviders(
       <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
-    const target = screen.getByTestId("from-to-config-from");
+    const target = screen.getByTestId("number-input-from");
 
     fireEvent.change(target, { target: { value: 8 } });
     expect(target).toHaveValue(8);
@@ -75,7 +75,7 @@ describe("From", () => {
     renderWithProviders(
       <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
-    const target = screen.getByTestId("from-to-config-from");
+    const target = screen.getByTestId("number-input-from");
 
     fireEvent.change(target, { target: { value: "" } });
     expect(target).not.toHaveValue();
@@ -87,7 +87,7 @@ describe("To", () => {
   test("init value is config.to", () => {
     renderWithProviders(<FromToConfig type="x" config={{ from: 3, to: 6 }} />);
 
-    const target = screen.getByTestId("from-to-config-to");
+    const target = screen.getByTestId("number-input-to");
     expect(target).toHaveValue(6);
   });
   test("change to Number, then value is update and call update", () => {
@@ -95,7 +95,7 @@ describe("To", () => {
     renderWithProviders(
       <FromToConfig type="x" config={{ from: 3, to: 6 }} updateFromTo={mockFn} />
     );
-    const target = screen.getByTestId("from-to-config-to");
+    const target = screen.getByTestId("number-input-to");
 
     fireEvent.change(target, { target: { value: 2 } });
     expect(target).toHaveValue(2);
@@ -110,7 +110,7 @@ describe("To", () => {
     renderWithProviders(
       <FromToConfig type="x" config={{ from: 3, to: 6 }} update={mockFn} />
     );
-    const target = screen.getByTestId("from-to-config-to");
+    const target = screen.getByTestId("number-input-to");
 
     fireEvent.change(target, { target: { value: "" } });
     expect(target).not.toHaveValue();
@@ -173,7 +173,7 @@ describe("Header", () => {
     test("from Error, then show Error icon", () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
-      fireEvent.change(screen.getByTestId("from-to-config-from"), {
+      fireEvent.change(screen.getByTestId("number-input-from"), {
         target: { value: "" },
       });
 
@@ -183,7 +183,7 @@ describe("Header", () => {
     test("to Error, then show Error icon", () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
-      fireEvent.change(screen.getByTestId("from-to-config-to"), {
+      fireEvent.change(screen.getByTestId("number-input-to"), {
         target: { value: "" },
       });
 
@@ -195,8 +195,8 @@ describe("Header", () => {
         <FromToConfig type="x" config={{ from: 12, to: 34 }} name="テストネーム" />
       );
 
-      const from = screen.getByTestId("from-to-config-from");
-      const to = screen.getByTestId("from-to-config-to");
+      const from = screen.getByTestId("number-input-from");
+      const to = screen.getByTestId("number-input-to");
       fireEvent.change(from, { target: { value: "" } });
       fireEvent.change(to, { target: { value: "" } });
 
@@ -212,7 +212,7 @@ describe("Header", () => {
         <FromToConfig type="x" config={defaultConfig} name="テストネーム" />
       );
 
-      const from = screen.getByTestId("from-to-config-from");
+      const from = screen.getByTestId("number-input-from");
       fireEvent.change(from, { target: { value: "" } });
 
       const icon = screen.getByTestId("config-header-icon-error");
@@ -224,3 +224,16 @@ describe("Header", () => {
 
   });
 });
+describe('for Color', () => {
+  // NumberInputにてテスト済みなので、ColorRangeInputが出ればOKとする
+  test('type is red, then show ColorRangeInput', () => {
+    renderWithProviders(
+      <FromToConfig type="red" config={defaultConfig} name="テストネーム" />
+    );
+
+    const from = screen.getByTestId("color-range-input-number-from");
+    expect(from).toBeInTheDocument();
+    const to = screen.getByTestId("color-range-input-number-to");
+    expect(to).toBeInTheDocument();
+  })
+})

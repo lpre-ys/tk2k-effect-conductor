@@ -1,4 +1,4 @@
-import { fireEvent, screen, render } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PatternImage } from "./PatternImage";
 // import userEvent from "@testing-library/user-event";
 
@@ -13,11 +13,15 @@ jest.mock("react-konva", () => {
   return {
     __esModule: true,
     Stage: ({ children, onClick }) => {
-      return <div data-testid="mock-stage" onClick={onClick}>{children}</div>;
+      return (
+        <div data-testid="mock-stage" onClick={onClick}>
+          {children}
+        </div>
+      );
     },
-    Layer: ({ children }) => {
+    Layer: forwardRef(({ children }, ref) => {
       return <div>{children}</div>;
-    },
+    }),
     Rect: () => {
       return <div></div>;
     },
@@ -31,6 +35,19 @@ jest.mock("react-konva", () => {
       return <div></div>;
     }),
   };
+});
+jest.mock("../../player/TkColorSprite.jsx", () => {
+  const { forwardRef } = jest.requireActual("react");
+
+  return forwardRef((props, ref) => {
+    ref.current = {
+      isRunning: mockIsRunning,
+      frameIndex: mockFrameIndex,
+      start: mockStart,
+      stop: mockStop,
+    };
+    return <div></div>;
+  });
 });
 test("trImage is empty, then show emptyBlock", () => {
   render(<PatternImage />);
@@ -49,21 +66,21 @@ test("trImage is valid, then show canvas", () => {
   expect(main).toBeInTheDocument();
 });
 
-describe('onClick', () => {
-  test('isRunning, then Sprite is Stop and reset frame', () => {
+describe("onClick", () => {
+  test("isRunning, then Sprite is Stop and reset frame", () => {
     render(<PatternImage trImage="test.png" config={{ start: 1, end: 1 }} />);
     mockIsRunning.mockReturnValue(true);
 
-    fireEvent.click(screen.getByTestId('mock-stage'));
+    fireEvent.click(screen.getByTestId("mock-stage"));
 
     expect(mockStop).toBeCalled();
     expect(mockFrameIndex).toBeCalledWith(0);
   });
-  test('not isRunning, then Sprite is Start', () => {
+  test("not isRunning, then Sprite is Start", () => {
     render(<PatternImage trImage="test.png" config={{ start: 1, end: 1 }} />);
     mockIsRunning.mockReturnValue(false);
 
-    fireEvent.click(screen.getByTestId('mock-stage'));
+    fireEvent.click(screen.getByTestId("mock-stage"));
 
     expect(mockStart).toBeCalled();
   });

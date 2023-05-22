@@ -55,18 +55,21 @@ class App extends React.Component {
         <Global styles={normalize}></Global>
         <Global styles={styles.global}></Global>
         <div className="App" css={styles.container}>
-          {(!process.env.NODE_ENV ||
-            process.env.NODE_ENV === "development") && (
-            <button
-              onClick={() => {
-                this.props.i18n.changeLanguage(
-                  this.props.i18n.language === "ja" ? "en" : "ja"
-                );
-              }}
-            >
-              test
-            </button>
-          )}
+          {
+            /* istanbul ignore next */
+            (!process.env.NODE_ENV ||
+              process.env.NODE_ENV === "development") && (
+              <button
+                onClick={() => {
+                  this.props.i18n.changeLanguage(
+                    this.props.i18n.language === "ja" ? "en" : "ja"
+                  );
+                }}
+              >
+                test
+              </button>
+            )
+          }
           <div className="effect">
             <Material />
             <div className="player" css={styles.player}>

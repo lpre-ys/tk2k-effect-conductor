@@ -1,6 +1,6 @@
 {
   "name": "tk2k-effect-conductor",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "author": "lpre_ys",
   "license": "GPL",
@@ -15,6 +15,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "chroma-js": "^2.4.2",
     "d3-ease": "^3.0.1",
     "deepmerge": "^4.2.2",
     "electron-store": "^8.1.0",
@@ -75,6 +76,12 @@
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!(konva|d3-ease)).*\\.js$"
+    ],
+    "coveragePathIgnorePatterns": [
+      "./src/index.js",
+      "./src/reportWebVitals.js",
+      "./src/app/store.js",
+      "./src/konva/*"
     ]
   },
   "main": "public/electron.js",

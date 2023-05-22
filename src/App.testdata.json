@@ -1,0 +1,146 @@
+{
+  "frame": {
+    "frame": 0,
+    "maxFrame": 20
+  },
+  "material": {
+    "key": 1684366924717,
+    "originalImage": null,
+    "trImage": null,
+    "maxPage": 0,
+    "trColor": {
+      "r": 0,
+      "g": 0,
+      "b": 0
+    },
+    "bgColor": "transparent"
+  },
+  "celList": {
+    "celIndex": 0,
+    "drawKey": 1684366923667,
+    "list": [
+      {
+        "name": "セル1b",
+        "x": {
+          "from": 0,
+          "to": 0,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "easeLinear",
+          "easingAdd": ""
+        },
+        "y": {
+          "from": 0,
+          "to": 0,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "easeLinear",
+          "easingAdd": ""
+        },
+        "scale": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "easeLinear",
+          "easingAdd": ""
+        },
+        "opacity": {
+          "from": 0,
+          "to": 0,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "easeLinear",
+          "easingAdd": ""
+        },
+        "red": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "green": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "blue": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "hsv": {
+          "min": 0,
+          "max": 100,
+          "isHsv": false
+        },
+        "hue": {
+          "from": 0,
+          "to": 0,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "sat": {
+          "from": 0,
+          "to": 0,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "val": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "tkSat": {
+          "from": 100,
+          "to": 100,
+          "cycle": 0,
+          "isRoundTrip": false,
+          "easing": "fixed",
+          "easingAdd": ""
+        },
+        "frame": {
+          "start": 1,
+          "volume": 20,
+          "isHideLast": false,
+          "isLoopBack": false
+        },
+        "pattern": {
+          "start": 1,
+          "end": 1,
+          "isRoundTrip": false,
+          "align": "loop",
+          "customPattern": [],
+          "isCustom": false
+        }
+      }
+    ]
+  },
+  "info": {
+    "title": "",
+    "image": "",
+    "rawEffect": false,
+    "target": 0,
+    "yLine": 1
+  },
+  "player": {
+    "bgImage": null,
+    "bgColor": "transparent",
+    "zoom": 2
+  }
+}

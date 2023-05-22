@@ -1,5 +1,4 @@
-import calcValue from "./calcValue";
-import makePageList from "./makePageList";
+import getDataByLocalFrame from "./calcFrameValue/getDataByLocalFrame";
 
 export default function calcFrameValue(frame, maxFrame, config) {
   if (frame < 0 || frame >= maxFrame) {
@@ -18,32 +17,6 @@ export default function calcFrameValue(frame, maxFrame, config) {
   return getDataByLocalFrame(localFrame, config);
 }
 
-// * 表示有無はこのfunctionを呼ぶ前にチェックしているので、不要
-export function getDataByLocalFrame(localFrame, config) {
-  if (config.frame.volume === 1) {
-    // 1フレだけの場合
-    return getStartValues(config);
-  }
-  // easingする系の取得
-  const x = calcValue(localFrame, config.x, config.frame);
-  const y = calcValue(localFrame, config.y, config.frame);
-  const scale = calcValue(localFrame, config.scale, config.frame);
-  const opacity = calcValue(localFrame, config.opacity, config.frame);
-  // フレームの決定
-  const pageIndex = calcPageIndex(
-    localFrame,
-    config.pattern,
-    config.frame.volume
-  );
-  return {
-    x,
-    y,
-    scale,
-    opacity,
-    pageIndex,
-  };
-}
-
 export function calcLocalFrame(frame, maxFrame, { start, isLoopBack }) {
   if (isLoopBack) {
     start = ((start - 1) % maxFrame) + 1;
@@ -59,61 +32,4 @@ export function calcLocalFrame(frame, maxFrame, { start, isLoopBack }) {
   }
 
   return localFrame;
-}
-
-function getStartValues(config) {
-  const x = config.x.from;
-  const y = config.y.from;
-  const scale = config.scale.from;
-  const opacity = config.opacity.from;
-  const pageIndex = config.pattern.start - 1; // pageIndexは0はじまり。
-  return {
-    x,
-    y,
-    scale,
-    opacity,
-    pageIndex,
-  };
-}
-
-function calcPageIndex(localFrame, config, volume) {
-  // まずはページのリストを作成する
-  const pageList = makePageList(config);
-
-  if (["start", "end", "center"].includes(config.align)) {
-    return calcPageIndexByPosition(config, pageList, localFrame, volume);
-  }
-
-  if (config.align === "even") {
-    const index = Math.floor(localFrame / (volume / pageList.length));
-    return pageList[index] - 1;
-  }
-
-  // ループ
-  if (config.isRoundTrip) {
-    pageList.pop();
-  }
-  return pageList[localFrame % pageList.length] - 1;
-}
-
-function calcPageIndexByPosition(config, pageList, localFrame, volume) {
-  let head;
-  if (config.align === "start") {
-    head = 0;
-  } else if (config.align === "end") {
-    head = volume - pageList.length;
-  } else if (config.align === "center") {
-    head = Math.floor((volume - pageList.length) / 2);
-  }
-
-  let page;
-  if (localFrame < head) {
-    page = pageList[0];
-  } else {
-    page = pageList[localFrame - head]
-      ? pageList[localFrame - head]
-      : pageList[pageList.length - 1];
-  }
-
-  return page - 1;
 }

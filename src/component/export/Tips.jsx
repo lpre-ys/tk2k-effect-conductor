@@ -4,14 +4,17 @@ import { css } from "@emotion/react";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Tips = () => {
+  const { t } = useTranslation();
   const [isShow, setIsShow] = useState(false);
 
   return (
     <>
       <span
         css={styles.icon}
+        data-testid="export-tips-icon"
         onMouseOver={() => {
           setIsShow(true);
         }}
@@ -21,8 +24,12 @@ const Tips = () => {
       >
         <FontAwesomeIcon icon={faCircleQuestion} />
       </span>
-      <div css={styles.dialog} style={{ display: isShow ? "block" : "none" }}>
-        クリップボード内の戦闘アニメデータから、セルの動作以外の情報を取得し、上書き設定します。
+      <div
+        css={styles.dialog}
+        data-testid="export-tips-dialog"
+        style={{ display: isShow ? "block" : "none" }}
+      >
+        {t("export.tips")}
       </div>
     </>
   );
@@ -41,8 +48,8 @@ const styles = {
   dialog: css`
     border: 2px solid #616161;
     position: absolute;
-    left: 535px;
-    top: 70px;
+    right: 0;
+    top: -1em;
     font-size: 0.8rem;
     padding: 0.25em;
     width: 28em;

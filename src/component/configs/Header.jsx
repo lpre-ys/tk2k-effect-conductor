@@ -62,7 +62,7 @@ export function Header({
           data-testid="config-header-icon-error"
         />
       )}
-      <span css={styles.note}>{note}</span>
+      <span css={[styles.note, isSub && styles.subNote]}>{note}</span>
     </Heading>
   );
 }
@@ -114,8 +114,13 @@ const styles = {
   `,
   note: css`
     font-size: 0.8em;
+    font-weight: normal;
+    margin-left: 1em;
     position: absolute;
     right: 1em;
+    top: 0.7em;
+  `,
+  subNote: css`
     top: 0.2em;
   `,
 };

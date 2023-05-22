@@ -21,6 +21,7 @@
     "file": "Graphic",
     "option": "Options",
     "load": "Load from Clipboard",
+    "tips": "It fetches and overwrites information from the animation data in the clipboard, excluding details about cell actions.",
     "target": {
       "label": "Scope",
       "single": "Single",
@@ -37,6 +38,10 @@
       "on": "exists",
       "off": "none",
       "clear": "Clear"
+    },
+    "error": {
+      "message": "The failure of the COPY command may be due to security settings. <br/>Please try the following steps:",
+      "link": "What to do if you get an error with the COPY!! button (Instructions in Japanese only)"
     }
   },
   "player": {
@@ -96,12 +101,30 @@
         "small": ""
       }
     },
+    "tab": {
+      "basic": "Basic",
+      "color": "Color"
+    },
     "x": "X",
     "y": "Y",
     "scale": "Scale",
     "opacity": "Opacity",
     "cycle": "Cycle",
-    "roundTrip": "Round trip"
+    "roundTrip": "Round trip",
+    "color": {
+      "red": "Red",
+      "green": "Green",
+      "blue": "Blue",
+      "satulation": "Satulation",
+      "satulationNote": "*RPG Maker value",
+      "preview": "Preview",
+      "hsvMode": "HSV Mode",
+      "hsvColor": "HSV Color",
+      "hsvHue": "Hue",
+      "hsvHueNote": "*range: 0–360",
+      "hsvSat": "Satulation",
+      "hsvVal": "Value"
+    }
   },
   "other": {
     "cel": "cell",

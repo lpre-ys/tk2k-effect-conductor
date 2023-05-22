@@ -5,17 +5,17 @@ import { faCircleXmark } from "@fortawesome/free-regular-svg-icons";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 
 const ErrorInfo = () => {
+  const { t } = useTranslation();
   const [isShow, setIsShow] = useState(true);
   if (isShow) {
     return (
-      <div css={styles.container}>
+      <div css={styles.container} data-testid="export-error-info">
         <div>
           <p css={styles.msg}>
-            COPYの失敗は、セキュリティ設定が原因の可能性があります。
-            <br />
-            下記手順をお試しください
+            <Trans i18nKey="export.error.message" />
           </p>
           <a
             href="https://github.com/lpre-ys/tk2k-effect-conductor/blob/main/doc/security.md"
@@ -23,11 +23,12 @@ const ErrorInfo = () => {
             rel="noreferrer"
           >
             <FontAwesomeIcon icon={faLink} css={styles.linkIcon} />
-            COPY!!ボタンでエラーが出た場合
+            {t("export.error.link")}
           </a>
         </div>
         <div
           css={styles.closeIcon}
+          data-testid="export-error-info-close"
           onClick={() => {
             setIsShow(false);
           }}

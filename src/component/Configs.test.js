@@ -35,6 +35,14 @@ jest.mock("use-image", () => {
     },
   };
 });
+
+jest.mock("./player/TkColorSprite.jsx", () => {
+  const { forwardRef } = jest.requireActual("react");
+
+  return forwardRef((props, ref) => {
+    return <div></div>;
+  });
+});
 describe("Header", () => {
   test("header text is name", () => {
     renderWithProviders(<Configs name="テストセル" />);
@@ -119,4 +127,24 @@ describe("FromTo Components", () => {
     const target = screen.getByText("透明度");
     expect(target).toBeInTheDocument();
   });
+});
+
+describe('Color components', () => {
+  test("has Color component", () => {
+    renderWithProviders(<Configs />);
+
+    userEvent.click(screen.getByText('色調'));
+
+    const target = screen.getByText("赤");
+    expect(target).toBeInTheDocument();
+  });
+  test('click HSV mode button, then HSV mode ON', () => {
+    renderWithProviders(<Configs />);
+
+    userEvent.click(screen.getByText('色調'));
+    userEvent.click(screen.getByTestId('color-config-hsv-mode'));
+
+    const target = screen.getByText('H. 色相');
+    expect(target).toBeInTheDocument();
+  })
 });

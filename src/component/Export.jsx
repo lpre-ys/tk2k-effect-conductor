@@ -70,37 +70,39 @@ export const Export = ({
   return (
     <div css={styles.container}>
       {errorMsgKey && <ErrorInfo key={errorMsgKey} />}
-      <label>
-        {t("export.name")}:&nbsp;
-        <input
-          type="text"
-          value={title}
-          css={styles.input}
-          onChange={({ currentTarget }) => {
-            setTitle(currentTarget.value);
-          }}
-        />
-      </label>
-      <label>
-        {t("export.file")}:&nbsp;
-        <input
-          type="text"
-          value={imageName}
-          css={styles.input}
-          onChange={({ currentTarget }) => {
-            setImage(currentTarget.value);
-          }}
-        />
-      </label>
-      <button
-        css={[styles.exportButton, disabled && styles.disabled]}
-        type="button"
-        onClick={handleExport}
-        disabled={disabled}
-      >
-        <FontAwesomeIcon icon={faCopy} css={styles.icon} />
-        COPY!!
-      </button>
+      <div css={styles.flexWrapper}>
+        <label>
+          {t("export.name")}:&nbsp;
+          <input
+            type="text"
+            value={title}
+            css={styles.input}
+            onChange={({ currentTarget }) => {
+              setTitle(currentTarget.value);
+            }}
+          />
+        </label>
+        <label>
+          {t("export.file")}:&nbsp;
+          <input
+            type="text"
+            value={imageName}
+            css={styles.input}
+            onChange={({ currentTarget }) => {
+              setImage(currentTarget.value);
+            }}
+          />
+        </label>
+        <button
+          css={[styles.exportButton, disabled && styles.disabled]}
+          type="button"
+          onClick={handleExport}
+          disabled={disabled}
+        >
+          <FontAwesomeIcon icon={faCopy} css={styles.icon} />
+          COPY!!
+        </button>
+      </div>
       <Options />
     </div>
   );
@@ -141,6 +143,10 @@ const styles = {
     }
     border-bottom: 1px dotted #9e9e9e;
   `,
+  flexWrapper: css`
+    display: flex;
+    align-items: center;
+  `,
   input: css`
     width: 10.5rem;
   `,
@@ -159,6 +165,7 @@ const styles = {
     :hover {
       background-color: #1b5e20;
     }
+    margin-left: auto;
   `,
   disabled: css`
     background-color: #9e9e9e;

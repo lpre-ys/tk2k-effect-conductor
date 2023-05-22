@@ -6,15 +6,41 @@ import FixedConfig from "./FixedConfig";
 import FromToConfig from "./FromToConfig";
 import SinCosConfig from "./SinCosConfig";
 
-export function ParameterConfig({ name, type, easing }) {
+export function ParameterConfig({
+  name,
+  note = "",
+  type,
+  easing,
+  isSub,
+  min,
+  max,
+}) {
   const returnConfig = () => {
     if (easing === "fixed") {
-      return <FixedConfig name={name} type={type} />;
+      return (
+        <FixedConfig
+          name={name}
+          note={note}
+          type={type}
+          isSub={isSub}
+          min={min}
+          max={max}
+        />
+      );
     }
     if (["sin", "cos"].includes(easing)) {
-      return <SinCosConfig name={name} type={type} />;
+      return <SinCosConfig name={name} note={note} type={type} isSub={isSub} />;
     }
-    return <FromToConfig name={name} type={type} />;
+    return (
+      <FromToConfig
+        name={name}
+        note={note}
+        type={type}
+        isSub={isSub}
+        min={min}
+        max={max}
+      />
+    );
   };
   return <div css={styles.wrapper}>{returnConfig()}</div>;
 }
