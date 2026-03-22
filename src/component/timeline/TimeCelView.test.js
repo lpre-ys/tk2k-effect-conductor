@@ -41,7 +41,7 @@ describe("onClick", () => {
 
     userEvent.click(screen.getByTestId("time-cel-view"));
 
-    expect(mockFn).toBeCalledWith("1");
+    expect(mockFn).toBeCalledWith(1);
   });
   test("index: 42, Clicked, then call setCelIndex(42)", () => {
     const mockFn = jest.fn();
@@ -56,7 +56,7 @@ describe("onClick", () => {
 
     userEvent.click(screen.getByTestId("time-cel-view"));
 
-    expect(mockFn).toBeCalledWith("42");
+    expect(mockFn).toBeCalledWith(42);
   });
 });
 
