@@ -39,7 +39,8 @@ const restoreState = (dispatch, targetState) => {
   dispatch(loadInfo(targetState.info));
 };
 
-export const createUndoRedoMiddleware = () => {
+export const createUndoRedoMiddleware = (options = {}) => {
+  const { onUserAction } = options;
   let undoStack = [];
   let redoStack = [];
 
@@ -55,6 +56,7 @@ export const createUndoRedoMiddleware = () => {
       const current = getEditableState(getState());
       redoStack.push(current);
       restoreState(dispatch, undoStack.pop());
+      onUserAction?.();
       return;
     }
 
@@ -63,6 +65,7 @@ export const createUndoRedoMiddleware = () => {
       const current = getEditableState(getState());
       undoStack.push(current);
       restoreState(dispatch, redoStack.pop());
+      onUserAction?.();
       return;
     }
 
@@ -70,6 +73,7 @@ export const createUndoRedoMiddleware = () => {
       undoStack.push(getEditableState(getState()));
       if (undoStack.length > MAX_HISTORY) undoStack.shift();
       redoStack = [];
+      onUserAction?.();
     }
 
     return next(action);

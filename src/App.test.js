@@ -151,6 +151,7 @@ describe("for Electron", () => {
         onReceiveUndo: jest.fn(),
         onReceiveRedo: jest.fn(),
         onReceiveSaveAs: jest.fn(),
+        markDirty: jest.fn(),
         saveDataAs: jest.fn(),
         saveData: jest.fn(),
       };

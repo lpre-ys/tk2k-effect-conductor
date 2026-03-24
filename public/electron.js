@@ -16,14 +16,26 @@ const ElectronStore = require("electron-store");
 const store = new ElectronStore();
 let mainWindow;
 let currentFilePath = null;
+let isDirty = false;
+
+const getWindowTitle = (filePath, dirty) => {
+  const base = filePath ? `${path.basename(filePath)} - Effect Conductor` : "Effect Conductor";
+  return dirty ? `* ${base}` : base;
+};
 
 const updateWindowTitle = (filePath) => {
-  mainWindow.setTitle(`${path.basename(filePath)} - Effect Conductor`);
+  mainWindow.setTitle(getWindowTitle(filePath, isDirty));
+};
+
+const setClean = () => {
+  isDirty = false;
+  mainWindow.setTitle(getWindowTitle(currentFilePath, false));
 };
 
 const resetCurrentFile = () => {
   currentFilePath = null;
-  mainWindow.setTitle("Effect Conductor");
+  isDirty = false;
+  mainWindow.setTitle(getWindowTitle(null, false));
 };
 
 const openFile = () => {
@@ -44,6 +56,7 @@ const openFile = () => {
       }
       store.set("savePath", path.dirname(filePaths[0]));
       currentFilePath = filePaths[0];
+      isDirty = false;
       updateWindowTitle(filePaths[0]);
       loadFile(filePaths[0]);
     });
@@ -106,14 +119,24 @@ function showSaveAsDialog(data) {
       }
       store.set("savePath", path.dirname(filePath));
       currentFilePath = filePath;
-      updateWindowTitle(filePath);
-      return writeFile(filePath, JSON.stringify(data));
+      return writeFile(filePath, JSON.stringify(data)).then(() => {
+        setClean();
+      });
     });
 }
 
+ipcMain.on("mark-dirty", () => {
+  if (!isDirty) {
+    isDirty = true;
+    mainWindow.setTitle(getWindowTitle(currentFilePath, true));
+  }
+});
+
 ipcMain.handle("save-state-data", (event, data) => {
   if (currentFilePath) {
-    return writeFile(currentFilePath, JSON.stringify(data));
+    return writeFile(currentFilePath, JSON.stringify(data)).then(() => {
+      setClean();
+    });
   }
   return showSaveAsDialog(data);
 });

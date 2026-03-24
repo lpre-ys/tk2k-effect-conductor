@@ -15,5 +15,9 @@ export default configureStore({
     player: playerSlice
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(createUndoRedoMiddleware()),
+    getDefaultMiddleware().concat(
+      createUndoRedoMiddleware({
+        onUserAction: () => window.appMenu?.markDirty?.(),
+      })
+    ),
 });
