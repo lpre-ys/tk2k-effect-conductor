@@ -4,5 +4,8 @@
   "new": "New",
   "open": "Open",
   "save": "Save",
-  "exit": "Exit"
+  "exit": "Exit",
+  "edit": "Edit",
+  "undo": "Undo",
+  "redo": "Redo"
 }

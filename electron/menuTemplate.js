@@ -29,6 +29,29 @@ module.exports = (app, mainWindow, i18n, open) => {
     ],
   };
   menu.push(file);
+  // 編集
+  const edit = {
+    label: i18n.t("edit"),
+    submenu: [
+      {
+        label: i18n.t("undo"),
+        accelerator: "Ctrl+Z",
+        registerAccelerator: false,
+        click: () => {
+          mainWindow.webContents.send("undo", {});
+        },
+      },
+      {
+        label: i18n.t("redo"),
+        accelerator: "Ctrl+Y",
+        registerAccelerator: false,
+        click: () => {
+          mainWindow.webContents.send("redo", {});
+        },
+      },
+    ],
+  };
+  menu.push(edit);
   // 言語
   const lang = {
     label: i18n.t("language"),

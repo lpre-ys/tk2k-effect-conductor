@@ -37,6 +37,16 @@ contextBridge.exposeInMainWorld("appMenu", {
       listener(...arg);
     });
   },
+  onReceiveUndo: (listener) => {
+    ipcRenderer.on("undo", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  onReceiveRedo: (listener) => {
+    ipcRenderer.on("redo", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
   saveData: async (args) => {
     await ipcRenderer.invoke("save-state-data", args).then((result) => {
       return result;

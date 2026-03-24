@@ -148,6 +148,8 @@ describe("for Electron", () => {
         onReceiveSave: jest.fn(),
         onReceiveLoad: jest.fn(),
         onReceiveLanguage: jest.fn(),
+        onReceiveUndo: jest.fn(),
+        onReceiveRedo: jest.fn(),
         saveData: jest.fn(),
       };
     });
