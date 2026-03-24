@@ -27,7 +27,7 @@ export function TimingConfig({ config, update }) {
     setIsHideLast(config.isHideLast);
     setIsLoopBack(config.isLoopBack);
   };
-  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
+  const { headerProps, optionKey, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -121,6 +121,7 @@ export function TimingConfig({ config, update }) {
         </label>
       </div>
       <Options
+        key={optionKey}
         isHideLast={isHideLast}
         setIsHideLast={setIsHideLast}
         isLoopBack={isLoopBack}

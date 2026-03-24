@@ -22,8 +22,8 @@ export function useConfigOption(hasOption, reset) {
       isOption,
       setIsOption
     },
+    optionKey,
     optionProps: {
-      key: optionKey,
       isOption,
     }
   }

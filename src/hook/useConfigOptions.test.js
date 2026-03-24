@@ -1,13 +1,13 @@
 import { renderHook } from "@testing-library/react";
 import { useConfigOption } from "./useConfigOption";
 
-describe("optionProps", () => {
+describe("optionKey", () => {
   test("key is Date.now()", () => {
     Date.now = jest.fn(() => 1674030617777);
     const { result } = renderHook(() => useConfigOption(jest.fn(), jest.fn()));
-    const { optionProps } = result.current;
+    const { optionKey } = result.current;
 
-    expect(optionProps.key).toBe(1674030617777);
+    expect(optionKey).toBe(1674030617777);
   });
 });
 describe("headerProps", () => {
