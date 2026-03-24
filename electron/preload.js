@@ -53,6 +53,12 @@ contextBridge.exposeInMainWorld("appMenu", {
     });
   },
   markDirty: () => ipcRenderer.send("mark-dirty"),
+  onRequestState: (listener) => {
+    ipcRenderer.on("request-state", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  respondState: (data) => ipcRenderer.send("state-response", data),
   saveData: async (args) => {
     return await ipcRenderer.invoke("save-state-data", args);
   },

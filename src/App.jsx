@@ -72,6 +72,9 @@ class App extends React.Component {
       window.appMenu.onReceiveSaveAs(() => {
         window.appMenu.saveDataAs(this.props.data);
       });
+      window.appMenu.onRequestState(() => {
+        window.appMenu.respondState(this.props.data);
+      });
     }
   }
   componentWillUnmount() {

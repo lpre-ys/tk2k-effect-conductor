@@ -151,7 +151,9 @@ describe("for Electron", () => {
         onReceiveUndo: jest.fn(),
         onReceiveRedo: jest.fn(),
         onReceiveSaveAs: jest.fn(),
+        onRequestState: jest.fn(),
         markDirty: jest.fn(),
+        respondState: jest.fn(),
         saveDataAs: jest.fn(),
         saveData: jest.fn(),
       };
@@ -223,6 +225,29 @@ describe("for Electron", () => {
 
       const target = window.appMenu.saveDataAs;
 
+      expect(target).toBeCalled();
+      const [arg] = target.mock.calls[target.mock.calls.length - 1];
+      expect(arg).toMatchObject({ celList: { list: [{ name: "セル1a" }] } });
+    });
+    test("call RequestState, then respond with current state", () => {
+      let requestState;
+      window.appMenu.onRequestState = (listener) => {
+        requestState = listener;
+      };
+      renderWithProviders(<App />);
+
+      // セル1の名前を適当に変更する
+      const header = screen.getByRole("heading", { name: "セル1" });
+      userEvent.click(header);
+      const input = screen.getByDisplayValue("セル1");
+      userEvent.type(input, "a");
+      userEvent.click(screen.getByText("Material Data"));
+
+      expect(header).toHaveTextContent("セル1a");
+
+      requestState();
+
+      const target = window.appMenu.respondState;
       expect(target).toBeCalled();
       const [arg] = target.mock.calls[target.mock.calls.length - 1];
       expect(arg).toMatchObject({ celList: { list: [{ name: "セル1a" }] } });

@@ -17,6 +17,7 @@ const store = new ElectronStore();
 let mainWindow;
 let currentFilePath = null;
 let isDirty = false;
+let isClosing = false;
 
 const getWindowTitle = (filePath, dirty) => {
   const base = filePath ? `${path.basename(filePath)} - Effect Conductor` : "Effect Conductor";
@@ -83,6 +84,56 @@ const createWindow = () => {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: "deny" };
+  });
+
+  mainWindow.on("close", async (e) => {
+    if (!isDirty) return;
+    if (isClosing) {
+      e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+    isClosing = true;
+
+    try {
+      const { response } = await dialog.showMessageBox(mainWindow, {
+        type: "warning",
+        buttons: [i18n.t("save"), i18n.t("discard"), i18n.t("cancel")],
+        defaultId: 0,
+        cancelId: 2,
+        message: i18n.t("unsavedChangesMessage"),
+        detail: i18n.t("unsavedChangesDetail"),
+      });
+
+      if (response === 1) {
+        setClean();
+        mainWindow.close();
+      } else if (response === 0) {
+        const data = await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            ipcMain.removeListener("state-response", handler);
+            reject(new Error("state-response timeout"));
+          }, 5000);
+          const handler = (event, stateData) => {
+            clearTimeout(timer);
+            resolve(stateData);
+          };
+          ipcMain.once("state-response", handler);
+          mainWindow.webContents.send("request-state");
+        });
+        if (currentFilePath) {
+          await writeFile(currentFilePath, JSON.stringify(data));
+          setClean();
+        } else {
+          await showSaveAsDialog(data);
+        }
+        if (!isDirty) mainWindow.close();
+      }
+    } catch {
+      // 保存失敗またはタイムアウト: ウィンドウを閉じない
+    } finally {
+      isClosing = false;
+    }
   });
 };
 // Passthrough is not supported, GL is disabled, ANGLE is とか言うエラーを消すヤツ

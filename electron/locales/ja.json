@@ -8,5 +8,9 @@
   "edit": "編集",
   "undo": "元に戻す",
   "redo": "やり直す",
-  "saveAs": "名前を付けて保存"
+  "saveAs": "名前を付けて保存",
+  "discard": "破棄",
+  "cancel": "キャンセル",
+  "unsavedChangesMessage": "未保存の変更があります",
+  "unsavedChangesDetail": "変更を保存しますか？"
 }
