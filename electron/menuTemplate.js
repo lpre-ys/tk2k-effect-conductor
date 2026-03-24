@@ -1,4 +1,4 @@
-module.exports = (app, mainWindow, i18n, open) => {
+module.exports = (app, mainWindow, i18n, open, resetCurrentFile) => {
   let menu = [];
 
   // ファイル
@@ -8,6 +8,7 @@ module.exports = (app, mainWindow, i18n, open) => {
       {
         label: i18n.t("new"),
         click: () => {
+          resetCurrentFile();
           mainWindow.webContents.send("new", {});
         },
       },
@@ -22,6 +23,13 @@ module.exports = (app, mainWindow, i18n, open) => {
         accelerator: "Ctrl+S",
         click: () => {
           mainWindow.webContents.send("save", {});
+        },
+      },
+      {
+        label: i18n.t("saveAs"),
+        accelerator: "Ctrl+Shift+S",
+        click: () => {
+          mainWindow.webContents.send("saveAs", {});
         },
       },
       { type: "separator" },

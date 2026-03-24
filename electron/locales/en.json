@@ -7,5 +7,6 @@
   "exit": "Exit",
   "edit": "Edit",
   "undo": "Undo",
-  "redo": "Redo"
+  "redo": "Redo",
+  "saveAs": "Save As"
 }

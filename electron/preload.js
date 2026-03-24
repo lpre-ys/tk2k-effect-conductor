@@ -47,9 +47,15 @@ contextBridge.exposeInMainWorld("appMenu", {
       listener(...arg);
     });
   },
-  saveData: async (args) => {
-    await ipcRenderer.invoke("save-state-data", args).then((result) => {
-      return result;
+  onReceiveSaveAs: (listener) => {
+    ipcRenderer.on("saveAs", (event, ...arg) => {
+      listener(...arg);
     });
+  },
+  saveData: async (args) => {
+    return await ipcRenderer.invoke("save-state-data", args);
+  },
+  saveDataAs: async (args) => {
+    return await ipcRenderer.invoke("save-state-data-as", args);
   },
 });

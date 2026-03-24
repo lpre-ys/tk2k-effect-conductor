@@ -15,6 +15,16 @@ const ElectronStore = require("electron-store");
 
 const store = new ElectronStore();
 let mainWindow;
+let currentFilePath = null;
+
+const updateWindowTitle = (filePath) => {
+  mainWindow.setTitle(`${path.basename(filePath)} - Effect Conductor`);
+};
+
+const resetCurrentFile = () => {
+  currentFilePath = null;
+  mainWindow.setTitle("Effect Conductor");
+};
 
 const openFile = () => {
   dialog
@@ -33,6 +43,8 @@ const openFile = () => {
         return;
       }
       store.set("savePath", path.dirname(filePaths[0]));
+      currentFilePath = filePaths[0];
+      updateWindowTitle(filePaths[0]);
       loadFile(filePaths[0]);
     });
 };
@@ -76,17 +88,16 @@ i18n.on("loaded", (loaded) => {
 
 i18n.on("languageChanged", (lng) => {
   const menu = Menu.buildFromTemplate(
-    menuTemplate(app, mainWindow, i18n, openFile)
+    menuTemplate(app, mainWindow, i18n, openFile, resetCurrentFile)
   );
   Menu.setApplicationMenu(menu);
   store.set("lang", lng);
 });
 
-ipcMain.handle("save-state-data", (event, data) => {
-  dialog
+function showSaveAsDialog(data) {
+  return dialog
     .showSaveDialog(mainWindow, {
       defaultPath: store.get("savePath", app.getPath("documents")),
-      properties: ["openFile"],
       filters: [{ name: "Effect Data", extensions: ["json"] }],
     })
     .then(({ canceled, filePath }) => {
@@ -94,20 +105,36 @@ ipcMain.handle("save-state-data", (event, data) => {
         return;
       }
       store.set("savePath", path.dirname(filePath));
-      // ファイル保存処理
-      writeFile(filePath, JSON.stringify(data));
+      currentFilePath = filePath;
+      updateWindowTitle(filePath);
+      return writeFile(filePath, JSON.stringify(data));
     });
+}
+
+ipcMain.handle("save-state-data", (event, data) => {
+  if (currentFilePath) {
+    return writeFile(currentFilePath, JSON.stringify(data));
+  }
+  return showSaveAsDialog(data);
 });
 
-function writeFile(path, data) {
-  fs.writeFile(path, data, (error) => {
-    if (error !== null) {
-      dialog.showErrorBox(
-        "ファイル保存エラー",
-        ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\\n")
-      );
-      return;
-    }
+ipcMain.handle("save-state-data-as", (event, data) => {
+  return showSaveAsDialog(data);
+});
+
+function writeFile(filePath, data) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filePath, data, (error) => {
+      if (error !== null) {
+        dialog.showErrorBox(
+          "ファイル保存エラー",
+          ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\\n")
+        );
+        reject(error);
+        return;
+      }
+      resolve();
+    });
   });
 }
 

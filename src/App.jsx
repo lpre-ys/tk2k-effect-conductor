@@ -68,6 +68,10 @@ class App extends React.Component {
       window.appMenu.onReceiveRedo(() => {
         this.props.redo();
       });
+      // 名前を付けて保存
+      window.appMenu.onReceiveSaveAs(() => {
+        window.appMenu.saveDataAs(this.props.data);
+      });
     }
   }
   componentWillUnmount() {
