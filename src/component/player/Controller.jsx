@@ -38,6 +38,7 @@ export function Controller({
   const frameCounterRef = useRef(frame);
   const prevTimeStampRef = useRef(undefined);
   const isRepeatRef = useRef(isRepeat);
+  const handleKeyDownRef = useRef(null);
 
   useEffect(() => {
     isRepeatRef.current = isRepeat;
@@ -130,13 +131,16 @@ export function Controller({
     };
   }, []);
 
+  handleKeyDownRef.current = handleKeyDown;
+
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
+    const handler = (event) => handleKeyDownRef.current(event);
+    document.addEventListener("keydown", handler);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handler);
     };
-  });
+  }, []);
 
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;
