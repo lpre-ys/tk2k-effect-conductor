@@ -20,7 +20,7 @@ export const frameSlice = createSlice({
       if (action.payload < 0) {
         return;
       }
-      if (action.payload >= state.max) {
+      if (action.payload >= state.maxFrame) {
         return;
       }
       state.frame = parseInt(action.payload);
