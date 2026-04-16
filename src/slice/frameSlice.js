@@ -26,7 +26,7 @@ export const frameSlice = createSlice({
       state.frame = parseInt(action.payload);
     },
     setMaxFrame: (state, action) => {
-      state.maxFrame = parseInt(action.payload);
+      state.maxFrame = Math.min(99, Math.max(1, parseInt(action.payload)));
     },
     nextFrame: (state) => {
       state.frame += 1;

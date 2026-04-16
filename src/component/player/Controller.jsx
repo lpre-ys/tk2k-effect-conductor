@@ -243,6 +243,8 @@ export function Controller({
             {t("player.maxFrame")}:&nbsp;
             <input
               type="number"
+              min={1}
+              max={99}
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {
