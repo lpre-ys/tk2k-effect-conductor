@@ -219,6 +219,7 @@ function loadFile(path) {
         "ファイル読み込みエラー",
         ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\\n")
       );
+      return;
     }
     mainWindow.webContents.send("load", data.toString());
   });
