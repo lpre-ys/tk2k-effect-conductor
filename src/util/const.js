@@ -113,7 +113,14 @@ const DEFAULT_CEL = {
   },
 };
 const DEFAULT_TRIG = {
-  center: {},
+  center: {
+    from: 0,
+    to: 0,
+    cycle: 0,
+    isRoundTrip: false,
+    easing: "fixed",
+    easingAdd: "",
+  },
   amp: {
     from: 100,
     to: 100,
