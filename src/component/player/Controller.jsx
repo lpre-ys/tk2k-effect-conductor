@@ -34,47 +34,51 @@ export function Controller({
   const { t } = useTranslation();
 
   const animeRef = useRef();
+  const timeCounterRef = useRef(0.0);
+  const frameCounterRef = useRef(frame);
+  const prevTimeStampRef = useRef(undefined);
+  const isRepeatRef = useRef(isRepeat);
 
-  let timeCounter = 0.0;
-  let frameCounter = frame;
-  let prevTimeStamp;
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
 
   const animation = (timestamp) => {
-    if (prevTimeStamp === undefined) {
-      prevTimeStamp = timestamp;
+    if (prevTimeStampRef.current === undefined) {
+      prevTimeStampRef.current = timestamp;
     }
-    timeCounter += timestamp - prevTimeStamp;
+    timeCounterRef.current += timestamp - prevTimeStampRef.current;
 
     let isChange = false;
     let isNext = true;
-    while (timeCounter > FRAME_SEC) {
+    while (timeCounterRef.current > FRAME_SEC) {
       // 現在のフレームの計算
-      frameCounter += 1;
-      timeCounter -= FRAME_SEC;
+      frameCounterRef.current += 1;
+      timeCounterRef.current -= FRAME_SEC;
       isChange = true;
     }
     if (isChange) {
-      if (frameCounter > maxFrame - 1) {
-        if (isRepeat) {
-          frameCounter = 0;
+      if (frameCounterRef.current > maxFrame - 1) {
+        if (isRepeatRef.current) {
+          frameCounterRef.current = 0;
         } else {
           //リピート無しの時はアニメを止める;
           isNext = false;
           setIsRunning(false);
-          frameCounter = maxFrame - 1; //はみ出したとき用
+          frameCounterRef.current = maxFrame - 1; //はみ出したとき用
         }
       }
-      setFrame(frameCounter);
+      setFrame(frameCounterRef.current);
     }
     if (isNext) {
       animeRef.current = window.requestAnimationFrame(animation);
     }
-    prevTimeStamp = timestamp;
+    prevTimeStampRef.current = timestamp;
   };
 
   function playAnimation() {
     if (frame >= maxFrame - 1) {
-      frameCounter = 0;
+      frameCounterRef.current = 0;
     }
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
