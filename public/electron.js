@@ -202,7 +202,7 @@ function writeFile(filePath, data) {
       if (error !== null) {
         dialog.showErrorBox(
           "ファイル保存エラー",
-          ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\\n")
+          ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\n")
         );
         reject(error);
         return;
@@ -217,7 +217,7 @@ function loadFile(path) {
     if (error !== null) {
       dialog.showErrorBox(
         "ファイル読み込みエラー",
-        ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\\n")
+        ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\n")
       );
       return;
     }
@@ -288,7 +288,7 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
     .catch((error) => {
       dialog.showErrorBox(
         "エラー",
-        ["データコピーに失敗しました", `Error: ${error.text}`].join("\\n")
+        ["データコピーに失敗しました", `Error: ${error.text}`].join("\n")
       );
       return false;
     });
