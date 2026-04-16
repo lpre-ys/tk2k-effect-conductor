@@ -349,22 +349,26 @@ describe("easeElasticIn, from is 0, to is 100, frameConfig.volume is 20", () => 
       beforeEach(() => {
         config.easingOptions = {
           easeElastic: {
-            amplitude: 0.5,
+            period: 0.5,
           },
         };
       });
       test.each([
         [0, 0],
         [1, 0],
-        [6, -0],
-        [7, 1],
-        [8, 2],
-        [9, 0],
-        [10, -3],
-        [15, -7],
-        [16, -33],
-        [17, -29],
-        [18, 31],
+        [6, -1],
+        [7, -0],
+        [8, 1],
+        [9, 2],
+        [10, 3],
+        [11, 3],
+        [12, -1],
+        [13, -8],
+        [14, -16],
+        [15, -20],
+        [16, -13],
+        [17, 12],
+        [18, 55],
         [19, 100],
       ])("localFrame is %i, then return %i", (frame, ex) => {
         const result = calcValue(frame, config, frameConfig);
