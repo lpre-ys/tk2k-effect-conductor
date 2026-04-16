@@ -141,7 +141,7 @@ describe("Prev / Next", () => {
     const target = screen.getByTitle("next");
     userEvent.click(target);
 
-    expect(mockFn).toBeCalledTimes(1);
+    expect(window.cancelAnimationFrame).toBeCalledTimes(1);
   });
 });
 
