@@ -22,7 +22,7 @@ jest.mock("react-konva", () => {
 
 jest.mock("use-image", () => {
   return {
-    __esModule: true.valueOf,
+    __esModule: true,
     default: (src) => {
       const { createElement } = jest.requireActual("react");
       const elem = createElement("img", {
