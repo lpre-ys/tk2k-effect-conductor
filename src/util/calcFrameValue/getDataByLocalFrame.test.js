@@ -476,6 +476,15 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(7, config)).toMatchObject({ pageIndex: 2 });
       expect(getDataByLocalFrame(8, config)).toMatchObject({ pageIndex: 2 });
     });
+    test("localFrame が volume と等しいとき最後のページに留まる（境界外アクセスしない）", () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = "even";
+      config.frame.volume = 6;
+
+      expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
+    });
   });
 });
 
