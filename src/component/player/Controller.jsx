@@ -257,7 +257,7 @@ export function Controller({
             <input
               type="number"
               min={1}
-              max={99}
+              max={500}
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {

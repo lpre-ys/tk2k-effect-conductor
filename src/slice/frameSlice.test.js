@@ -55,9 +55,9 @@ describe("setMaxFrame", () => {
     expect(state.maxFrame).toBe(50);
   });
 
-  test("99 を超える値は 99 にクランプされる", () => {
-    const state = reducer({ frame: 0, maxFrame: 20 }, setMaxFrame(100));
-    expect(state.maxFrame).toBe(99);
+  test("500 を超える値は 500 にクランプされる", () => {
+    const state = reducer({ frame: 0, maxFrame: 20 }, setMaxFrame(501));
+    expect(state.maxFrame).toBe(500);
   });
 
   test("1 未満の値は 1 にクランプされる", () => {
