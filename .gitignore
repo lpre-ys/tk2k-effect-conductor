@@ -28,3 +28,8 @@ yarn-error.log*
 
 memo.md
 CLAUDE.md
+.claude
+
+# auto-review
+/tools/
+/run_review.bat
