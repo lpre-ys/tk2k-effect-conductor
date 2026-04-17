@@ -29,7 +29,7 @@ export function Options({
         <label css={[styles.label, styles.checkbox]}>
           <input
             name="is-loop-back"
-            data-testid="timing-is-hide-last"
+            data-testid="timing-is-loop-back"
             type="checkbox"
             checked={isLoopBack}
             value="true"
