@@ -262,7 +262,7 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
   frameList.forEach((cels, frameNo) => {
     const celList = cels.map((cel, celIndex) => {
       const celObj = getEmptyData(tk2k.ANIME_CEL);
-      celObj.pattern.data = cel.pageIndex - 1;
+      celObj.pattern.data = cel.pageIndex;
       celObj.x.data = cel.x;
       celObj.y.data = cel.y;
       celObj.scale.data = cel.scale;

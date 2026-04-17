@@ -2,76 +2,11 @@ import merge from "deepmerge";
 import calcFrameValue, {
   calcLocalFrame
 } from "./calcFrameValue";
-import { DEFAULT_TRIG } from "./const";
+import { DEFAULT_TRIG, DEFAULT_CEL, INIT_MAX_FRAME } from "./const";
 
 const DEFAULT_CEL_CONFIG = {
-  x: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  y: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  scale: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  opacity: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  red: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  green: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  blue: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  tkSat: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  frame: { start: 1, volume: 20, isLoopBack: false, isHideLast: false }, // 20: INIT_MAX_FRAME
-  pattern: { start: 1, end: 1, isRoundTrip: false, align: "loop" },
-  hsv: { min: 0, max: 100, isHsv: false }
+  ...DEFAULT_CEL,
+  frame: { start: 1, volume: INIT_MAX_FRAME, isLoopBack: false, isHideLast: false },
 };
 
 describe("calcLocalFrame", () => {

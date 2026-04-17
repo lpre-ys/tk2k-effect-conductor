@@ -40,7 +40,6 @@ export const Export = ({
         .map((celConfig) => {
           const cel = calcFrameValue(i, maxFrame, celConfig);
           if (cel) {
-            cel.pageIndex += 1;
             return cel;
           } else {
             return null;

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { moveCel, setCelIndex, updateFrame } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
@@ -46,6 +46,8 @@ export function TimeCelView({
   listLength,
 }) {
   const [drag, setDrag] = useState(null);
+  const dragRef = useRef(drag);
+  useEffect(() => { dragRef.current = drag; }, [drag]);
   const isSelected = index === celIndex;
 
   useEffect(() => {
@@ -77,17 +79,16 @@ export function TimeCelView({
     };
 
     const onUp = () => {
-      setDrag((prev) => {
-        if (prev?.directionLocked === DIRECTION.VERTICAL) {
-          const target = Math.max(0, Math.min(index + prev.offsetRows, listLength - 1));
-          if (target !== index) moveCel(target);
-        } else if (prev?.directionLocked === DIRECTION.HORIZONTAL && prev.offsetFrame !== 0) {
-          const { start, volume } = config.frame;
-          const result = calculateFrameAfterDrag(prev.type, start, volume, prev.offsetFrame);
-          updateFrame({ ...config.frame, ...result });
-        }
-        return null;
-      });
+      const prev = dragRef.current;
+      if (prev?.directionLocked === DIRECTION.VERTICAL) {
+        const target = Math.max(0, Math.min(index + prev.offsetRows, listLength - 1));
+        if (target !== index) moveCel(target);
+      } else if (prev?.directionLocked === DIRECTION.HORIZONTAL && prev.offsetFrame !== 0) {
+        const { start, volume } = config.frame;
+        const result = calculateFrameAfterDrag(prev.type, start, volume, prev.offsetFrame);
+        updateFrame({ ...config.frame, ...result });
+      }
+      setDrag(null);
     };
 
     document.addEventListener("mousemove", onMove);
