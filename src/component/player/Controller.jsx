@@ -37,8 +37,13 @@ export function Controller({
   const timeCounterRef = useRef(0.0);
   const frameCounterRef = useRef(frame);
   const prevTimeStampRef = useRef(undefined);
+  const maxFrameRef = useRef(maxFrame);
   const isRepeatRef = useRef(isRepeat);
-  const handleKeyDownRef = useRef(null);
+  const isRunningRef = useRef(false);
+
+  useEffect(() => {
+    maxFrameRef.current = maxFrame;
+  }, [maxFrame]);
 
   useEffect(() => {
     isRepeatRef.current = isRepeat;
@@ -59,14 +64,15 @@ export function Controller({
       isChange = true;
     }
     if (isChange) {
-      if (frameCounterRef.current > maxFrame - 1) {
+      if (frameCounterRef.current > maxFrameRef.current - 1) {
         if (isRepeatRef.current) {
           frameCounterRef.current = 0;
         } else {
           //リピート無しの時はアニメを止める;
           isNext = false;
+          isRunningRef.current = false;
           setIsRunning(false);
-          frameCounterRef.current = maxFrame - 1; //はみ出したとき用
+          frameCounterRef.current = maxFrameRef.current - 1; //はみ出したとき用
         }
       }
       setFrame(frameCounterRef.current);
@@ -78,15 +84,17 @@ export function Controller({
   };
 
   function playAnimation() {
-    if (frame >= maxFrame - 1) {
+    if (frame >= maxFrameRef.current - 1) {
       frameCounterRef.current = 0;
     }
+    isRunningRef.current = true;
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
   }
 
   function stopAnimation() {
     window.cancelAnimationFrame(animeRef.current);
+    isRunningRef.current = false;
     setIsRunning(false);
   }
 
@@ -100,45 +108,42 @@ export function Controller({
     nextFrame();
   }
 
-  const handleKeyDown = (event) => {
-    if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
-      return;
-    }
-    if (event.key === "ArrowLeft") {
-      prev();
-      event.preventDefault();
-    }
-    if (event.key === "ArrowRight") {
-      next();
-      event.preventDefault();
-    }
-    if (event.key === " ") {
-      if (event.target.tagName === "BUTTON") {
-        return;
-      }
-      if (isRunning) {
-        stopAnimation();
-      } else {
-        playAnimation();
-      }
-      event.preventDefault();
-    }
-  };
-
   useEffect(() => {
     return () => {
       window.cancelAnimationFrame(animeRef.current);
     };
   }, []);
 
-  handleKeyDownRef.current = handleKeyDown;
-
   useEffect(() => {
-    const handler = (event) => handleKeyDownRef.current(event);
-    document.addEventListener("keydown", handler);
+    const handleKeyDown = (event) => {
+      if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        prev();
+        event.preventDefault();
+      }
+      if (event.key === "ArrowRight") {
+        next();
+        event.preventDefault();
+      }
+      if (event.key === " ") {
+        if (event.target.tagName === "BUTTON") {
+          return;
+        }
+        if (isRunningRef.current) {
+          stopAnimation();
+        } else {
+          playAnimation();
+        }
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handler);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 

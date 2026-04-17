@@ -225,4 +225,19 @@ describe("handleKeyDown", () => {
 
     expect(window.requestAnimationFrame).toBeCalled();
   });
+  test("Space key down while running, then call stopAnimation", () => {
+    render(<Controller frame={3} maxFrame={10} />);
+
+    // 再生開始
+    const play = screen.getByTitle("play");
+    userEvent.click(play);
+
+    // スペースキーで停止
+    fireEvent.keyDown(document, {
+      target: { tagName: "test" },
+      key: " ",
+    });
+
+    expect(window.cancelAnimationFrame).toBeCalledTimes(1);
+  });
 });

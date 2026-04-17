@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 // import { css } from "@emotion/react";
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import { Group, Rect, Text } from "react-konva";
 import { useSelector } from "react-redux";
@@ -40,6 +40,11 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
     }
     return patterns;
   }, [maxPage]);
+
+  const animations = useMemo(
+    () => ({ pattern: makePatterns() }),
+    [makePatterns]
+  );
 
   const resetData = {
     x: 0,
@@ -92,7 +97,7 @@ const Cel = ({ config, isShowCelBorder, id, setMsg, zoom }) => {
         y={calcScale(-96 / 2, data.scale)}
         image={imgElement}
         animation="pattern"
-        animations={{ pattern: makePatterns() }}
+        animations={animations}
         frameRate={30}
         frameIndex={data.pageIndex}
         visible={visible}
