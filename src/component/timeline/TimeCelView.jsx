@@ -20,7 +20,7 @@ const DIRECTION = {
 const DRAG_DIRECTION_THRESHOLD = 8;
 
 // ドラッグ種別・現在値・オフセットから確定後の { start, volume } を計算する
-function calculateFrameAfterDrag(type, start, volume, offsetFrame) {
+export function calculateFrameAfterDrag(type, start, volume, offsetFrame) {
   if (type === DRAG_TYPE.MOVE) {
     return { start: Math.max(1, start + offsetFrame), volume };
   }
