@@ -86,7 +86,10 @@ function calcPageIndex(localFrame, config, volume) {
   }
 
   if (config.align === "even") {
-    const index = Math.floor(localFrame / (volume / pageList.length));
+    const index = Math.min(
+      Math.floor(localFrame / (volume / pageList.length)),
+      pageList.length - 1
+    );
     return pageList[index] - 1;
   }
 

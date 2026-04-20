@@ -32,7 +32,7 @@ export function PatternConfig({ config, update }) {
     setEnd(config.end);
     setCustomPattern(config.customPattern.join(","));
   };
-  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
+  const { headerProps, optionKey, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (start, end) => {
     const num = parseInt(start);
@@ -199,6 +199,7 @@ export function PatternConfig({ config, update }) {
         </div>
       </div>
       <Options
+        key={optionKey}
         isCustom={isCustom}
         setIsCustom={setIsCustom}
         customPattern={customPattern}

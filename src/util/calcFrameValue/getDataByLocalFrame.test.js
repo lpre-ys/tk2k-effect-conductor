@@ -1,74 +1,10 @@
 import merge from "deepmerge";
 import getDataByLocalFrame from "./getDataByLocalFrame";
+import { DEFAULT_CEL, INIT_MAX_FRAME } from "../const";
 
 const DEFAULT_CEL_CONFIG = {
-  x: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  y: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  scale: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  opacity: {
-    from: 0,
-    to: 0,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "easeLinear",
-    easingAdd: "",
-  },
-  red: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  green: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  blue: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  tkSat: {
-    from: 100,
-    to: 100,
-    cycle: 0,
-    isRoundTrip: false,
-    easing: "fixed",
-    easingAdd: "",
-  },
-  frame: { start: 1, volume: 20, isLoopBack: false, isHideLast: false }, // 20: INIT_MAX_FRAME
-  pattern: { start: 1, end: 1, isRoundTrip: false, align: "loop" },
-  hsv: { min: 0, max: 100, isHsv: false },
+  ...DEFAULT_CEL,
+  frame: { start: 1, volume: INIT_MAX_FRAME, isLoopBack: false, isHideLast: false },
 };
 
 const FROM_TO_CEL_CONFIG = {
@@ -475,6 +411,15 @@ describe("pattern", () => {
       expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
       expect(getDataByLocalFrame(7, config)).toMatchObject({ pageIndex: 2 });
       expect(getDataByLocalFrame(8, config)).toMatchObject({ pageIndex: 2 });
+    });
+    test("localFrame が volume と等しいとき最後のページに留まる（境界外アクセスしない）", () => {
+      const config = JSON.parse(JSON.stringify(DEFAULT_CEL_CONFIG));
+      config.pattern.start = 1;
+      config.pattern.end = 3;
+      config.pattern.align = "even";
+      config.frame.volume = 6;
+
+      expect(getDataByLocalFrame(6, config)).toMatchObject({ pageIndex: 2 });
     });
   });
 });

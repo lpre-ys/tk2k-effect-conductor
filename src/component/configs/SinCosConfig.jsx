@@ -15,7 +15,7 @@ export function SinCosConfig({ type, name, config, isSub }) {
     return true;
   };
   const reset = () => {};
-  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
+  const { headerProps, optionKey, optionProps } = useConfigOption(hasOption, reset);
 
   return (
     <div>
@@ -28,7 +28,7 @@ export function SinCosConfig({ type, name, config, isSub }) {
           </p>
           <EasingConfig type={type} />
         </div>
-        <Options type={type} config={config.trig} {...optionProps} />
+        <Options key={optionKey} type={type} config={config.trig} {...optionProps} />
       </div>
     </div>
   );

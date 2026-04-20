@@ -37,9 +37,32 @@ contextBridge.exposeInMainWorld("appMenu", {
       listener(...arg);
     });
   },
-  saveData: async (args) => {
-    await ipcRenderer.invoke("save-state-data", args).then((result) => {
-      return result;
+  onReceiveUndo: (listener) => {
+    ipcRenderer.on("undo", (event, ...arg) => {
+      listener(...arg);
     });
+  },
+  onReceiveRedo: (listener) => {
+    ipcRenderer.on("redo", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  onReceiveSaveAs: (listener) => {
+    ipcRenderer.on("saveAs", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  markDirty: () => ipcRenderer.send("mark-dirty"),
+  onRequestState: (listener) => {
+    ipcRenderer.on("request-state", (event, ...arg) => {
+      listener(...arg);
+    });
+  },
+  respondState: (data) => ipcRenderer.send("state-response", data),
+  saveData: async (args) => {
+    return await ipcRenderer.invoke("save-state-data", args);
+  },
+  saveDataAs: async (args) => {
+    return await ipcRenderer.invoke("save-state-data-as", args);
   },
 });

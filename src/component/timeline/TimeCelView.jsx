@@ -1,9 +1,39 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCelIndex } from "../../slice/celListSlice";
+import { moveCel, setCelIndex, updateFrame } from "../../slice/celListSlice";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
+
+const DRAG_TYPE = {
+  MOVE: "move",
+  RESIZE_LEFT: "resize-left",
+  RESIZE_RIGHT: "resize-right",
+};
+
+const DIRECTION = {
+  HORIZONTAL: "horizontal",
+  VERTICAL: "vertical",
+};
+
+const DRAG_DIRECTION_THRESHOLD = 8;
+
+// ドラッグ種別・現在値・オフセットから確定後の { start, volume } を計算する
+export function calculateFrameAfterDrag(type, start, volume, offsetFrame) {
+  if (type === DRAG_TYPE.MOVE) {
+    return { start: Math.max(1, start + offsetFrame), volume };
+  }
+  if (type === DRAG_TYPE.RESIZE_LEFT) {
+    const end = start + volume - 1;
+    const newStart = Math.max(1, Math.min(start + offsetFrame, end));
+    return { start: newStart, volume: end - newStart + 1 };
+  }
+  if (type === DRAG_TYPE.RESIZE_RIGHT) {
+    return { start, volume: Math.max(1, volume + offsetFrame) };
+  }
+  return { start, volume };
+}
 
 export function TimeCelView({
   index,
@@ -11,10 +41,100 @@ export function TimeCelView({
   celIndex,
   setCelIndex,
   maxFrame,
+  updateFrame,
+  moveCel,
+  listLength,
 }) {
+  const [drag, setDrag] = useState(null);
+  const dragRef = useRef(drag);
+  useEffect(() => { dragRef.current = drag; }, [drag]);
   const isSelected = index === celIndex;
 
-  let { start, volume } = config.frame;
+  useEffect(() => {
+    if (!drag) return;
+
+    const onMove = (e) => {
+      const deltaX = e.clientX - drag.startX;
+      const deltaY = e.clientY - drag.startY;
+      setDrag((prev) => {
+        if (!prev) return prev;
+
+        let directionLocked = prev.directionLocked;
+        if (!directionLocked) {
+          if (Math.abs(deltaY) > DRAG_DIRECTION_THRESHOLD) directionLocked = DIRECTION.VERTICAL;
+          else if (Math.abs(deltaX) > DRAG_DIRECTION_THRESHOLD) directionLocked = DIRECTION.HORIZONTAL;
+          else return prev;
+        }
+
+        if (directionLocked === DIRECTION.VERTICAL) {
+          const offsetRows = Math.round(deltaY / TIMELINE_HEIGHT);
+          if (prev.offsetRows === offsetRows && prev.directionLocked === directionLocked) return prev;
+          return { ...prev, directionLocked, offsetRows };
+        } else {
+          const offsetFrame = Math.round(deltaX / FRAME_SIZE);
+          if (prev.offsetFrame === offsetFrame && prev.directionLocked === directionLocked) return prev;
+          return { ...prev, directionLocked, offsetFrame };
+        }
+      });
+    };
+
+    const onUp = () => {
+      const prev = dragRef.current;
+      if (prev?.directionLocked === DIRECTION.VERTICAL) {
+        const target = Math.max(0, Math.min(index + prev.offsetRows, listLength - 1));
+        if (target !== index) moveCel(target);
+      } else if (prev?.directionLocked === DIRECTION.HORIZONTAL && prev.offsetFrame !== 0) {
+        const { start, volume } = config.frame;
+        const result = calculateFrameAfterDrag(prev.type, start, volume, prev.offsetFrame);
+        updateFrame({ ...config.frame, ...result });
+      }
+      setDrag(null);
+    };
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    return () => {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    // drag.startX/startY はドラッグ開始時のみ変わる。offset 更新ではリスナーを再登録しない
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drag?.startX, config.frame, updateFrame, moveCel, listLength]);
+
+  const handleMouseDown = (e) => {
+    setCelIndex(index);
+    setDrag({ startX: e.clientX, startY: e.clientY, offsetFrame: 0, offsetRows: 0, type: DRAG_TYPE.MOVE, directionLocked: null });
+  };
+
+  const createResizeHandler = (dragType) => (e) => {
+    e.stopPropagation();
+    setCelIndex(index);
+    setDrag({ startX: e.clientX, startY: e.clientY, offsetFrame: 0, offsetRows: 0, type: dragType, directionLocked: DIRECTION.HORIZONTAL });
+  };
+
+  const handleResizeLeftDown = createResizeHandler(DRAG_TYPE.RESIZE_LEFT);
+  const handleResizeRightDown = createResizeHandler(DRAG_TYPE.RESIZE_RIGHT);
+
+  let previewStart = config.frame.start;
+  let previewVolume = config.frame.volume;
+  if (drag?.directionLocked === DIRECTION.HORIZONTAL) {
+    const result = calculateFrameAfterDrag(
+      drag.type,
+      config.frame.start,
+      config.frame.volume,
+      drag.offsetFrame
+    );
+    previewStart = result.start;
+    previewVolume = result.volume;
+  }
+
+  const rowOffset =
+    drag?.directionLocked === DIRECTION.VERTICAL
+      ? Math.max(-index, Math.min(drag.offsetRows, listLength - 1 - index))
+      : 0;
+
+  let start = previewStart;
+  let volume = previewVolume;
   let isLeft = false;
   let leftVolume = 0;
 
@@ -41,10 +161,14 @@ export function TimeCelView({
         volume={volume}
         isSelected={isSelected}
         index={index}
+        rowOffset={rowOffset}
         isHideLast={isLeft ? false : config.frame.isHideLast}
-        setCelIndex={setCelIndex}
         name={config.name ? config.name : index}
         type={isLeft ? "right" : "normal"}
+        onMouseDown={handleMouseDown}
+        onMouseDownLeft={handleResizeLeftDown}
+        onMouseDownRight={handleResizeRightDown}
+        isDragging={!!drag}
       />
       {isLeft && config.frame.volume <= maxFrame && (
         <TimelineBar
@@ -52,10 +176,12 @@ export function TimeCelView({
           volume={leftVolume}
           isSelected={isSelected}
           index={index}
+          rowOffset={rowOffset}
           isHideLast={config.frame.isHideLast}
-          setCelIndex={setCelIndex}
           name={config.name ? config.name : index}
           type="left"
+          onMouseDown={handleMouseDown}
+          isDragging={!!drag}
         />
       )}
     </>
@@ -67,10 +193,14 @@ function TimelineBar({
   volume,
   isSelected,
   index,
+  rowOffset,
   isHideLast,
-  setCelIndex,
   name,
   type,
+  onMouseDown,
+  onMouseDownLeft,
+  onMouseDownRight,
+  isDragging,
 }) {
   const width = FRAME_SIZE * volume - (type === "normal" ? 8 : 3);
   return (
@@ -80,16 +210,15 @@ function TimelineBar({
         type === "left" ? styles.left : null,
         type === "right" ? styles.right : null,
         isSelected ? styles.outsideSelected : null,
+        isDragging ? styles.dragging : null,
       ]}
       style={{
-        top: `${4 + index * TIMELINE_HEIGHT}px`,
+        top: `${4 + (index + rowOffset) * TIMELINE_HEIGHT}px`,
         left: `${FRAME_SIZE * (start - 1) + (type === "left" ? 1 : 4)}px`,
         width: `${width}px`,
         height: `${TIMELINE_HEIGHT - 6}px`,
       }}
-      onClick={({ currentTarget }) => {
-        setCelIndex(currentTarget.dataset.id);
-      }}
+      onMouseDown={onMouseDown}
       data-id={index}
       data-testid="time-cel-view"
     >
@@ -109,6 +238,20 @@ function TimelineBar({
           {name}
         </p>
       </div>
+      {type === "normal" && (
+        <>
+          <div
+            css={styles.handleLeft}
+            onMouseDown={onMouseDownLeft}
+            data-testid="time-cel-handle-left"
+          />
+          <div
+            css={styles.handleRight}
+            onMouseDown={onMouseDownRight}
+            data-testid="time-cel-handle-right"
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -117,12 +260,20 @@ function TimelineBar({
 export default (props) => {
   const celIndex = useSelector((state) => state.celList.celIndex);
   const maxFrame = useSelector((state) => state.frame.maxFrame);
+  const listLength = useSelector((state) => state.celList.list.length);
   const dispatch = useDispatch();
   const _props = {
     celIndex,
     maxFrame,
+    listLength,
     setCelIndex: (value) => {
       dispatch(setCelIndex(value));
+    },
+    updateFrame: (newFrame) => {
+      dispatch(updateFrame(newFrame));
+    },
+    moveCel: (target) => {
+      dispatch(moveCel(target));
     },
     ...props,
   };
@@ -134,7 +285,7 @@ const styles = {
   outside: css`
     position: absolute;
     border-radius: 4px;
-    cursor: pointer;
+    cursor: grab;
     box-sizing: border-box;
     border: 1px solid #03a9f4;
     :hover {
@@ -153,13 +304,32 @@ const styles = {
   `,
   outsideSelected: css`
     border: 1px solid #388e3c;
-    cursor: auto;
     :hover {
       border: 1px solid #388e3c;
     }
   `,
   insideSelected: css`
     background: rgba(165, 214, 167, 0.7);
+  `,
+  dragging: css`
+    cursor: grabbing;
+    opacity: 0.8;
+  `,
+  handleLeft: css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+    cursor: w-resize;
+  `,
+  handleRight: css`
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 100%;
+    cursor: e-resize;
   `,
   timelineText: css`
     margin: 0;

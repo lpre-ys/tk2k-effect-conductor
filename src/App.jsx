@@ -15,11 +15,13 @@ import { loadInfo, resetInfo } from "./slice/infoSlice";
 import { loadMaterial, resetMaterial } from "./slice/materialSlice";
 import { loadPlayer, resetPlayer } from "./slice/playerSlice";
 import { withTranslation } from "react-i18next";
+import { undoAction, redoAction, clearUndoHistory } from "./app/undoRedoMiddleware";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     if (!!window.initArgs) {
       const lang = window.initArgs.lang();
       if (lang && this.props.i18n.language !== lang) {
@@ -28,7 +30,20 @@ class App extends React.Component {
       }
     }
   }
+  handleKeyDown(e) {
+    if (e.isComposing) return;
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      this.props.undo();
+    } else if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+      e.preventDefault();
+      this.props.redo();
+    }
+  }
   componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
     if (!!window.appMenu) {
       // 新規
       window.appMenu.onReceiveNew(() => {
@@ -46,7 +61,24 @@ class App extends React.Component {
       window.appMenu.onReceiveLanguage(({ lang }) => {
         this.props.i18n.changeLanguage(lang);
       });
+      // Undo/Redo
+      window.appMenu.onReceiveUndo(() => {
+        this.props.undo();
+      });
+      window.appMenu.onReceiveRedo(() => {
+        this.props.redo();
+      });
+      // 名前を付けて保存
+      window.appMenu.onReceiveSaveAs(() => {
+        window.appMenu.saveDataAs(this.props.data);
+      });
+      window.appMenu.onRequestState(() => {
+        window.appMenu.respondState(this.props.data);
+      });
     }
+  }
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   render() {
@@ -132,6 +164,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(loadInfo(value.info));
       dispatch(loadMaterial(value.material));
       dispatch(loadPlayer(value.player));
+      dispatch(clearUndoHistory());
     },
     resetAll: () => {
       dispatch(resetFrameConfig());
@@ -139,7 +172,10 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(resetInfo());
       dispatch(resetMaterial());
       dispatch(resetPlayer());
+      dispatch(clearUndoHistory());
     },
+    undo: () => dispatch(undoAction()),
+    redo: () => dispatch(redoAction()),
   };
 };
 

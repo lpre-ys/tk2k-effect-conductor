@@ -19,10 +19,10 @@ export function Loader({ setMsg, loadOriginalImage, setImageName }) {
         setMsg("");
       })
       .catch((error) => {
-        if (error.message === "width") {
+        if (error?.message === "width") {
           setMsg(t("material.error.width"));
         }
-        if (error.message === "height") {
+        if (error?.message === "height") {
           setMsg(t("material.error.height"));
         }
       });

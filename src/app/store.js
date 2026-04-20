@@ -4,6 +4,7 @@ import frameSlice from "../slice/frameSlice";
 import infoSlice from "../slice/infoSlice";
 import materialSlice from "../slice/materialSlice";
 import playerSlice from "../slice/playerSlice";
+import { createUndoRedoMiddleware } from "./undoRedoMiddleware";
 
 export default configureStore({
   reducer: {
@@ -12,5 +13,11 @@ export default configureStore({
     celList: celListSlice,
     info: infoSlice,
     player: playerSlice
-  }
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      createUndoRedoMiddleware({
+        onUserAction: () => window.appMenu?.markDirty?.(),
+      })
+    ),
 });

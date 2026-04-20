@@ -27,7 +27,7 @@ export function TimingConfig({ config, update }) {
     setIsHideLast(config.isHideLast);
     setIsLoopBack(config.isLoopBack);
   };
-  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
+  const { headerProps, optionKey, optionProps } = useConfigOption(hasOption, reset);
 
   const validateStart = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -68,7 +68,19 @@ export function TimingConfig({ config, update }) {
     if (validateConfig(newConfig) && isChangeConfig(newConfig, config)) {
       update(newConfig);
     }
-  }, [start, update, volume, config, validateConfig, isHideLast, isLoopBack]);
+    // update・config を deps から除外:
+    //   update: 毎レンダーで新参照になるため、外部(ドラッグ等)の config 変更が
+    //           あるたびに Effect が誤発火するのを防ぐ
+    //   config: 外部変更時の update 呼び出しは下の effect で防ぐ
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start, volume, isHideLast, isLoopBack, validateConfig]);
+
+  useEffect(() => {
+    setStart(config.start);
+    setVolume(config.volume);
+    setIsHideLast(config.isHideLast);
+    setIsLoopBack(config.isLoopBack);
+  }, [config]);
 
   return (
     <div>
@@ -109,6 +121,7 @@ export function TimingConfig({ config, update }) {
         </label>
       </div>
       <Options
+        key={optionKey}
         isHideLast={isHideLast}
         setIsHideLast={setIsHideLast}
         isLoopBack={isLoopBack}

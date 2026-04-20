@@ -31,7 +31,8 @@ const TkColorSprite = ({ parent, ...props }, ref) => {
         }
       });
     }
-  }, [props]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...Object.values(props)]);
 };
 
 export default forwardRef(TkColorSprite);

@@ -27,3 +27,9 @@ yarn-error.log*
 /test.js
 
 memo.md
+CLAUDE.md
+.claude
+
+# auto-review
+/tools/
+/run_review.bat

@@ -34,54 +34,69 @@ export function Controller({
   const { t } = useTranslation();
 
   const animeRef = useRef();
+  const timeCounterRef = useRef(0.0);
+  const frameCounterRef = useRef(frame);
+  const prevTimeStampRef = useRef(undefined);
+  const maxFrameRef = useRef(maxFrame);
+  const isRepeatRef = useRef(isRepeat);
+  const isRunningRef = useRef(false);
 
-  let timeCounter = 0.0;
-  let frameCounter = frame;
-  let prevTimeStamp;
+  useEffect(() => {
+    maxFrameRef.current = maxFrame;
+  }, [maxFrame]);
+
+  useEffect(() => {
+    isRepeatRef.current = isRepeat;
+  }, [isRepeat]);
 
   const animation = (timestamp) => {
-    if (prevTimeStamp === undefined) {
-      prevTimeStamp = timestamp;
+    if (prevTimeStampRef.current === undefined) {
+      prevTimeStampRef.current = timestamp;
     }
-    timeCounter += timestamp - prevTimeStamp;
+    timeCounterRef.current += timestamp - prevTimeStampRef.current;
 
     let isChange = false;
     let isNext = true;
-    while (timeCounter > FRAME_SEC) {
+    while (timeCounterRef.current > FRAME_SEC) {
       // 現在のフレームの計算
-      frameCounter += 1;
-      timeCounter -= FRAME_SEC;
+      frameCounterRef.current += 1;
+      timeCounterRef.current -= FRAME_SEC;
       isChange = true;
     }
     if (isChange) {
-      if (frameCounter > maxFrame - 1) {
-        if (isRepeat) {
-          frameCounter = 0;
+      if (frameCounterRef.current > maxFrameRef.current - 1) {
+        if (isRepeatRef.current) {
+          frameCounterRef.current = 0;
         } else {
           //リピート無しの時はアニメを止める;
           isNext = false;
+          isRunningRef.current = false;
           setIsRunning(false);
-          frameCounter = maxFrame - 1; //はみ出したとき用
+          frameCounterRef.current = maxFrameRef.current - 1; //はみ出したとき用
         }
       }
-      setFrame(frameCounter);
+      setFrame(frameCounterRef.current);
     }
     if (isNext) {
       animeRef.current = window.requestAnimationFrame(animation);
     }
-    prevTimeStamp = timestamp;
+    prevTimeStampRef.current = timestamp;
   };
 
   function playAnimation() {
-    if (frame >= maxFrame - 1) {
-      frameCounter = 0;
+    if (frame >= maxFrameRef.current - 1) {
+      frameCounterRef.current = 0;
     }
+    timeCounterRef.current = 0;
+    prevTimeStampRef.current = undefined;
+    isRunningRef.current = true;
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
   }
 
   function stopAnimation() {
     window.cancelAnimationFrame(animeRef.current);
+    isRunningRef.current = false;
     setIsRunning(false);
   }
 
@@ -95,31 +110,6 @@ export function Controller({
     nextFrame();
   }
 
-  const handleKeyDown = (event) => {
-    if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
-      return;
-    }
-    if (event.key === "ArrowLeft") {
-      prev();
-      event.preventDefault();
-    }
-    if (event.key === "ArrowRight") {
-      next();
-      event.preventDefault();
-    }
-    if (event.key === " ") {
-      if (event.target.tagName === "BUTTON") {
-        return;
-      }
-      if (isRunning) {
-        stopAnimation();
-      } else {
-        playAnimation();
-      }
-      event.preventDefault();
-    }
-  };
-
   useEffect(() => {
     return () => {
       window.cancelAnimationFrame(animeRef.current);
@@ -127,12 +117,37 @@ export function Controller({
   }, []);
 
   useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        prev();
+        event.preventDefault();
+      }
+      if (event.key === "ArrowRight") {
+        next();
+        event.preventDefault();
+      }
+      if (event.key === " ") {
+        if (event.target.tagName === "BUTTON") {
+          return;
+        }
+        if (isRunningRef.current) {
+          stopAnimation();
+        } else {
+          playAnimation();
+        }
+        event.preventDefault();
+      }
+    };
+
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  });
+  }, []);
 
   const control = ({ currentTarget }) => {
     const type = currentTarget.dataset.type;
@@ -243,6 +258,8 @@ export function Controller({
             {t("player.maxFrame")}:&nbsp;
             <input
               type="number"
+              min={1}
+              max={500}
               data-testid="controller-max-frame"
               value={maxFrame}
               onChange={({ target }) => {

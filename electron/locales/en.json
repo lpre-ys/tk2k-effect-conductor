@@ -4,5 +4,13 @@
   "new": "New",
   "open": "Open",
   "save": "Save",
-  "exit": "Exit"
+  "exit": "Exit",
+  "edit": "Edit",
+  "undo": "Undo",
+  "redo": "Redo",
+  "saveAs": "Save As",
+  "discard": "Discard",
+  "cancel": "Cancel",
+  "unsavedChangesMessage": "Unsaved changes",
+  "unsavedChangesDetail": "Do you want to save your changes?"
 }

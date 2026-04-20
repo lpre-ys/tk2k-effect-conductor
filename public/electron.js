@@ -15,6 +15,29 @@ const ElectronStore = require("electron-store");
 
 const store = new ElectronStore();
 let mainWindow;
+let currentFilePath = null;
+let isDirty = false;
+let isClosing = false;
+
+const getWindowTitle = (filePath, dirty) => {
+  const base = filePath ? `${path.basename(filePath)} - Effect Conductor` : "Effect Conductor";
+  return dirty ? `* ${base}` : base;
+};
+
+const updateWindowTitle = (filePath) => {
+  mainWindow.setTitle(getWindowTitle(filePath, isDirty));
+};
+
+const setClean = () => {
+  isDirty = false;
+  mainWindow.setTitle(getWindowTitle(currentFilePath, false));
+};
+
+const resetCurrentFile = () => {
+  currentFilePath = null;
+  isDirty = false;
+  mainWindow.setTitle(getWindowTitle(null, false));
+};
 
 const openFile = () => {
   dialog
@@ -33,6 +56,9 @@ const openFile = () => {
         return;
       }
       store.set("savePath", path.dirname(filePaths[0]));
+      currentFilePath = filePaths[0];
+      isDirty = false;
+      updateWindowTitle(filePaths[0]);
       loadFile(filePaths[0]);
     });
 };
@@ -59,6 +85,56 @@ const createWindow = () => {
     shell.openExternal(url);
     return { action: "deny" };
   });
+
+  mainWindow.on("close", async (e) => {
+    if (!isDirty) return;
+    if (isClosing) {
+      e.preventDefault();
+      return;
+    }
+    e.preventDefault();
+    isClosing = true;
+
+    try {
+      const { response } = await dialog.showMessageBox(mainWindow, {
+        type: "warning",
+        buttons: [i18n.t("save"), i18n.t("discard"), i18n.t("cancel")],
+        defaultId: 0,
+        cancelId: 2,
+        message: i18n.t("unsavedChangesMessage"),
+        detail: i18n.t("unsavedChangesDetail"),
+      });
+
+      if (response === 1) {
+        setClean();
+        mainWindow.close();
+      } else if (response === 0) {
+        const data = await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => {
+            ipcMain.removeListener("state-response", handler);
+            reject(new Error("state-response timeout"));
+          }, 5000);
+          const handler = (event, stateData) => {
+            clearTimeout(timer);
+            resolve(stateData);
+          };
+          ipcMain.once("state-response", handler);
+          mainWindow.webContents.send("request-state");
+        });
+        if (currentFilePath) {
+          await writeFile(currentFilePath, JSON.stringify(data));
+          setClean();
+        } else {
+          await showSaveAsDialog(data);
+        }
+        if (!isDirty) mainWindow.close();
+      }
+    } catch {
+      // 保存失敗またはタイムアウト: ウィンドウを閉じない
+    } finally {
+      isClosing = false;
+    }
+  });
 };
 // Passthrough is not supported, GL is disabled, ANGLE is とか言うエラーを消すヤツ
 app.disableHardwareAcceleration();
@@ -76,17 +152,16 @@ i18n.on("loaded", (loaded) => {
 
 i18n.on("languageChanged", (lng) => {
   const menu = Menu.buildFromTemplate(
-    menuTemplate(app, mainWindow, i18n, openFile)
+    menuTemplate(app, mainWindow, i18n, openFile, resetCurrentFile)
   );
   Menu.setApplicationMenu(menu);
   store.set("lang", lng);
 });
 
-ipcMain.handle("save-state-data", (event, data) => {
-  dialog
+function showSaveAsDialog(data) {
+  return dialog
     .showSaveDialog(mainWindow, {
       defaultPath: store.get("savePath", app.getPath("documents")),
-      properties: ["openFile"],
       filters: [{ name: "Effect Data", extensions: ["json"] }],
     })
     .then(({ canceled, filePath }) => {
@@ -94,20 +169,46 @@ ipcMain.handle("save-state-data", (event, data) => {
         return;
       }
       store.set("savePath", path.dirname(filePath));
-      // ファイル保存処理
-      writeFile(filePath, JSON.stringify(data));
+      currentFilePath = filePath;
+      return writeFile(filePath, JSON.stringify(data)).then(() => {
+        setClean();
+      });
     });
+}
+
+ipcMain.on("mark-dirty", () => {
+  if (!isDirty) {
+    isDirty = true;
+    mainWindow.setTitle(getWindowTitle(currentFilePath, true));
+  }
 });
 
-function writeFile(path, data) {
-  fs.writeFile(path, data, (error) => {
-    if (error !== null) {
-      dialog.showErrorBox(
-        "ファイル保存エラー",
-        ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\\n")
-      );
-      return;
-    }
+ipcMain.handle("save-state-data", (event, data) => {
+  if (currentFilePath) {
+    return writeFile(currentFilePath, JSON.stringify(data)).then(() => {
+      setClean();
+    });
+  }
+  return showSaveAsDialog(data);
+});
+
+ipcMain.handle("save-state-data-as", (event, data) => {
+  return showSaveAsDialog(data);
+});
+
+function writeFile(filePath, data) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filePath, data, (error) => {
+      if (error !== null) {
+        dialog.showErrorBox(
+          "ファイル保存エラー",
+          ["ファイルの保存に失敗しました。", `Error: ${error}`].join("\n")
+        );
+        reject(error);
+        return;
+      }
+      resolve();
+    });
   });
 }
 
@@ -116,10 +217,25 @@ function loadFile(path) {
     if (error !== null) {
       dialog.showErrorBox(
         "ファイル読み込みエラー",
-        ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\\n")
+        ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\n")
       );
+      currentFilePath = null;
+      updateWindowTitle(null);
+      return;
     }
-    mainWindow.webContents.send("load", data.toString());
+    const str = data.toString();
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      dialog.showErrorBox(
+        "ファイル読み込みエラー",
+        ["ファイルの読み込みに失敗しました。", "JSON形式が正しくありません。"].join("\n")
+      );
+      currentFilePath = null;
+      updateWindowTitle(null);
+      return;
+    }
+    mainWindow.webContents.send("load", str);
   });
 }
 
@@ -160,7 +276,7 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
   frameList.forEach((cels, frameNo) => {
     const celList = cels.map((cel, celIndex) => {
       const celObj = getEmptyData(tk2k.ANIME_CEL);
-      celObj.pattern.data = cel.pageIndex - 1;
+      celObj.pattern.data = cel.pageIndex;
       celObj.x.data = cel.x;
       celObj.y.data = cel.y;
       celObj.scale.data = cel.scale;
@@ -186,7 +302,7 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
     .catch((error) => {
       dialog.showErrorBox(
         "エラー",
-        ["データコピーに失敗しました", `Error: ${error.text}`].join("\\n")
+        ["データコピーに失敗しました", `Error: ${error.text}`].join("\n")
       );
       return false;
     });

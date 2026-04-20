@@ -33,7 +33,7 @@ export function FromToConfig({
     setFrom(config.from);
     setTo(config.to);
   };
-  const { headerProps, optionProps } = useConfigOption(hasOption, reset);
+  const { headerProps, optionKey, optionProps } = useConfigOption(hasOption, reset);
 
   const validate = (value) => {
     return !Number.isNaN(parseInt(value));
@@ -91,7 +91,7 @@ export function FromToConfig({
           />
         </label>
         <EasingConfig type={type} />
-        <Options type={type} setIsValid={setOptionIsValid} {...optionProps} />
+        <Options key={optionKey} type={type} setIsValid={setOptionIsValid} {...optionProps} />
       </div>
     </div>
   );

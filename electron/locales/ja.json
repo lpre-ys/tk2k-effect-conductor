@@ -4,5 +4,13 @@
   "new": "新規作成",
   "open": "開く",
   "save": "保存",
-  "exit": "終了"
+  "exit": "終了",
+  "edit": "編集",
+  "undo": "元に戻す",
+  "redo": "やり直す",
+  "saveAs": "名前を付けて保存",
+  "discard": "破棄",
+  "cancel": "キャンセル",
+  "unsavedChangesMessage": "未保存の変更があります",
+  "unsavedChangesDetail": "変更を保存しますか？"
 }
