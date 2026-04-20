@@ -249,7 +249,7 @@ ipcMain.handle("read-info", () => {
       result.material = parser.parseString(data.material.raw);
       result.target = parser.parseBer(data.target.raw);
       result.yLine = parser.parseBer(data.yLine.raw);
-      result.rawEffect = data.effectList.raw;
+      result.rawEffect = Array.from(data.effectList.raw);
 
       return result;
     })
@@ -268,7 +268,9 @@ ipcMain.handle("write-anime", (event, { frameList, info }) => {
   anime.yLine.data = parseInt(info.yLine);
 
   if (info.rawEffect) {
-    anime.effectList.raw = info.rawEffect;
+    anime.effectList.raw = Array.isArray(info.rawEffect)
+      ? info.rawEffect
+      : Object.values(info.rawEffect);
   }
 
   // フレームデータの生成
