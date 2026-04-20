@@ -219,9 +219,23 @@ function loadFile(path) {
         "ファイル読み込みエラー",
         ["ファイルの読み込みに失敗しました", `Error: ${error}`].join("\n")
       );
+      currentFilePath = null;
+      updateWindowTitle(null);
       return;
     }
-    mainWindow.webContents.send("load", data.toString());
+    const str = data.toString();
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      dialog.showErrorBox(
+        "ファイル読み込みエラー",
+        ["ファイルの読み込みに失敗しました。", "JSON形式が正しくありません。"].join("\n")
+      );
+      currentFilePath = null;
+      updateWindowTitle(null);
+      return;
+    }
+    mainWindow.webContents.send("load", str);
   });
 }
 

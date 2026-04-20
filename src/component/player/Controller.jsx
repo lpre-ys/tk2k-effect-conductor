@@ -87,6 +87,8 @@ export function Controller({
     if (frame >= maxFrameRef.current - 1) {
       frameCounterRef.current = 0;
     }
+    timeCounterRef.current = 0;
+    prevTimeStampRef.current = undefined;
     isRunningRef.current = true;
     setIsRunning(true);
     animeRef.current = window.requestAnimationFrame(animation);
