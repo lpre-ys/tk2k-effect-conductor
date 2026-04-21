@@ -29,9 +29,9 @@ const setupMiddleware = (initialState, options = {}) => {
   let currentState = initialState ?? makeState();
   const store = {
     getState: () => currentState,
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
   };
-  const next = jest.fn();
+  const next = vi.fn();
   const invoke = createUndoRedoMiddleware(options)(store)(next);
   const setState = (s) => { currentState = s; };
   return { store, next, invoke, setState };
@@ -248,14 +248,14 @@ describe('MAX_HISTORY（履歴上限）', () => {
 // ----------------------------------------------------------------
 describe('onUserAction コールバック', () => {
   test('記録対象アクション発行時に呼ばれる', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(RECORDING_ACTION);
     expect(onUserAction).toHaveBeenCalledTimes(1);
   });
 
   test('undoAction発行時に呼ばれる', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(RECORDING_ACTION);
     onUserAction.mockClear();
@@ -264,7 +264,7 @@ describe('onUserAction コールバック', () => {
   });
 
   test('redoAction発行時に呼ばれる', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(RECORDING_ACTION);
     invoke(undoAction());
@@ -274,7 +274,7 @@ describe('onUserAction コールバック', () => {
   });
 
   test('ブロック対象アクション（loadCelList等）では呼ばれない', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(loadCelList({ list: [] }));
     invoke(resetCelList());
@@ -284,14 +284,14 @@ describe('onUserAction コールバック', () => {
   });
 
   test('clearUndoHistory発行時は呼ばれない', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(clearUndoHistory());
     expect(onUserAction).not.toHaveBeenCalled();
   });
 
   test('undoStackが空のとき undoAction では呼ばれない', () => {
-    const onUserAction = jest.fn();
+    const onUserAction = vi.fn();
     const { invoke } = setupMiddleware(undefined, { onUserAction });
     invoke(undoAction());
     expect(onUserAction).not.toHaveBeenCalled();
