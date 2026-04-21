@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css, Global } from "@emotion/react";
-import normalize from "normalize.css";
+import normalize from "normalize.css?inline";
 import React from "react";
 import { connect } from "react-redux";
 import Configs from "./component/Configs";
@@ -89,8 +89,7 @@ class App extends React.Component {
         <div className="App" css={styles.container}>
           {
             /* istanbul ignore next */
-            (!process.env.NODE_ENV ||
-              process.env.NODE_ENV === "development") && (
+            import.meta.env.DEV && (
               <button
                 onClick={() => {
                   this.props.i18n.changeLanguage(
