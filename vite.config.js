@@ -22,6 +22,18 @@ export default defineConfig({
   base: './',
   build: {
     outDir: 'build',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (/\/konva\/|\/react-konva\/|\/use-image\//.test(id)) return 'vendor-konva';
+          if (/\/react\/|\/react-dom\/|\/react-redux\/|\/react-hook-form\/|\/react-i18next\//.test(id)) return 'vendor-react';
+          if (/\/@reduxjs\//.test(id)) return 'vendor-redux';
+          if (/\/@emotion\/|\/react-color\/|\/react-dropzone\/|\/@fortawesome\//.test(id)) return 'vendor-ui';
+          if (/\/chroma-js\/|\/d3-ease\/|\/i18next\/|\/deepmerge\//.test(id)) return 'vendor-misc';
+        },
+      },
+    },
   },
   test: {
     globals: true,
