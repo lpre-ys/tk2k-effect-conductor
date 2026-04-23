@@ -9,8 +9,8 @@ const {
 const path = require("path");
 const fs = require("fs");
 const { tk2k, getEmptyData, write, read, parser } = require("tk2k-clipdata");
-const i18n = require("../electron/configs/i18next.config");
-const menuTemplate = require("../electron/menuTemplate");
+const i18n = require("./configs/i18next.config");
+const menuTemplate = require("./menuTemplate");
 const ElectronStore = require("electron-store");
 
 const store = new ElectronStore();
@@ -69,7 +69,7 @@ const createWindow = () => {
     useContentSize: true,
     title: "Effect Conductor",
     webPreferences: {
-      preload: path.resolve(__dirname, "../electron/preload.js"),
+      preload: path.resolve(__dirname, "./preload.js"),
       additionalArguments: [
         `storedLanguage=${store.get("lang", "ja")}`
       ]

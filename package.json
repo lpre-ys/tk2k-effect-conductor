@@ -61,7 +61,7 @@
     "vite": "^8.0.9",
     "vitest": "^4.1.4"
   },
-  "main": "public/electron.js",
+  "main": "electron/electron.js",
   "build": {
     "appId": "com.lpre-ys.effedct-conductor",
     "productName": "EffectConductor",
