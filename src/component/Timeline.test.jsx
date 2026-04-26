@@ -11,14 +11,18 @@ const defaultConfig = {
 describe("Buttons", () => {
   test("add,　then Call props.addCel", () => {
     const mockFn = vi.fn();
-    renderWithProviders(<Timeline celList={[]} addCel={mockFn} />);
+    renderWithProviders(
+      <Timeline celList={[]} selectedIndices={[0]} addCel={mockFn} />
+    );
 
     userEvent.click(screen.getByText("追加"));
     expect(mockFn).toBeCalled();
   });
   test("copy,　then Call props.copyCel", () => {
     const mockFn = vi.fn();
-    renderWithProviders(<Timeline celList={[]} copyCel={mockFn} />);
+    renderWithProviders(
+      <Timeline celList={[]} selectedIndices={[0]} copyCel={mockFn} />
+    );
 
     userEvent.click(screen.getByText("コピー"));
     expect(mockFn).toBeCalled();
@@ -26,7 +30,7 @@ describe("Buttons", () => {
   test("delete　celList.length = 1,then not Call props.deleteCel", () => {
     const mockFn = vi.fn();
     renderWithProviders(
-      <Timeline celList={[defaultConfig]} deleteCel={mockFn} />
+      <Timeline celList={[defaultConfig]} selectedIndices={[0]} deleteCel={mockFn} />
     );
 
     userEvent.click(screen.getByText("削除"));
@@ -35,11 +39,73 @@ describe("Buttons", () => {
   test("delete　celList.length = 2,then Call props.deleteCel", () => {
     const mockFn = vi.fn();
     renderWithProviders(
-      <Timeline celList={[defaultConfig, defaultConfig]} deleteCel={mockFn} />
+      <Timeline
+        celList={[defaultConfig, defaultConfig]}
+        selectedIndices={[0]}
+        deleteCel={mockFn}
+      />
     );
 
     userEvent.click(screen.getByText("削除"));
     expect(mockFn).toBeCalled();
+  });
+  test("↑ボタン: selectedIndices が全て 0 のとき disabled", () => {
+    renderWithProviders(
+      <Timeline
+        celList={[defaultConfig, defaultConfig]}
+        selectedIndices={[0]}
+        celIndex={0}
+      />
+    );
+    const buttons = screen.getAllByRole("button");
+    const upBtn = buttons.find((b) => b.querySelector("svg"));
+    // ↑ボタンはインデックス4番目（add, copy, delete, ↑, ↓の順）
+    const sortButtons = buttons.filter((b) => !b.textContent);
+    expect(sortButtons[0]).toBeDisabled();
+  });
+  test("↑ボタン: selectedIndices に 0 以外があれば enabled", () => {
+    const mockFn = vi.fn();
+    renderWithProviders(
+      <Timeline
+        celList={[defaultConfig, defaultConfig]}
+        selectedIndices={[1]}
+        celIndex={1}
+        moveCelGroup={mockFn}
+      />
+    );
+    const buttons = screen.getAllByRole("button");
+    const sortButtons = buttons.filter((b) => !b.textContent);
+    expect(sortButtons[0]).not.toBeDisabled();
+    userEvent.click(sortButtons[0]);
+    expect(mockFn).toBeCalledWith(-1);
+  });
+  test("↓ボタン: selectedIndices が全て末尾のとき disabled", () => {
+    renderWithProviders(
+      <Timeline
+        celList={[defaultConfig, defaultConfig]}
+        selectedIndices={[1]}
+        celIndex={1}
+      />
+    );
+    const buttons = screen.getAllByRole("button");
+    const sortButtons = buttons.filter((b) => !b.textContent);
+    expect(sortButtons[1]).toBeDisabled();
+  });
+  test("↓ボタン: selectedIndices に末尾でないものがあれば enabled", () => {
+    const mockFn = vi.fn();
+    renderWithProviders(
+      <Timeline
+        celList={[defaultConfig, defaultConfig]}
+        selectedIndices={[0]}
+        celIndex={0}
+        moveCelGroup={mockFn}
+      />
+    );
+    const buttons = screen.getAllByRole("button");
+    const sortButtons = buttons.filter((b) => !b.textContent);
+    expect(sortButtons[1]).not.toBeDisabled();
+    userEvent.click(sortButtons[1]);
+    expect(mockFn).toBeCalledWith(1);
   });
 });
 
@@ -48,7 +114,7 @@ describe("Buttons", () => {
 describe("TimeCelView", () => {
   test("celList.length = 1, then has 1 TimeCelView", () => {
     // 1回
-    renderWithProviders(<Timeline celList={[defaultConfig]} />);
+    renderWithProviders(<Timeline celList={[defaultConfig]} selectedIndices={[0]} />);
 
     const target = screen.queryAllByTestId("time-cel-view");
     expect(target).toHaveLength(1);
@@ -58,6 +124,7 @@ describe("TimeCelView", () => {
     renderWithProviders(
       <Timeline
         celList={[defaultConfig, defaultConfig, defaultConfig, defaultConfig]}
+        selectedIndices={[0]}
       />
     );
 
@@ -66,7 +133,10 @@ describe("TimeCelView", () => {
   });
   test("index is celList index", () => {
     renderWithProviders(
-      <Timeline celList={[defaultConfig, defaultConfig, defaultConfig]} />
+      <Timeline
+        celList={[defaultConfig, defaultConfig, defaultConfig]}
+        selectedIndices={[0]}
+      />
     );
 
     const targets = screen.queryAllByTestId("time-cel-view");
@@ -81,7 +151,7 @@ describe("TimeCelView", () => {
     const config2 = {
       frame: { start: 2, volume: 22 },
     };
-    renderWithProviders(<Timeline celList={[config1, config2]} />);
+    renderWithProviders(<Timeline celList={[config1, config2]} selectedIndices={[0]} />);
 
     const targets = screen.queryAllByTestId("time-cel-view");
     expect(targets[0]).toHaveStyle({
@@ -96,7 +166,7 @@ describe("TimeCelView", () => {
 });
 
 test("has spacer", () => {
-  renderWithProviders(<Timeline celList={[defaultConfig]} />);
+  renderWithProviders(<Timeline celList={[defaultConfig]} selectedIndices={[0]} />);
 
   const target = screen.getByTestId("timeline-spacer");
   expect(target).toBeInTheDocument();

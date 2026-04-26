@@ -1,28 +1,66 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FRAME_SIZE, TIMELINE_HEIGHT } from "../../util/const";
-import { TimeCelView, calculateFrameAfterDrag } from "./TimeCelView";
+import { calculateFrameAfterDrag } from "../../util/frameUtil";
+import { TimeCelView } from "./TimeCelView";
 
 const defaultConfig = {
   frame: { start: 1, volume: 10, isHideLast: false },
 };
 
 describe("isSelected", () => {
-  test("index = celIndex, then has Selected Style", () => {
-    render(<TimeCelView index={1} celIndex={1} config={defaultConfig} />);
+  test("index = celIndex, then has active (green) style", () => {
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={1}
+        selectedIndices={[1]}
+        config={defaultConfig}
+      />
+    );
 
     const target = screen.getByTestId("time-cel-view");
-    expect(target).toHaveStyle({
-      border: "1px solid #388e3c",
-    });
+    expect(target).toHaveStyle({ border: "1px solid #388e3c" });
   });
-  test("index != celIndex, then not Selected Style", () => {
-    render(<TimeCelView index={1} celIndex={2} config={defaultConfig} />);
+  test("index != celIndex, then not active style", () => {
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={2}
+        selectedIndices={[2]}
+        config={defaultConfig}
+      />
+    );
 
     const target = screen.getByTestId("time-cel-view");
-    expect(target).not.toHaveStyle({
-      border: "1px solid #388e3c",
-    });
+    expect(target).not.toHaveStyle({ border: "1px solid #388e3c" });
+  });
+  test("index in selectedIndices but not celIndex, then has secondary (blue) style", () => {
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={2}
+        selectedIndices={[1, 2]}
+        config={defaultConfig}
+      />
+    );
+
+    const target = screen.getByTestId("time-cel-view");
+    expect(target).toHaveStyle({ border: "1px solid #1565c0" });
+  });
+  test("index not in selectedIndices and not celIndex, then no selection style", () => {
+    render(
+      <TimeCelView
+        index={0}
+        celIndex={2}
+        selectedIndices={[1, 2]}
+        config={defaultConfig}
+      />
+    );
+
+    const target = screen.getByTestId("time-cel-view");
+    expect(target).not.toHaveStyle({ border: "1px solid #388e3c" });
+    expect(target).not.toHaveStyle({ border: "1px solid #1565c0" });
   });
 });
 
@@ -34,6 +72,7 @@ describe("onClick", () => {
       <TimeCelView
         index={1}
         celIndex={2}
+        selectedIndices={[2]}
         config={defaultConfig}
         setCelIndex={mockFn}
       />
@@ -49,6 +88,7 @@ describe("onClick", () => {
       <TimeCelView
         index={42}
         celIndex={1}
+        selectedIndices={[1]}
         config={defaultConfig}
         setCelIndex={mockFn}
       />
@@ -57,6 +97,25 @@ describe("onClick", () => {
     userEvent.click(screen.getByTestId("time-cel-view"));
 
     expect(mockFn).toBeCalledWith(42);
+  });
+  test("Ctrl+Click, then call toggleSelectIndex", () => {
+    const mockToggle = vi.fn();
+    const mockSetCelIndex = vi.fn();
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={0}
+        selectedIndices={[0]}
+        config={defaultConfig}
+        setCelIndex={mockSetCelIndex}
+        toggleSelectIndex={mockToggle}
+      />
+    );
+
+    userEvent.click(screen.getByTestId("time-cel-view"), { ctrlKey: true });
+
+    expect(mockToggle).toBeCalledWith(1);
+    expect(mockSetCelIndex).not.toBeCalled();
   });
 });
 
@@ -98,16 +157,18 @@ const dragConfig = {
 };
 
 describe("drag", () => {
-  test("水平ドラッグで updateFrame が呼ばれる", () => {
-    const mockUpdateFrame = vi.fn();
+  test("水平ドラッグで updateFrameMultiple が選択中インデックス全体で呼ばれる", () => {
+    const mockUpdateFrameMultiple = vi.fn();
     render(
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0, 2]}
         config={dragConfig}
         setCelIndex={vi.fn()}
-        updateFrame={mockUpdateFrame}
-        moveCel={vi.fn()}
+        setActiveIndex={vi.fn()}
+        updateFrameMultiple={mockUpdateFrameMultiple}
+        moveCelGroup={vi.fn()}
         maxFrame={20}
         listLength={3}
       />
@@ -119,21 +180,25 @@ describe("drag", () => {
     fireEvent.mouseMove(document, { clientX: 121, clientY: 100 });
     fireEvent.mouseUp(document);
 
-    expect(mockUpdateFrame).toBeCalledWith({
-      start: 6, volume: 10, isHideLast: false, isLoopBack: false,
+    expect(mockUpdateFrameMultiple).toBeCalledWith({
+      indices: [0, 2],
+      offsetFrame: 1,
+      type: "move",
     });
   });
 
-  test("左ハンドルドラッグで updateFrame が呼ばれる", () => {
-    const mockUpdateFrame = vi.fn();
+  test("左ハンドルドラッグで updateFrameMultiple が呼ばれる（RESIZE_LEFT）", () => {
+    const mockUpdateFrameMultiple = vi.fn();
     render(
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={dragConfig}
         setCelIndex={vi.fn()}
-        updateFrame={mockUpdateFrame}
-        moveCel={vi.fn()}
+        setActiveIndex={vi.fn()}
+        updateFrameMultiple={mockUpdateFrameMultiple}
+        moveCelGroup={vi.fn()}
         maxFrame={20}
         listLength={3}
       />
@@ -141,25 +206,28 @@ describe("drag", () => {
 
     const handle = screen.getByTestId("time-cel-handle-left");
     fireEvent.mouseDown(handle, { clientX: 100, clientY: 100 });
-    // RESIZE_LEFT: start=5, offsetFrame=1 → {start:6, volume:9}
     fireEvent.mouseMove(document, { clientX: 121, clientY: 100 });
     fireEvent.mouseUp(document);
 
-    expect(mockUpdateFrame).toBeCalledWith({
-      start: 6, volume: 9, isHideLast: false, isLoopBack: false,
+    expect(mockUpdateFrameMultiple).toBeCalledWith({
+      indices: [0],
+      offsetFrame: 1,
+      type: "resize-left",
     });
   });
 
-  test("右ハンドルドラッグで updateFrame が呼ばれる", () => {
-    const mockUpdateFrame = vi.fn();
+  test("右ハンドルドラッグで updateFrameMultiple が呼ばれる（RESIZE_RIGHT）", () => {
+    const mockUpdateFrameMultiple = vi.fn();
     render(
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={dragConfig}
         setCelIndex={vi.fn()}
-        updateFrame={mockUpdateFrame}
-        moveCel={vi.fn()}
+        setActiveIndex={vi.fn()}
+        updateFrameMultiple={mockUpdateFrameMultiple}
+        moveCelGroup={vi.fn()}
         maxFrame={20}
         listLength={3}
       />
@@ -167,25 +235,28 @@ describe("drag", () => {
 
     const handle = screen.getByTestId("time-cel-handle-right");
     fireEvent.mouseDown(handle, { clientX: 100, clientY: 100 });
-    // RESIZE_RIGHT: volume=10, offsetFrame=1 → {start:5, volume:11}
     fireEvent.mouseMove(document, { clientX: 121, clientY: 100 });
     fireEvent.mouseUp(document);
 
-    expect(mockUpdateFrame).toBeCalledWith({
-      start: 5, volume: 11, isHideLast: false, isLoopBack: false,
+    expect(mockUpdateFrameMultiple).toBeCalledWith({
+      indices: [0],
+      offsetFrame: 1,
+      type: "resize-right",
     });
   });
 
-  test("縦ドラッグで moveCel が呼ばれる", () => {
-    const mockMoveCel = vi.fn();
+  test("縦ドラッグで moveCelGroup(delta) が呼ばれる", () => {
+    const mockMoveCelGroup = vi.fn();
     render(
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={dragConfig}
         setCelIndex={vi.fn()}
-        updateFrame={vi.fn()}
-        moveCel={mockMoveCel}
+        setActiveIndex={vi.fn()}
+        updateFrameMultiple={vi.fn()}
+        moveCelGroup={mockMoveCelGroup}
         maxFrame={20}
         listLength={3}
       />
@@ -197,7 +268,7 @@ describe("drag", () => {
     fireEvent.mouseMove(document, { clientX: 100, clientY: 129 });
     fireEvent.mouseUp(document);
 
-    expect(mockMoveCel).toBeCalledWith(1); // index(0) + offsetRows(1) = 1
+    expect(mockMoveCelGroup).toBeCalledWith(1);
   });
 });
 
@@ -207,6 +278,7 @@ describe("isLoopBack", () => {
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={{ frame: { start: 5, volume: 5, isHideLast: false, isLoopBack: false } }}
         maxFrame={20}
         setCelIndex={vi.fn()}
@@ -220,6 +292,7 @@ describe("isLoopBack", () => {
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={{ frame: { start: 5, volume: 5, isHideLast: false, isLoopBack: true } }}
         maxFrame={20}
         setCelIndex={vi.fn()}
@@ -233,6 +306,7 @@ describe("isLoopBack", () => {
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={{ frame: { start: 15, volume: 10, isHideLast: false, isLoopBack: true } }}
         maxFrame={20}
         setCelIndex={vi.fn()}
@@ -246,6 +320,7 @@ describe("isLoopBack", () => {
       <TimeCelView
         index={0}
         celIndex={0}
+        selectedIndices={[0]}
         config={{ frame: { start: 5, volume: 25, isHideLast: false, isLoopBack: true } }}
         maxFrame={20}
         setCelIndex={vi.fn()}
@@ -257,7 +332,14 @@ describe("isLoopBack", () => {
 
 describe("isHideLast", () => {
   test("not HideLast, then inside Width is outside Width - 2", () => {
-    render(<TimeCelView index={1} celIndex={1} config={defaultConfig} />);
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={1}
+        selectedIndices={[1]}
+        config={defaultConfig}
+      />
+    );
 
     const outside = screen.getByTestId("time-cel-view");
     const inside = screen.getByTestId("time-cel-view-inside");
@@ -270,8 +352,15 @@ describe("isHideLast", () => {
   });
   test("HideLast, then inside Width is outside Width - 2 - (FRAMESIZE - 5)", () => {
     const config = Object.assign({}, defaultConfig);
-    config.frame.isHideLast = true;
-    render(<TimeCelView index={1} celIndex={1} config={config} />);
+    config.frame = { ...defaultConfig.frame, isHideLast: true };
+    render(
+      <TimeCelView
+        index={1}
+        celIndex={1}
+        selectedIndices={[1]}
+        config={config}
+      />
+    );
 
     const outside = screen.getByTestId("time-cel-view");
     const inside = screen.getByTestId("time-cel-view-inside");
