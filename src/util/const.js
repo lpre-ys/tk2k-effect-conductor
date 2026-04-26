@@ -147,6 +147,12 @@ const DEFAULT_TRIG = {
   },
 };
 
+const DRAG_TYPE = {
+  MOVE: "move",
+  RESIZE_LEFT: "resize-left",
+  RESIZE_RIGHT: "resize-right",
+};
+
 export {
   FRAME_SIZE,
   TIMELINE_HEIGHT,
@@ -154,4 +160,5 @@ export {
   FRAME_SEC,
   DEFAULT_CEL,
   DEFAULT_TRIG,
+  DRAG_TYPE,
 };

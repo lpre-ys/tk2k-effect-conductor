@@ -11,7 +11,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCel, copyCel, deleteCel, moveCel } from "../slice/celListSlice";
+import { addCel, copyCel, deleteCel, moveCelGroup, setCelIndex } from "../slice/celListSlice";
 import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
 import { useTranslation } from "react-i18next";
@@ -24,11 +24,13 @@ export function Timeline({
   maxFrame,
   celList,
   celIndex,
+  selectedIndices,
   setFrame,
   addCel,
   copyCel,
   deleteCel,
-  moveCel,
+  moveCelGroup,
+  resetSelection,
 }) {
   const scrollRef = useRef(null);
   const { t } = useTranslation();
@@ -100,9 +102,9 @@ export function Timeline({
         </button>
         <button
           css={[styles.button, styles.sortButton]}
-          disabled={celList.length < 2 || celIndex < 1}
+          disabled={celList.length < 2 || selectedIndices.every((i) => i < 1)}
           onClick={() => {
-            moveCel(celIndex - 1);
+            moveCelGroup(-1);
           }}
         >
           <FontAwesomeIcon icon={faSortUp} />
@@ -110,9 +112,9 @@ export function Timeline({
         <button
           css={[styles.button, styles.sortButton]}
           style={{ marginRight: "1rem" }}
-          disabled={celList.length < 2 || celIndex >= celList.length - 1}
+          disabled={celList.length < 2 || selectedIndices.every((i) => i >= celList.length - 1)}
           onClick={() => {
-            moveCel(celIndex + 1);
+            moveCelGroup(1);
           }}
         >
           <FontAwesomeIcon icon={faSortDown} />
@@ -125,7 +127,12 @@ export function Timeline({
           overflowX: maxFrame > 60 ? "scroll" : "visible",
         }}
       >
-        <section css={styles.timelineComponent}>
+        <section
+          css={styles.timelineComponent}
+          onMouseDown={() => {
+            if (selectedIndices.length > 1) resetSelection(celIndex);
+          }}
+        >
           <div
             css={styles.cursor}
             style={{
@@ -186,12 +193,14 @@ export default (props) => {
   const maxFrame = useSelector((state) => state.frame.maxFrame);
   const celList = useSelector((state) => state.celList.list);
   const celIndex = useSelector((state) => state.celList.celIndex);
+  const selectedIndices = useSelector((state) => state.celList.selectedIndices);
   const dispatch = useDispatch();
   const _props = {
     frame,
     maxFrame,
     celList,
     celIndex,
+    selectedIndices,
     setFrame: (value) => {
       dispatch(setFrame(value));
     },
@@ -204,8 +213,11 @@ export default (props) => {
     deleteCel: () => {
       dispatch(deleteCel());
     },
-    moveCel: (target) => {
-      dispatch(moveCel(target));
+    moveCelGroup: (delta) => {
+      dispatch(moveCelGroup(delta));
+    },
+    resetSelection: (index) => {
+      dispatch(setCelIndex(index));
     },
     ...props,
   };

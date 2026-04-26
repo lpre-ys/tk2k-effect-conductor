@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { DEFAULT_CEL, INIT_MAX_FRAME } from "../util/const";
+import { DEFAULT_CEL, DRAG_TYPE, INIT_MAX_FRAME } from "../util/const";
+import { calculateFrameAfterDrag } from "../util/frameUtil";
 import i18n from "../i18n/config";
 import merge from "deepmerge";
 import * as celParamReducers from "../reducers/celParamReducers";
@@ -7,6 +8,7 @@ import * as celHSVReducers from "../reducers/celHSVReducers";
 
 const initialState = {
   celIndex: 0,
+  selectedIndices: [0],
   drawKey: Date.now(),
   list: [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))],
 };
@@ -18,11 +20,16 @@ export const celListSlice = createSlice({
     resetCelList: (state) => {
       // keyの更新が必要なため、個別に記載する
       state.celIndex = 0;
+      state.selectedIndices = [0];
       state.drawKey = Date.now();
       state.list = [initCel(1, INIT_MAX_FRAME, makeDefaultName(1))];
     },
     loadCelList: (state, action) => {
       Object.assign(state, action.payload);
+      // selectedIndicesが無い場合は後方互換のためcelIndexから生成
+      if (!action.payload.selectedIndices) {
+        state.selectedIndices = [state.celIndex];
+      }
       // VerUP対応
       const list = state.list.map((cel, index) => {
         // デフォルト値を持っていてほしいので、マージする
@@ -44,6 +51,26 @@ export const celListSlice = createSlice({
     },
     setCelIndex: (state, action) => {
       state.celIndex = parseInt(action.payload);
+      state.selectedIndices = [state.celIndex];
+    },
+    setActiveIndex: (state, action) => {
+      state.celIndex = parseInt(action.payload);
+      // selectedIndices は変えない（複数選択を維持したままアクティブセルを切り替える）
+    },
+    toggleSelectIndex: (state, action) => {
+      const index = parseInt(action.payload);
+      const set = new Set(state.selectedIndices);
+      if (set.has(index)) {
+        if (set.size === 1) return;
+        set.delete(index);
+        if (state.celIndex === index) {
+          state.celIndex = Math.min(...set);
+        }
+      } else {
+        set.add(index);
+        state.celIndex = index;
+      }
+      state.selectedIndices = [...set];
     },
     addCel: (state, action) => {
       const { volume, start } = action.payload;
@@ -58,6 +85,7 @@ export const celListSlice = createSlice({
       );
       state.list = newList;
       state.celIndex = index;
+      state.selectedIndices = [index];
     },
     deleteCel: (state) => {
       if (state.list.length < 2) {
@@ -69,6 +97,7 @@ export const celListSlice = createSlice({
       state.list = newList;
       // 1個前のセルを選択する
       state.celIndex = state.celIndex === 0 ? 0 : state.celIndex - 1;
+      state.selectedIndices = [state.celIndex];
       // 表示更新に失敗するケースがあるので、drawKeyも更新してしまう。
       state.drawKey = Date.now();
     },
@@ -87,6 +116,34 @@ export const celListSlice = createSlice({
       state.list = copyList;
       // 追加したセルを選択する
       state.celIndex += 1;
+      state.selectedIndices = [state.celIndex];
+    },
+    moveCelGroup: (state, action) => {
+      const delta = parseInt(action.payload);
+      if (delta === 0 || state.list.length < 2) return;
+      const dir = delta > 0 ? 1 : -1;
+      const steps = Math.abs(delta);
+      let celIndexPos = state.celIndex;
+      let currentSelected = new Set(state.selectedIndices);
+
+      for (let step = 0; step < steps; step++) {
+        const nextSelected = new Set(currentSelected);
+        // 下方向はインデックスの大きい方から処理、上方向は小さい方から
+        const sorted = [...currentSelected].sort((a, b) => dir > 0 ? b - a : a - b);
+        for (const i of sorted) {
+          const next = i + dir;
+          if (next >= 0 && next < state.list.length && !nextSelected.has(next)) {
+            [state.list[i], state.list[next]] = [state.list[next], state.list[i]];
+            nextSelected.delete(i);
+            nextSelected.add(next);
+            if (celIndexPos === i) celIndexPos = next;
+          }
+        }
+        currentSelected = nextSelected;
+      }
+
+      state.selectedIndices = [...currentSelected];
+      state.celIndex = celIndexPos;
     },
     moveCel: (state, action) => {
       let target = parseInt(action.payload);
@@ -114,6 +171,16 @@ export const celListSlice = createSlice({
 
       // 挿入したセルを選択する
       state.celIndex = target;
+      state.selectedIndices = [target];
+    },
+    updateFrameMultiple: (state, action) => {
+      const { indices, offsetFrame, type } = action.payload;
+      for (const idx of indices) {
+        const frame = state.list[idx].frame;
+        const result = calculateFrameAfterDrag(type, frame.start, frame.volume, offsetFrame);
+        frame.start = result.start;
+        frame.volume = result.volume;
+      }
     },
     updateFrame: (state, action) => {
       state.list = state.list.map((cel, index) => {
@@ -140,12 +207,16 @@ export const {
   resetCelList,
   loadCelList,
   setCelIndex,
+  setActiveIndex,
+  toggleSelectIndex,
   setCelName,
   addCel,
   deleteCel,
   copyCel,
   moveCel,
+  moveCelGroup,
   updateFrame,
+  updateFrameMultiple,
   updatePattern,
   updateFromTo,
   updateCycle,

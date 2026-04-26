@@ -6,6 +6,9 @@ import reducer, {
   setCelIndex,
   setCelName,
   moveCel,
+  moveCelGroup,
+  toggleSelectIndex,
+  updateFrameMultiple,
   updateFromTo,
   updateEasing,
   updateCycle,
@@ -15,7 +18,7 @@ import reducer, {
 
 test("return Initial state", () => {
   const state = reducer(undefined, { type: undefined });
-  expect(state).toMatchObject({ celIndex: 0 });
+  expect(state).toMatchObject({ celIndex: 0, selectedIndices: [0] });
 });
 
 describe("loadCelList", () => {
@@ -768,4 +771,190 @@ describe("updateEasingOptions", () => {
     expect(target).toHaveProperty("easePoly.exponent");
     expect(target.easePoly.exponent).toBe(3.5);
   })
+});
+
+const makeList = (n) =>
+  Array.from({ length: n }, (_, i) => ({ name: `cel${i}`, frame: { start: 1, volume: 10 } }));
+
+describe("toggleSelectIndex", () => {
+  test("未選択インデックスを追加し celIndex を更新する", () => {
+    const old = { celIndex: 0, selectedIndices: [0], list: makeList(3) };
+    const state = reducer(old, toggleSelectIndex(2));
+    expect(state.selectedIndices).toContain(0);
+    expect(state.selectedIndices).toContain(2);
+    expect(state.celIndex).toBe(2);
+  });
+  test("選択済みインデックスを除去する", () => {
+    const old = { celIndex: 2, selectedIndices: [0, 2], list: makeList(3) };
+    const state = reducer(old, toggleSelectIndex(0));
+    expect(state.selectedIndices).not.toContain(0);
+    expect(state.selectedIndices).toContain(2);
+    expect(state.celIndex).toBe(2);
+  });
+  test("celIndex を除去したとき celIndex が別の選択済みインデックスに移る", () => {
+    const old = { celIndex: 2, selectedIndices: [0, 2], list: makeList(3) };
+    const state = reducer(old, toggleSelectIndex(2));
+    expect(state.selectedIndices).not.toContain(2);
+    expect(state.celIndex).toBe(0);
+  });
+  test("最後の 1 つは除去できない", () => {
+    const old = { celIndex: 1, selectedIndices: [1], list: makeList(3) };
+    const state = reducer(old, toggleSelectIndex(1));
+    expect(state.selectedIndices).toEqual([1]);
+    expect(state.celIndex).toBe(1);
+  });
+});
+
+describe("setCelIndex", () => {
+  test("selectedIndices を単独リセットする", () => {
+    const old = { celIndex: 0, selectedIndices: [0, 1, 2], list: makeList(3) };
+    const state = reducer(old, setCelIndex(2));
+    expect(state.celIndex).toBe(2);
+    expect(state.selectedIndices).toEqual([2]);
+  });
+});
+
+describe("moveCelGroup", () => {
+  test("単独選択を 1 つ上に移動する", () => {
+    const old = { celIndex: 1, selectedIndices: [1], list: makeList(3) };
+    const state = reducer(old, moveCelGroup(-1));
+    expect(state.celIndex).toBe(0);
+    expect(state.selectedIndices).toEqual([0]);
+    expect(state.list[0].name).toBe("cel1");
+    expect(state.list[1].name).toBe("cel0");
+  });
+  test("単独選択を 1 つ下に移動する", () => {
+    const old = { celIndex: 0, selectedIndices: [0], list: makeList(3) };
+    const state = reducer(old, moveCelGroup(1));
+    expect(state.celIndex).toBe(1);
+    expect(state.selectedIndices).toEqual([1]);
+    expect(state.list[0].name).toBe("cel1");
+    expect(state.list[1].name).toBe("cel0");
+  });
+  test("非連続マルチ選択を上に移動する", () => {
+    const old = { celIndex: 2, selectedIndices: [1, 3], list: makeList(5) };
+    const state = reducer(old, moveCelGroup(-1));
+    expect([...state.selectedIndices].sort((a, b) => a - b)).toEqual([0, 2]);
+    expect(state.list[0].name).toBe("cel1");
+    expect(state.list[2].name).toBe("cel3");
+  });
+  test("連続マルチ選択を下に移動する", () => {
+    const old = { celIndex: 1, selectedIndices: [1, 2], list: makeList(4) };
+    const state = reducer(old, moveCelGroup(1));
+    expect([...state.selectedIndices].sort((a, b) => a - b)).toEqual([2, 3]);
+    expect(state.list[2].name).toBe("cel1");
+    expect(state.list[3].name).toBe("cel2");
+  });
+  test("上端でのクランプ（動かせないものはスキップ）", () => {
+    const old = { celIndex: 0, selectedIndices: [0], list: makeList(3) };
+    const state = reducer(old, moveCelGroup(-1));
+    expect(state.selectedIndices).toEqual([0]);
+    expect(state.list[0].name).toBe("cel0");
+  });
+  test("下端でのクランプ", () => {
+    const old = { celIndex: 2, selectedIndices: [2], list: makeList(3) };
+    const state = reducer(old, moveCelGroup(1));
+    expect(state.selectedIndices).toEqual([2]);
+    expect(state.list[2].name).toBe("cel2");
+  });
+  test("delta=0 は何もしない", () => {
+    const old = { celIndex: 1, selectedIndices: [1], list: makeList(3) };
+    const state = reducer(old, moveCelGroup(0));
+    expect(state.list[1].name).toBe("cel1");
+  });
+  test("2 ステップ移動する", () => {
+    const old = { celIndex: 0, selectedIndices: [0], list: makeList(4) };
+    const state = reducer(old, moveCelGroup(2));
+    expect(state.celIndex).toBe(2);
+    expect(state.list[2].name).toBe("cel0");
+  });
+  test("celIndex が選択グループの移動先に追従する", () => {
+    const old = { celIndex: 1, selectedIndices: [0, 1], list: makeList(4) };
+    const state = reducer(old, moveCelGroup(1));
+    expect(state.celIndex).toBe(2);
+  });
+});
+
+describe("updateFrameMultiple", () => {
+  const makeFrameList = (frames) =>
+    frames.map((f, i) => ({ name: `cel${i}`, frame: { ...f } }));
+
+  test("MOVE: 複数セルの start を offsetFrame 分シフトする", () => {
+    const old = {
+      celIndex: 0,
+      selectedIndices: [0, 2],
+      list: makeFrameList([
+        { start: 5, volume: 10 },
+        { start: 3, volume: 5 },
+        { start: 8, volume: 4 },
+      ]),
+    };
+    const state = reducer(old, updateFrameMultiple({ indices: [0, 2], offsetFrame: 2, type: "move" }));
+    expect(state.list[0].frame.start).toBe(7);
+    expect(state.list[1].frame.start).toBe(3); // 変化なし
+    expect(state.list[2].frame.start).toBe(10);
+  });
+  test("MOVE: start が 1 未満にはならない", () => {
+    const old = {
+      celIndex: 0,
+      selectedIndices: [0],
+      list: makeFrameList([{ start: 2, volume: 5 }]),
+    };
+    const state = reducer(old, updateFrameMultiple({ indices: [0], offsetFrame: -5, type: "move" }));
+    expect(state.list[0].frame.start).toBe(1);
+  });
+  test("RESIZE_LEFT: start と volume を調整する", () => {
+    const old = {
+      celIndex: 0,
+      selectedIndices: [0],
+      list: makeFrameList([{ start: 5, volume: 10 }]),
+    };
+    const state = reducer(old, updateFrameMultiple({ indices: [0], offsetFrame: 2, type: "resize-left" }));
+    expect(state.list[0].frame.start).toBe(7);
+    expect(state.list[0].frame.volume).toBe(8);
+  });
+  test("RESIZE_RIGHT: volume を調整する", () => {
+    const old = {
+      celIndex: 0,
+      selectedIndices: [0],
+      list: makeFrameList([{ start: 5, volume: 10 }]),
+    };
+    const state = reducer(old, updateFrameMultiple({ indices: [0], offsetFrame: 3, type: "resize-right" }));
+    expect(state.list[0].frame.volume).toBe(13);
+  });
+  test("各セルの volume は最小 1 フレームまで縮小可能", () => {
+    const old = {
+      celIndex: 0,
+      selectedIndices: [0, 1],
+      list: makeFrameList([
+        { start: 5, volume: 10 },
+        { start: 2, volume: 3 },
+      ]),
+    };
+    const state = reducer(old, updateFrameMultiple({ indices: [0, 1], offsetFrame: -20, type: "resize-right" }));
+    expect(state.list[0].frame.volume).toBe(1);
+    expect(state.list[1].frame.volume).toBe(1);
+  });
+});
+
+describe("loadCelList (selectedIndices 後方互換)", () => {
+  test("selectedIndices がない場合は celIndex から生成する", () => {
+    const data = {
+      celIndex: 2,
+      drawKey: Date.now(),
+      list: [{ frame: {} }, { frame: {} }, { frame: {} }],
+    };
+    const state = reducer(undefined, loadCelList(data));
+    expect(state.selectedIndices).toEqual([2]);
+  });
+  test("selectedIndices がある場合はそのまま使う", () => {
+    const data = {
+      celIndex: 0,
+      selectedIndices: [0, 2],
+      drawKey: Date.now(),
+      list: [{ frame: {} }, { frame: {} }, { frame: {} }],
+    };
+    const state = reducer(undefined, loadCelList(data));
+    expect(state.selectedIndices).toEqual([0, 2]);
+  });
 });
