@@ -2,9 +2,7 @@
 
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { useCallback } from "react";
-import { useState } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useConfigOption } from "../../hook/useConfigOption";
 import EasingConfig from "./FromTo/EasingConfig";
 import Options from "./FromTo/Options";
@@ -25,6 +23,7 @@ export function FromToConfig({
   const [from, setFrom] = useState(config.from);
   const [to, setTo] = useState(config.to);
   const [optionIsValid, setOptionIsValid] = useState(true);
+  const prevConfigRef = useRef({ from: config.from, to: config.to });
 
   const hasOption = () => {
     return config.cycle !== 0 || config.isRoundTrip;
@@ -48,6 +47,18 @@ export function FromToConfig({
   };
 
   useEffect(() => {
+    const configChanged =
+      config.from !== prevConfigRef.current.from ||
+      config.to !== prevConfigRef.current.to;
+    prevConfigRef.current = { from: config.from, to: config.to };
+
+    if (configChanged) {
+      // 外部からの config 変更（一括設定・undo等）→ローカル値を config に同期
+      setFrom(config.from);
+      setTo(config.to);
+      return;
+    }
+
     if (validateConfig(from, to)) {
       const intFrom = parseInt(from);
       const intTo = parseInt(to);

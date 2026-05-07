@@ -3,7 +3,18 @@
     "header": "タイムライン",
     "add": "追加",
     "copy": "コピー",
-    "delete": "削除"
+    "delete": "削除",
+    "bulkConfig": "一括設定"
+  },
+  "bulkConfigDialog": {
+    "title": "一括設定",
+    "overwrite": "上書き",
+    "add": "加算",
+    "multiply": "乗算",
+    "basic": "基本",
+    "color": "色調",
+    "apply": "適用",
+    "cancel": "キャンセル"
   },
   "material": {
     "header": "素材データ",

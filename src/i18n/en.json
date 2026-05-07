@@ -3,7 +3,18 @@
     "header": "Timeline",
     "add": "New",
     "copy": "Copy",
-    "delete": "Delete"
+    "delete": "Delete",
+    "bulkConfig": "Bulk Settings"
+  },
+  "bulkConfigDialog": {
+    "title": "Bulk Settings",
+    "overwrite": "Overwrite",
+    "add": "Add",
+    "multiply": "Multiply",
+    "basic": "Basic",
+    "color": "Color",
+    "apply": "Apply",
+    "cancel": "Cancel"
   },
   "material": {
     "header": "Material Data",

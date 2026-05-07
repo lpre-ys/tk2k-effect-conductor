@@ -9,11 +9,12 @@ import {
   faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addCel, copyCel, deleteCel, moveCelGroup, setCelIndex } from "../slice/celListSlice";
 import { setFrame } from "../slice/frameSlice";
 import TimeCelView from "./timeline/TimeCelView";
+import BulkConfigDialog from "./BulkConfigDialog";
 import { useTranslation } from "react-i18next";
 
 const FRAME_SIZE = 20;
@@ -34,6 +35,7 @@ export function Timeline({
 }) {
   const scrollRef = useRef(null);
   const { t } = useTranslation();
+  const [isBulkDialogOpen, setIsBulkDialogOpen] = useState(false);
 
   const baseList = [];
   for (let i = 0; i < maxFrame; i++) {
@@ -119,6 +121,12 @@ export function Timeline({
         >
           <FontAwesomeIcon icon={faSortDown} />
         </button>
+        <button
+          css={[styles.button, styles.bulkButton]}
+          onClick={() => setIsBulkDialogOpen(true)}
+        >
+          {t("timeline.bulkConfig")}
+        </button>
       </div>
       <div
         css={styles.wrapper}
@@ -183,6 +191,9 @@ export function Timeline({
           </div>
         </section>
       </div>
+      {isBulkDialogOpen && (
+        <BulkConfigDialog onClose={() => setIsBulkDialogOpen(false)} />
+      )}
     </div>
   );
 }
@@ -263,6 +274,9 @@ const styles = {
   sortButton: css`
     padding: 0.3em 0.5em 0.3em 0.5em;
     margin: 0 0.1em;
+  `,
+  bulkButton: css`
+    padding: 0.3em 0.8em;
   `,
   deleteButton: css`
     background: #e53935;

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFromTo } from "../../slice/celListSlice";
 import EasingConfig from "./FromTo/EasingConfig";
@@ -21,6 +21,7 @@ export function FixedConfig({
 }) {
   const [from, setFrom] = useState(config.from);
   const [key, setKey] = useState(Date.now());
+  const prevConfigFromRef = useRef(config.from);
 
   const reset = () => {
     setFrom(config.from);
@@ -36,6 +37,16 @@ export function FixedConfig({
   };
 
   useEffect(() => {
+    const configChanged = config.from !== prevConfigFromRef.current;
+    prevConfigFromRef.current = config.from;
+
+    if (configChanged) {
+      // 外部からの config 変更（一括設定・undo等）→ローカル値を config に同期
+      setFrom(config.from);
+      setKey(Date.now());
+      return;
+    }
+
     if (validate(from) && isChangeConfig(config, parseInt(from))) {
       updateFromTo(type, parseInt(from), config.to);
     }

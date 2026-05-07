@@ -118,6 +118,9 @@ export const celListSlice = createSlice({
       state.celIndex += 1;
       state.selectedIndices = [state.celIndex];
     },
+    selectAllCels: (state) => {
+      state.selectedIndices = state.list.map((_, i) => i);
+    },
     moveCelGroup: (state, action) => {
       const delta = parseInt(action.payload);
       if (delta === 0 || state.list.length < 2) return;
@@ -215,6 +218,7 @@ export const {
   copyCel,
   moveCel,
   moveCelGroup,
+  selectAllCels,
   updateFrame,
   updateFrameMultiple,
   updatePattern,
@@ -223,6 +227,7 @@ export const {
   updateIsRoundTrip,
   updateEasing,
   updateEasingOptions,
+  bulkUpdateParams,
   updateHSVMin,
   updateHSVMax,
   setIsHsv
