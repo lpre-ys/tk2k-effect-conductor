@@ -14,7 +14,8 @@
     "basic": "Basic",
     "color": "Color",
     "apply": "Apply",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "hsvMixed": "Color params (RGB/HSV) cannot be edited because HSV mode differs across selected cells."
   },
   "material": {
     "header": "Material Data",
@@ -133,7 +134,7 @@
       "hsvColor": "HSV Color",
       "hsvHue": "Hue",
       "hsvHueNote": "*range: 0–360",
-      "hsvSat": "Satulation",
+      "hsvSat": "S. Saturation",
       "hsvVal": "Value"
     }
   },

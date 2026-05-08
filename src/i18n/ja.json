@@ -14,7 +14,8 @@
     "basic": "基本",
     "color": "色調",
     "apply": "適用",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "hsvMixed": "HSVモードが混在しているため、色調（RGB/HSV）は編集できません。"
   },
   "material": {
     "header": "素材データ",

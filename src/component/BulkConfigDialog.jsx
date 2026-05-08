@@ -1,20 +1,23 @@
 /** @jsxImportSource @emotion/react */
 
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { bulkUpdateParams } from "../slice/celListSlice";
 
 const PARAMS = [
-  { key: "x",       labelKey: "configs.x",             section: "basic" },
-  { key: "y",       labelKey: "configs.y",             section: "basic" },
-  { key: "scale",   labelKey: "configs.scale",         section: "basic" },
-  { key: "opacity", labelKey: "configs.opacity",       section: "basic" },
-  { key: "red",     labelKey: "configs.color.red",     section: "color" },
-  { key: "green",   labelKey: "configs.color.green",   section: "color" },
-  { key: "blue",    labelKey: "configs.color.blue",    section: "color" },
-  { key: "tkSat",   labelKey: "configs.color.satulation", section: "color" },
+  { key: "x",       labelKey: "configs.x",                  section: "basic" },
+  { key: "y",       labelKey: "configs.y",                  section: "basic" },
+  { key: "scale",   labelKey: "configs.scale",              section: "basic" },
+  { key: "opacity", labelKey: "configs.opacity",            section: "basic" },
+  { key: "red",     labelKey: "configs.color.red",          section: "color", colorMode: "rgb" },
+  { key: "green",   labelKey: "configs.color.green",        section: "color", colorMode: "rgb" },
+  { key: "blue",    labelKey: "configs.color.blue",         section: "color", colorMode: "rgb" },
+  { key: "hue",     labelKey: "configs.color.hsvHue",       section: "color", colorMode: "hsv" },
+  { key: "sat",     labelKey: "configs.color.hsvSat",       section: "color", colorMode: "hsv" },
+  { key: "val",     labelKey: "configs.color.hsvVal",       section: "color", colorMode: "hsv" },
+  { key: "tkSat",   labelKey: "configs.color.satulation",   section: "color", colorMode: "always" },
 ];
 
 const UPDATE_TYPES = ["overwrite", "add", "multiply"];
@@ -29,7 +32,19 @@ const makeInitialParamState = (updateType) =>
 export default function BulkConfigDialog({ onClose }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const celList = useSelector((state) => state.celList.list);
   const selectedIndices = useSelector((state) => state.celList.selectedIndices);
+
+  const hsvMode = useMemo(() => {
+    const flags = selectedIndices
+      .map((i) => celList[i])
+      .filter(Boolean)
+      .map((cel) => cel.hsv?.isHsv ?? false);
+    if (flags.length === 0) return "rgb";
+    if (flags.every((f) => f === true))  return "hsv";
+    if (flags.every((f) => f === false)) return "rgb";
+    return "mixed";
+  }, [celList, selectedIndices]);
 
   const [updateType, setUpdateType] = useState("overwrite");
   const [paramState, setParamState] = useState(() => makeInitialParamState("overwrite"));
@@ -59,8 +74,20 @@ export default function BulkConfigDialog({ onClose }) {
   };
 
   const handleApply = () => {
+    const activeKeys = new Set(
+      PARAMS
+        .filter((p) => {
+          if (!p.colorMode) return true;
+          if (p.colorMode === "always") return true;
+          if (p.colorMode === "rgb" && hsvMode === "rgb") return true;
+          if (p.colorMode === "hsv" && hsvMode === "hsv") return true;
+          return false;
+        })
+        .map((p) => p.key)
+    );
     const params = {};
     for (const [key, { enabled, value }] of Object.entries(paramState)) {
+      if (!activeKeys.has(key)) continue;
       if (enabled) {
         const parsed = parseFloat(value);
         if (!isNaN(parsed)) params[key] = parsed;
@@ -73,7 +100,13 @@ export default function BulkConfigDialog({ onClose }) {
   };
 
   const basicParams = PARAMS.filter((p) => p.section === "basic");
-  const colorParams = PARAMS.filter((p) => p.section === "color");
+  const colorParams = PARAMS.filter((p) => {
+    if (p.section !== "color") return false;
+    if (!p.colorMode || p.colorMode === "always") return true;
+    if (p.colorMode === "rgb" && hsvMode === "rgb") return true;
+    if (p.colorMode === "hsv" && hsvMode === "hsv") return true;
+    return false;
+  });
 
   return (
     <div css={styles.overlay} onMouseDown={onClose} data-testid="bulk-config-overlay">
@@ -107,6 +140,9 @@ export default function BulkConfigDialog({ onClose }) {
 
         <div css={styles.section}>
           <p css={styles.sectionLabel}>{t("bulkConfigDialog.color")}</p>
+          {hsvMode === "mixed" && (
+            <p css={styles.mixedMessage}>{t("bulkConfigDialog.hsvMixed")}</p>
+          )}
           {colorParams.map(({ key, labelKey }) => (
             <ParamRow
               key={key}
@@ -268,5 +304,10 @@ const styles = {
     :hover {
       background: #455a64;
     }
+  `,
+  mixedMessage: css`
+    margin: 0.3em 0;
+    font-size: 0.8rem;
+    color: #f57c00;
   `,
 };
