@@ -3,7 +3,19 @@
     "header": "Timeline",
     "add": "New",
     "copy": "Copy",
-    "delete": "Delete"
+    "delete": "Delete",
+    "bulkConfig": "Bulk Settings"
+  },
+  "bulkConfigDialog": {
+    "title": "Bulk Settings",
+    "overwrite": "Overwrite",
+    "add": "Add",
+    "multiply": "Multiply",
+    "basic": "Basic",
+    "color": "Color",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "hsvMixed": "Color params (RGB/HSV) cannot be edited because HSV mode differs across selected cells."
   },
   "material": {
     "header": "Material Data",
@@ -122,7 +134,7 @@
       "hsvColor": "HSV Color",
       "hsvHue": "Hue",
       "hsvHueNote": "*range: 0–360",
-      "hsvSat": "Satulation",
+      "hsvSat": "S. Saturation",
       "hsvVal": "Value"
     }
   },

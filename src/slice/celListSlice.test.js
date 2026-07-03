@@ -7,6 +7,7 @@ import reducer, {
   setCelName,
   moveCel,
   moveCelGroup,
+  selectAllCels,
   toggleSelectIndex,
   updateFrameMultiple,
   updateFromTo,
@@ -956,5 +957,23 @@ describe("loadCelList (selectedIndices 後方互換)", () => {
     };
     const state = reducer(undefined, loadCelList(data));
     expect(state.selectedIndices).toEqual([0, 2]);
+  });
+});
+
+describe("selectAllCels", () => {
+  test("全セルが selectedIndices に入る", () => {
+    const data = { celIndex: 0, selectedIndices: [0], drawKey: 0, list: [1, 2, 3] };
+    const state = reducer(data, selectAllCels());
+    expect(state.selectedIndices).toEqual([0, 1, 2]);
+  });
+  test("celIndex は変わらない", () => {
+    const data = { celIndex: 1, selectedIndices: [1], drawKey: 0, list: [1, 2, 3] };
+    const state = reducer(data, selectAllCels());
+    expect(state.celIndex).toBe(1);
+  });
+  test("セルが1つのとき selectedIndices = [0]", () => {
+    const data = { celIndex: 0, selectedIndices: [0], drawKey: 0, list: [1] };
+    const state = reducer(data, selectAllCels());
+    expect(state.selectedIndices).toEqual([0]);
   });
 });

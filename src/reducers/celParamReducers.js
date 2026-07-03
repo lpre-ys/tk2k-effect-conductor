@@ -78,6 +78,36 @@ export const updateEasing = (state, action) => {
     return cel;
   });
 };
+export const bulkUpdateParams = (state, action) => {
+  const { indices, params, updateType } = action.payload;
+  for (const idx of indices) {
+    const cel = state.list[idx];
+    if (!cel) continue;
+    for (const [key, value] of Object.entries(params)) {
+      const p = cel[key];
+      if (!p) continue;
+      switch (updateType) {
+        case "overwrite":
+          if (p.easing === "fixed") {
+            p.from = value;
+            p.to = value;
+          } else {
+            p.to = value + (p.to - p.from);
+            p.from = value;
+          }
+          break;
+        case "add":
+          p.from += value;
+          p.to += value;
+          break;
+        case "multiply":
+          p.from *= value;
+          p.to *= value;
+          break;
+      }
+    }
+  }
+};
 export const updateEasingOptions = (state, action) => {
   const { type, easing, value } = action.payload;
   // type: x.trig.amp みたいなやつ

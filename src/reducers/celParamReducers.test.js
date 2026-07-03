@@ -4,6 +4,7 @@ import reducer, {
   updateIsRoundTrip,
   updateEasing,
   updateEasingOptions,
+  bulkUpdateParams,
 } from "../slice/celListSlice";
 
 const baseParam = {
@@ -123,5 +124,76 @@ describe("updateEasingOptions", () => {
     }));
     expect(state.list[0].x.easingOptions.easeBack).toEqual({ overshoot: 1.7 });
     expect(state.list[0].x.easingOptions.easePoly).toEqual({ exponent: 2 });
+  });
+});
+
+describe("bulkUpdateParams", () => {
+  const nonFixed = { from: 10, to: 20, cycle: 0, isRoundTrip: false, easing: "easeLinear", easingAdd: "" };
+  const fixed = { from: 100, to: 100, cycle: 0, isRoundTrip: false, easing: "fixed", easingAdd: "" };
+
+  const bulkState = {
+    celIndex: 0,
+    drawKey: 0,
+    selectedIndices: [0],
+    list: [
+      { x: { ...nonFixed }, y: { ...nonFixed }, red: { ...fixed } },
+      { x: { ...nonFixed }, y: { ...nonFixed } },
+    ],
+  };
+
+  describe("上書き (overwrite)", () => {
+    test("non-fixed param: from = input, to = input + 元の差分", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: 50 }, updateType: "overwrite" }));
+      expect(state.list[0].x.from).toBe(50);
+      expect(state.list[0].x.to).toBe(60);
+    });
+    test("fixed param: from/to 両方が input 値になる", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { red: 150 }, updateType: "overwrite" }));
+      expect(state.list[0].red.from).toBe(150);
+      expect(state.list[0].red.to).toBe(150);
+    });
+    test("差分が 0 のとき from = to = input", () => {
+      const s = { ...bulkState, list: [{ x: { ...nonFixed, from: 10, to: 10 } }, ...bulkState.list.slice(1)] };
+      const state = reducer(s, bulkUpdateParams({ indices: [0], params: { x: 5 }, updateType: "overwrite" }));
+      expect(state.list[0].x.from).toBe(5);
+      expect(state.list[0].x.to).toBe(5);
+    });
+  });
+
+  describe("加算 (add)", () => {
+    test("from/to 両方に加算される", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: 5 }, updateType: "add" }));
+      expect(state.list[0].x.from).toBe(15);
+      expect(state.list[0].x.to).toBe(25);
+    });
+    test("マイナス値を加算できる", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: -3 }, updateType: "add" }));
+      expect(state.list[0].x.from).toBe(7);
+      expect(state.list[0].x.to).toBe(17);
+    });
+  });
+
+  describe("乗算 (multiply)", () => {
+    test("from/to 両方に乗算される", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: 2 }, updateType: "multiply" }));
+      expect(state.list[0].x.from).toBe(20);
+      expect(state.list[0].x.to).toBe(40);
+    });
+  });
+
+  describe("複数セルへの適用", () => {
+    test("indices の全セルに適用される", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0, 1], params: { x: 50 }, updateType: "overwrite" }));
+      expect(state.list[0].x.from).toBe(50);
+      expect(state.list[1].x.from).toBe(50);
+    });
+    test("indices に含まれないセルは変更されない", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: 50 }, updateType: "overwrite" }));
+      expect(state.list[1].x.from).toBe(10);
+    });
+    test("params に含まれないパラメータは変更されない", () => {
+      const state = reducer(bulkState, bulkUpdateParams({ indices: [0], params: { x: 50 }, updateType: "overwrite" }));
+      expect(state.list[0].y.from).toBe(10);
+    });
   });
 });

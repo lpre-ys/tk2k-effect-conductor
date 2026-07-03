@@ -9,7 +9,7 @@ import Export from "./component/Export";
 import Material from "./component/Material";
 import Player from "./component/Player";
 import Timeline from "./component/Timeline";
-import { loadCelList, resetCelList } from "./slice/celListSlice";
+import { loadCelList, resetCelList, selectAllCels } from "./slice/celListSlice";
 import { loadFrameConfig, resetFrameConfig } from "./slice/frameSlice";
 import { loadInfo, resetInfo } from "./slice/infoSlice";
 import { loadMaterial, resetMaterial } from "./slice/materialSlice";
@@ -40,6 +40,9 @@ class App extends React.Component {
     } else if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
       e.preventDefault();
       this.props.redo();
+    } else if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+      e.preventDefault();
+      this.props.selectAll();
     }
   }
   componentDidMount() {
@@ -175,6 +178,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     undo: () => dispatch(undoAction()),
     redo: () => dispatch(redoAction()),
+    selectAll: () => dispatch(selectAllCels()),
   };
 };
 
