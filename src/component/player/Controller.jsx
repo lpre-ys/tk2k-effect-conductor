@@ -84,9 +84,7 @@ export function Controller({
   };
 
   function playAnimation() {
-    if (frame >= maxFrameRef.current - 1) {
-      frameCounterRef.current = 0;
-    }
+    frameCounterRef.current = frame >= maxFrameRef.current - 1 ? 0 : frame;
     timeCounterRef.current = 0;
     prevTimeStampRef.current = undefined;
     isRunningRef.current = true;

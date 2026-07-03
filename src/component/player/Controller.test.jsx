@@ -198,6 +198,49 @@ describe("2回目の再生", () => {
   });
 });
 
+describe("停止ボタンで先頭に戻した後の再生", () => {
+  test("最後まで自動再生された後に停止→再生しても、いきなり最終フレームに飛ばない", () => {
+    let animationCallback;
+    window.requestAnimationFrame.mockImplementation((cb) => {
+      animationCallback = cb;
+      return 1;
+    });
+
+    const mockSetFrame = vi.fn();
+    const { rerender } = render(
+      <Controller frame={19} maxFrame={20} setFrame={mockSetFrame} />
+    );
+
+    // リピート無しで最後まで自動再生され、内部カウンタが maxFrame-1 (19) で止まった状態を再現
+    userEvent.click(screen.getByTitle("play"));
+    act(() => {
+      animationCallback(0);
+    });
+    act(() => {
+      animationCallback(1000);
+    });
+
+    // 停止ボタン → Redux 側の frame は 0 になる想定（props を更新して再現）
+    userEvent.click(screen.getByTitle("stop"));
+    rerender(<Controller frame={0} maxFrame={20} setFrame={mockSetFrame} />);
+
+    // 再生ボタン
+    mockSetFrame.mockClear();
+    userEvent.click(screen.getByTitle("play"));
+
+    // 1フレーム分だけ時間を進める（最終フレームへ飛ぶバグがあれば setFrame(19) が呼ばれる）
+    act(() => {
+      animationCallback(0);
+    });
+    act(() => {
+      animationCallback(50);
+    });
+
+    expect(mockSetFrame).not.toBeCalledWith(19);
+    expect(mockSetFrame).toBeCalledWith(1);
+  });
+});
+
 describe("handleKeyDown", () => {
   describe("Left key down", () => {
     test("then call prevFrame", () => {
