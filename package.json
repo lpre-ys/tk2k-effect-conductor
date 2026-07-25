@@ -12,7 +12,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@reduxjs/toolkit": "^2.12.0",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/user-event": "^13.5.0",
     "chroma-js": "^2.4.2",
     "d3-ease": "^3.0.1",
@@ -47,7 +47,7 @@
     "release": "run-s clean electron-clean build electron-build"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.3.1",
+    "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^6.0.4",
     "@vitest/coverage-v8": "^4.1.10",
     "electron": "^41.0.0",
