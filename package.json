@@ -21,7 +21,7 @@
     "i18next": "^26.3.6",
     "i18next-fs-backend": "^2.6.4",
     "iconv-lite": "^0.7.3",
-    "konva": "^8.3.13",
+    "konva": "^10.3.0",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
