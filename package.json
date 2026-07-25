@@ -47,7 +47,7 @@
     "release": "run-s clean electron-clean build electron-build"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.3.1",
+    "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^6.0.4",
     "@vitest/coverage-v8": "^4.1.10",
     "electron": "^41.0.0",
