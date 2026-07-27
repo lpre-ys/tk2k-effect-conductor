@@ -11,7 +11,8 @@ const fs = require("fs");
 const { tk2k, getEmptyData, write, read, parser } = require("tk2k-clipdata");
 const i18n = require("./configs/i18next.config");
 const menuTemplate = require("./menuTemplate");
-const ElectronStore = require("electron-store");
+// electron-store v9以降はESM専用のため、CJSからは default を取り出す必要がある
+const ElectronStore = require("electron-store").default;
 
 const store = new ElectronStore();
 let mainWindow;
