@@ -13,7 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@reduxjs/toolkit": "^2.12.0",
     "@testing-library/jest-dom": "^7.0.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/user-event": "^14.6.1",
     "chroma-js": "^3.2.0",
     "d3-ease": "^3.0.1",
     "deepmerge": "^4.2.2",
