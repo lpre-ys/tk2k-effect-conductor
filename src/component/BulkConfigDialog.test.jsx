@@ -40,56 +40,56 @@ describe("BulkConfigDialog", () => {
     expect(screen.getByText("乗算")).toBeInTheDocument();
   });
 
-  test("キャンセルで onClose が呼ばれ、状態は変わらない", () => {
+  test("キャンセルで onClose が呼ばれ、状態は変わらない", async () => {
     const onClose = vi.fn();
     const { store } = renderWithProviders(
       <BulkConfigDialog onClose={onClose} />,
       { preloadedState: preloaded }
     );
 
-    userEvent.click(screen.getByText("キャンセル"));
+    await userEvent.click(screen.getByText("キャンセル"));
 
     expect(onClose).toBeCalled();
     expect(store.getState().celList.list[0].x.from).toBe(10);
   });
 
-  test("乗算に切り替えると入力値が全て 1 になる", () => {
+  test("乗算に切り替えると入力値が全て 1 になる", async () => {
     renderWithProviders(<BulkConfigDialog onClose={vi.fn()} />, { preloadedState: preloaded });
 
-    userEvent.click(screen.getByText("乗算"));
+    await userEvent.click(screen.getByText("乗算"));
 
     const inputs = screen.getAllByRole("spinbutton");
     inputs.forEach((input) => expect(input).toHaveValue(1));
   });
 
-  test("加算に切り替えると入力値が全て 0 になる", () => {
+  test("加算に切り替えると入力値が全て 0 になる", async () => {
     renderWithProviders(<BulkConfigDialog onClose={vi.fn()} />, { preloadedState: preloaded });
 
-    userEvent.click(screen.getByText("乗算"));
-    userEvent.click(screen.getByText("加算"));
+    await userEvent.click(screen.getByText("乗算"));
+    await userEvent.click(screen.getByText("加算"));
 
     const inputs = screen.getAllByRole("spinbutton");
     inputs.forEach((input) => expect(input).toHaveValue(0));
   });
 
-  test("適用クリックで onClose が呼ばれる", () => {
+  test("適用クリックで onClose が呼ばれる", async () => {
     const onClose = vi.fn();
     renderWithProviders(<BulkConfigDialog onClose={onClose} />, { preloadedState: preloaded });
 
-    userEvent.click(screen.getByText("適用"));
+    await userEvent.click(screen.getByText("適用"));
     expect(onClose).toBeCalled();
   });
 
-  test("チェックをオンにしたパラメータだけ変更される", () => {
+  test("チェックをオンにしたパラメータだけ変更される", async () => {
     const { store } = renderWithProviders(
       <BulkConfigDialog onClose={vi.fn()} />,
       { preloadedState: preloaded }
     );
 
     const checkboxes = screen.getAllByRole("checkbox");
-    userEvent.click(checkboxes[0]); // X のみオン
+    await userEvent.click(checkboxes[0]); // X のみオン
 
-    userEvent.click(screen.getByText("適用"));
+    await userEvent.click(screen.getByText("適用"));
 
     // X は上書き 0 で更新される（from=0, to=0+(20-10)=10）
     expect(store.getState().celList.list[0].x.from).toBe(0);
@@ -97,11 +97,11 @@ describe("BulkConfigDialog", () => {
     expect(store.getState().celList.list[0].y.from).toBe(10);
   });
 
-  test("オーバーレイクリックで onClose が呼ばれる", () => {
+  test("オーバーレイクリックで onClose が呼ばれる", async () => {
     const onClose = vi.fn();
     renderWithProviders(<BulkConfigDialog onClose={onClose} />, { preloadedState: preloaded });
 
-    userEvent.click(screen.getByTestId("bulk-config-overlay"));
+    await userEvent.click(screen.getByTestId("bulk-config-overlay"));
     expect(onClose).toBeCalled();
   });
 
@@ -145,7 +145,7 @@ describe("BulkConfigDialog", () => {
     expect(screen.getByText("彩度")).toBeInTheDocument();
   });
 
-  test("混在モードで適用すると tkSat は更新され red と hue は変わらない", () => {
+  test("混在モードで適用すると tkSat は更新され red と hue は変わらない", async () => {
     const state = {
       celList: { celIndex: 0, selectedIndices: [0, 1], drawKey: 0, list: [makeCel(false), makeCel(true)] },
     };
@@ -155,15 +155,15 @@ describe("BulkConfigDialog", () => {
     );
 
     const checkboxes = screen.getAllByRole("checkbox");
-    userEvent.click(checkboxes[4]); // tkSat チェック（basic 4 個の後、混在時は tkSat のみ）
+    await userEvent.click(checkboxes[4]); // tkSat チェック（basic 4 個の後、混在時は tkSat のみ）
 
-    userEvent.click(screen.getByText("適用"));
+    await userEvent.click(screen.getByText("適用"));
 
     expect(store.getState().celList.list[0].tkSat.from).toBe(0);
     expect(store.getState().celList.list[0].red.from).toBe(100);
   });
 
-  test("HSV モードで適用すると hue が更新され red は変わらない", () => {
+  test("HSV モードで適用すると hue が更新され red は変わらない", async () => {
     const state = {
       celList: { celIndex: 0, selectedIndices: [0], drawKey: 0, list: [makeCel(true)] },
     };
@@ -173,9 +173,9 @@ describe("BulkConfigDialog", () => {
     );
 
     const checkboxes = screen.getAllByRole("checkbox");
-    userEvent.click(checkboxes[4]); // hue チェック（basic 4 個の後）
+    await userEvent.click(checkboxes[4]); // hue チェック（basic 4 個の後）
 
-    userEvent.click(screen.getByText("適用"));
+    await userEvent.click(screen.getByText("適用"));
 
     expect(store.getState().celList.list[0].hue.from).toBe(0);
     expect(store.getState().celList.list[0].red.from).toBe(100); // 変わらない

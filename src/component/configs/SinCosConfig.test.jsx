@@ -72,86 +72,86 @@ describe("options", () => {
     const target = screen.queryByTestId("sincos-config-options");
     expect(target).not.toBeInTheDocument();
   });
-  test("click Header, then show Options", () => {
+  test("click Header, then show Options", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.queryByTestId("sincos-config-options");
     expect(target).toBeInTheDocument();
   });
-  test("Options has center params", () => {
+  test("Options has center params", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.getByText("A. 中心");
     expect(target).toBeInTheDocument();
   });
-  test("Options has amp params", () => {
+  test("Options has amp params", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.getByText("B. 振幅 (半径)");
     expect(target).toBeInTheDocument();
   });
-  test("Options has cycle params", () => {
+  test("Options has cycle params", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.getByText("C. 周期");
     expect(target).toBeInTheDocument();
   });
-  test("Options has start params", () => {
+  test("Options has start params", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.getByText("D. 開始角度");
     expect(target).toBeInTheDocument();
   });
-  test("start params has note", () => {
+  test("start params has note", async () => {
     renderWithProviders(<>
       <FromToConfig type="x" />
       <SinCosConfig type="x" config={DEFAULT_CONFIG} />
     </>);
     const select = screen.getAllByTestId('from-to-easing-select');
-    userEvent.selectOptions(select[0], "sin");
+    await userEvent.selectOptions(select[0], "sin");
 
     const headers = screen.getAllByRole("heading", { level: 2 });
-    userEvent.click(headers[1]);
+    await userEvent.click(headers[1]);
 
     const target = screen.getByText("※単位: 度");
     expect(target).toBeInTheDocument();

@@ -67,7 +67,7 @@ describe("bg color", () => {
     const target = screen.getByTestId("colorpicker-color");
     expect(target).toHaveStyle({ backgroundColor: "#008000" });
   });
-  test("ColorPicker.setColor is setBgColor", () => {
+  test("ColorPicker.setColor is setBgColor", async () => {
     const mockFn = vi.fn();
     render(
       <ViewSettings
@@ -78,7 +78,7 @@ describe("bg color", () => {
       />
     );
 
-    userEvent.click(screen.getByTestId("colorpicker-color"));
+    await userEvent.click(screen.getByTestId("colorpicker-color"));
 
     expect(mockFn).toBeCalledWith("#FFFFFF");
   });
@@ -110,13 +110,13 @@ describe("bg image", () => {
 
     const target = screen.getByTestId("drop-player-bg-image");
     const file = new File(["test"], "testBgImage.png", { type: "image/png" });
-    userEvent.upload(target, file);
+    await userEvent.upload(target, file);
 
     await waitFor(() => {
       expect(mockFn).toBeCalledWith("data:image/png;base64,dGVzdA==");
     });
   });
-  test("reset, then call setBgImage with null", () => {
+  test("reset, then call setBgImage with null", async () => {
     const mockFn = vi.fn();
     render(
       <ViewSettings
@@ -126,7 +126,7 @@ describe("bg image", () => {
       />
     );
     const target = screen.getByText("クリア");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(mockFn).toBeCalledWith(null);
   });
@@ -161,7 +161,7 @@ describe("show Border", () => {
 
     expect(target).toBeChecked();
   });
-  test("not checked and click, then call setIsShowCelBorder with true", () => {
+  test("not checked and click, then call setIsShowCelBorder with true", async () => {
     const mockFn = vi.fn();
     render(
       <ViewSettings
@@ -174,11 +174,11 @@ describe("show Border", () => {
 
     const target = screen.getByLabelText("枠表示:");
 
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(mockFn).toBeCalledWith(true);
   });
-  test("checked and click, then call setIsShowCelBorder with false", () => {
+  test("checked and click, then call setIsShowCelBorder with false", async () => {
     const mockFn = vi.fn();
     render(
       <ViewSettings
@@ -191,7 +191,7 @@ describe("show Border", () => {
 
     const target = screen.getByLabelText("枠表示:");
 
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(mockFn).toBeCalledWith(false);
   });
@@ -242,7 +242,7 @@ describe("zoom", () => {
 
     expect(target).toHaveTextContent("1x");
   });
-  test("change, then call setZoom", () => {
+  test("change, then call setZoom", async () => {
     const mockFn = vi.fn();
     render(
       <ViewSettings
@@ -255,7 +255,7 @@ describe("zoom", () => {
       />
     );
 
-    userEvent.selectOptions(screen.getByRole("combobox"), ["2"]);
+    await userEvent.selectOptions(screen.getByRole("combobox"), ["2"]);
 
     expect(mockFn).toBeCalledWith("2");
   });

@@ -95,16 +95,16 @@ describe("<Configs />", () => {
     const target = screen.getByText("表示タイミング");
     expect(target).toBeInTheDocument();
   });
-  test("change CelName", () => {
+  test("change CelName", async () => {
     renderWithProviders(<App />);
 
     const header = screen.getByRole("heading", { name: "セル1" });
     expect(header).toBeInTheDocument();
 
-    userEvent.click(header);
+    await userEvent.click(header);
     const target = screen.getByDisplayValue("セル1");
-    userEvent.type(target, "a");
-    userEvent.click(screen.getByText("素材データ"));
+    await userEvent.type(target, "a");
+    await userEvent.click(screen.getByText("素材データ"));
 
     expect(header).toHaveTextContent("セル1a");
   });
@@ -183,7 +183,7 @@ describe("for Electron", () => {
       expect(target).toBeInTheDocument();
       delete window.initArgs;
     });
-    test("call Save, then save data", () => {
+    test("call Save, then save data", async () => {
       let save;
       window.appMenu.onReceiveSave = (listener) => {
         save = listener;
@@ -192,10 +192,10 @@ describe("for Electron", () => {
 
       // セル1の名前を適当に変更する
       const header = screen.getByRole("heading", { name: "セル1" });
-      userEvent.click(header);
+      await userEvent.click(header);
       const input = screen.getByDisplayValue("セル1");
-      userEvent.type(input, "a");
-      userEvent.click(screen.getByText("Material Data"));
+      await userEvent.type(input, "a");
+      await userEvent.click(screen.getByText("Material Data"));
 
       expect(header).toHaveTextContent("セル1a");
 
@@ -207,7 +207,7 @@ describe("for Electron", () => {
       const [arg] = target.mock.calls[target.mock.calls.length - 1];
       expect(arg).toMatchObject({ celList: { list: [{ name: "セル1a" }] } });
     });
-    test("call SaveAs, then save data with saveDataAs", () => {
+    test("call SaveAs, then save data with saveDataAs", async () => {
       let saveAs;
       window.appMenu.onReceiveSaveAs = (listener) => {
         saveAs = listener;
@@ -216,10 +216,10 @@ describe("for Electron", () => {
 
       // セル1の名前を適当に変更する
       const header = screen.getByRole("heading", { name: "セル1" });
-      userEvent.click(header);
+      await userEvent.click(header);
       const input = screen.getByDisplayValue("セル1");
-      userEvent.type(input, "a");
-      userEvent.click(screen.getByText("Material Data"));
+      await userEvent.type(input, "a");
+      await userEvent.click(screen.getByText("Material Data"));
 
       expect(header).toHaveTextContent("セル1a");
 
@@ -231,7 +231,7 @@ describe("for Electron", () => {
       const [arg] = target.mock.calls[target.mock.calls.length - 1];
       expect(arg).toMatchObject({ celList: { list: [{ name: "セル1a" }] } });
     });
-    test("call RequestState, then respond with current state", () => {
+    test("call RequestState, then respond with current state", async () => {
       let requestState;
       window.appMenu.onRequestState = (listener) => {
         requestState = listener;
@@ -240,10 +240,10 @@ describe("for Electron", () => {
 
       // セル1の名前を適当に変更する
       const header = screen.getByRole("heading", { name: "セル1" });
-      userEvent.click(header);
+      await userEvent.click(header);
       const input = screen.getByDisplayValue("セル1");
-      userEvent.type(input, "a");
-      userEvent.click(screen.getByText("Material Data"));
+      await userEvent.type(input, "a");
+      await userEvent.click(screen.getByText("Material Data"));
 
       expect(header).toHaveTextContent("セル1a");
 
@@ -267,7 +267,7 @@ describe("for Electron", () => {
       const header = screen.getByRole("heading", { name: "セル1b" });
       expect(header).toBeInTheDocument();
     });
-    test('call New, then reset all data', () => {
+    test('call New, then reset all data', async () => {
       let newFunc;
       window.appMenu.onReceiveNew = (listener) => {
         newFunc = listener;
@@ -276,10 +276,10 @@ describe("for Electron", () => {
 
       // セル1の名前を適当に変更する
       const header = screen.getByRole("heading", { name: "セル1" });
-      userEvent.click(header);
+      await userEvent.click(header);
       const input = screen.getByDisplayValue("セル1");
-      userEvent.type(input, "a");
-      userEvent.click(screen.getByText("Material Data"));
+      await userEvent.type(input, "a");
+      await userEvent.click(screen.getByText("Material Data"));
 
       expect(header).toHaveTextContent("セル1a");
       act(() => {

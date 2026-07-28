@@ -15,10 +15,10 @@ describe("type is red", () => {
     const target = screen.getByTestId("color-range-input-number");
     expect(target).toBeInTheDocument();
   });
-  test("range has red style", () => {
+  test("range has red style", async () => {
     render(<NumberInput type="red" setVal={vi.fn()} />);
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     expect(target).toHaveStyle({ backgroundColor: "#ffcdd2" });
@@ -31,10 +31,10 @@ describe("type is green", () => {
     const target = screen.getByTestId("color-range-input-number");
     expect(target).toBeInTheDocument();
   });
-  test("range has green style", () => {
+  test("range has green style", async () => {
     render(<NumberInput type="green" setVal={vi.fn()} />);
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     expect(target).toHaveStyle({ backgroundColor: "#c8e6c9" });
@@ -47,10 +47,10 @@ describe("type is blue", () => {
     const target = screen.getByTestId("color-range-input-number");
     expect(target).toBeInTheDocument();
   });
-  test("range has blue style", () => {
+  test("range has blue style", async () => {
     render(<NumberInput type="blue" setVal={vi.fn()} />);
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     expect(target).toHaveStyle({ backgroundColor: "#c5cae9" });
@@ -63,10 +63,10 @@ describe("type is tkSat", () => {
     const target = screen.getByTestId("color-range-input-number");
     expect(target).toBeInTheDocument();
   });
-  test("range has normal style", () => {
+  test("range has normal style", async () => {
     render(<NumberInput type="tkSat" setVal={vi.fn()} />);
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     expect(target).toHaveStyle({ backgroundColor: "#e0e0e0" });

@@ -20,20 +20,20 @@ describe("Play / Pause", () => {
       const target = screen.queryByTitle("play");
       expect(target).toBeInTheDocument();
     });
-    test("click, then call playAnimation", () => {
+    test("click, then call playAnimation", async () => {
       render(<Controller frame={0} maxFrame={10} />);
 
       const target = screen.getByTitle("play");
-      userEvent.click(target);
+      await userEvent.click(target);
 
       expect(window.requestAnimationFrame).toBeCalledTimes(1);
     });
-    test("if runnning, then hide play button", () => {
+    test("if runnning, then hide play button", async () => {
       render(<Controller frame={0} maxFrame={10} />);
 
       // play
       const target = screen.getByTitle("play");
-      userEvent.click(target);
+      await userEvent.click(target);
 
       expect(screen.queryByTitle("play")).not.toBeInTheDocument();
     });
@@ -45,23 +45,23 @@ describe("Play / Pause", () => {
       const target = screen.queryByTitle("pause");
       expect(target).not.toBeInTheDocument();
     });
-    test("if runnning, then show pause button", () => {
+    test("if runnning, then show pause button", async () => {
       render(<Controller frame={0} maxFrame={10} />);
 
       const play = screen.getByTitle("play");
-      userEvent.click(play);
+      await userEvent.click(play);
 
       const target = screen.queryByTitle("pause");
       expect(target).toBeInTheDocument();
     });
-    test("click, then call stopAnimation", () => {
+    test("click, then call stopAnimation", async () => {
       render(<Controller frame={0} maxFrame={10} />);
 
       const play = screen.getByTitle("play");
-      userEvent.click(play);
+      await userEvent.click(play);
 
       const target = screen.getByTitle("pause");
-      userEvent.click(target);
+      await userEvent.click(target);
 
       expect(window.cancelAnimationFrame).toBeCalledTimes(1);
     });
@@ -75,71 +75,71 @@ describe("repeat", () => {
     expect(target).toBeInTheDocument();
     expect(target).toHaveStyle({ color: "#eeeeee" });
   });
-  test("click once, then style is On", () => {
+  test("click once, then style is On", async () => {
     render(<Controller frame={0} maxFrame={10} />);
 
     const repeat = screen.getByTitle("repeat");
-    userEvent.click(repeat);
+    await userEvent.click(repeat);
 
     const target = screen.queryByTitle("repeat");
     expect(target).toBeInTheDocument();
     expect(target).toHaveStyle({ color: "#fafafa" });
   });
-  test("click twice, then style is Off", () => {
+  test("click twice, then style is Off", async () => {
     render(<Controller frame={0} maxFrame={10} />);
 
     const repeat = screen.getByTitle("repeat");
-    userEvent.click(repeat);
-    userEvent.click(repeat);
+    await userEvent.click(repeat);
+    await userEvent.click(repeat);
 
     const target = screen.queryByTitle("repeat");
     expect(target).toBeInTheDocument();
     expect(target).toHaveStyle({ color: "#eeeeee" });
   });
-  test("click, then call stopAnimation", () => {
+  test("click, then call stopAnimation", async () => {
     render(<Controller frame={0} maxFrame={10} />);
 
     const target = screen.getByTitle("repeat");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(window.cancelAnimationFrame).toBeCalledTimes(1);
   });
 });
 
 describe("Prev / Next", () => {
-  test("click prev, then call prevFrame", () => {
+  test("click prev, then call prevFrame", async () => {
     const mockFn = vi.fn();
     render(<Controller frame={3} maxFrame={10} prevFrame={mockFn} />);
 
     const target = screen.getByTitle("prev");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(mockFn).toBeCalledTimes(1);
   });
-  test("click prev, then call stopAnimation", () => {
+  test("click prev, then call stopAnimation", async () => {
     const mockFn = vi.fn();
     render(<Controller frame={3} maxFrame={10} prevFrame={mockFn} />);
 
     const target = screen.getByTitle("prev");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(window.cancelAnimationFrame).toBeCalledTimes(1);
   });
-  test("click next, then call nextFrame", () => {
+  test("click next, then call nextFrame", async () => {
     const mockFn = vi.fn();
     render(<Controller frame={3} maxFrame={10} nextFrame={mockFn} />);
 
     const target = screen.getByTitle("next");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(mockFn).toBeCalledTimes(1);
   });
-  test("click next, then call stopAnimation", () => {
+  test("click next, then call stopAnimation", async () => {
     const mockFn = vi.fn();
     render(<Controller frame={3} maxFrame={10} nextFrame={mockFn} />);
 
     const target = screen.getByTitle("next");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(window.cancelAnimationFrame).toBeCalledTimes(1);
   });
@@ -170,7 +170,7 @@ describe("maxFrame", () => {
 });
 
 describe("2回目の再生", () => {
-  test("1回目停止後に再生しても timeCounter がリセットされており即時フレームスキップしない", () => {
+  test("1回目停止後に再生しても timeCounter がリセットされており即時フレームスキップしない", async () => {
     let animationCallback;
     window.requestAnimationFrame.mockImplementation((cb) => {
       animationCallback = cb;
@@ -181,15 +181,15 @@ describe("2回目の再生", () => {
     render(<Controller frame={0} maxFrame={20} setFrame={mockSetFrame} />);
 
     // 1回目の再生 - prevTimeStamp を 1000 に設定
-    userEvent.click(screen.getByTitle("play"));
+    await userEvent.click(screen.getByTitle("play"));
     act(() => { animationCallback(1000); });
 
     // 停止
-    userEvent.click(screen.getByTitle("pause"));
+    await userEvent.click(screen.getByTitle("pause"));
 
     // 2回目の再生（6000ms 後を模倣）
     mockSetFrame.mockClear();
-    userEvent.click(screen.getByTitle("play"));
+    await userEvent.click(screen.getByTitle("play"));
     // リセット済みなら prevTimestamp=undefined → delta=0 → フレーム進まない
     // リセット未実施なら 6000-1000=5000ms → 150フレーム分スキップ
     act(() => { animationCallback(6000); });
@@ -199,7 +199,7 @@ describe("2回目の再生", () => {
 });
 
 describe("停止ボタンで先頭に戻した後の再生", () => {
-  test("最後まで自動再生された後に停止→再生しても、いきなり最終フレームに飛ばない", () => {
+  test("最後まで自動再生された後に停止→再生しても、いきなり最終フレームに飛ばない", async () => {
     let animationCallback;
     window.requestAnimationFrame.mockImplementation((cb) => {
       animationCallback = cb;
@@ -212,7 +212,7 @@ describe("停止ボタンで先頭に戻した後の再生", () => {
     );
 
     // リピート無しで最後まで自動再生され、内部カウンタが maxFrame-1 (19) で止まった状態を再現
-    userEvent.click(screen.getByTitle("play"));
+    await userEvent.click(screen.getByTitle("play"));
     act(() => {
       animationCallback(0);
     });
@@ -221,12 +221,12 @@ describe("停止ボタンで先頭に戻した後の再生", () => {
     });
 
     // 停止ボタン → Redux 側の frame は 0 になる想定（props を更新して再現）
-    userEvent.click(screen.getByTitle("stop"));
+    await userEvent.click(screen.getByTitle("stop"));
     rerender(<Controller frame={0} maxFrame={20} setFrame={mockSetFrame} />);
 
     // 再生ボタン
     mockSetFrame.mockClear();
-    userEvent.click(screen.getByTitle("play"));
+    await userEvent.click(screen.getByTitle("play"));
 
     // 1フレーム分だけ時間を進める（最終フレームへ飛ぶバグがあれば setFrame(19) が呼ばれる）
     act(() => {
@@ -243,37 +243,37 @@ describe("停止ボタンで先頭に戻した後の再生", () => {
 
 describe("handleKeyDown", () => {
   describe("Left key down", () => {
-    test("then call prevFrame", () => {
+    test("then call prevFrame", async () => {
       const mockFn = vi.fn();
       render(<Controller frame={3} maxFrame={10} prevFrame={mockFn} />);
 
-      userEvent.keyboard("{arrowleft}");
+      await userEvent.keyboard("{arrowleft}");
 
       expect(mockFn).toBeCalledTimes(1);
     });
-    test("then call stopAnimation", () => {
+    test("then call stopAnimation", async () => {
       const mockFn = vi.fn();
       render(<Controller frame={3} maxFrame={10} prevFrame={mockFn} />);
 
-      userEvent.keyboard("{arrowleft}");
+      await userEvent.keyboard("{arrowleft}");
 
       expect(window.cancelAnimationFrame).toBeCalledTimes(1);
     });
   });
   describe("Right key down", () => {
-    test("then call nextFrame", () => {
+    test("then call nextFrame", async () => {
       const mockFn = vi.fn();
       render(<Controller frame={3} maxFrame={10} nextFrame={mockFn} />);
 
-      userEvent.keyboard("{arrowright}");
+      await userEvent.keyboard("{arrowright}");
 
       expect(mockFn).toBeCalledTimes(1);
     });
-    test("then call stopAnimation", () => {
+    test("then call stopAnimation", async () => {
       const mockFn = vi.fn();
       render(<Controller frame={3} maxFrame={10} nextFrame={mockFn} />);
 
-      userEvent.keyboard("{arrowright}");
+      await userEvent.keyboard("{arrowright}");
 
       expect(window.cancelAnimationFrame).toBeCalledTimes(1);
     });
@@ -297,12 +297,12 @@ describe("handleKeyDown", () => {
 
     expect(window.requestAnimationFrame).toBeCalled();
   });
-  test("Space key down while running, then call stopAnimation", () => {
+  test("Space key down while running, then call stopAnimation", async () => {
     render(<Controller frame={3} maxFrame={10} />);
 
     // 再生開始
     const play = screen.getByTitle("play");
-    userEvent.click(play);
+    await userEvent.click(play);
 
     // スペースキーで停止
     fireEvent.keyDown(document, {

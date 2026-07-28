@@ -53,19 +53,19 @@ describe("ViewSettings", () => {
     const target = screen.getByLabelText("枠表示:");
     expect(target).not.toBeChecked();
   });
-  test("click once checkbox, then isShowCelBorder is true", () => {
+  test("click once checkbox, then isShowCelBorder is true", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
-    userEvent.click(target);
+    await userEvent.click(target);
     expect(target).toBeChecked();
   });
-  test("click twice checkbox, then isShowCelBorder is false", () => {
+  test("click twice checkbox, then isShowCelBorder is false", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     const target = screen.getByLabelText("枠表示:");
-    userEvent.click(target);
-    userEvent.click(target);
+    await userEvent.click(target);
+    await userEvent.click(target);
     expect(target).not.toBeChecked();
   });
 });
@@ -136,31 +136,31 @@ describe("Controller", () => {
     const target = screen.getByTitle("play");
     expect(target).toBeInTheDocument();
   });
-  test("start, then show Pause button", () => {
+  test("start, then show Pause button", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     const play = screen.getByTitle("play");
-    userEvent.click(play);
+    await userEvent.click(play);
 
     const target = screen.getByTitle("pause");
     expect(target).toBeInTheDocument();
   });
-  test("pause, then show Play button", () => {
+  test("pause, then show Play button", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     const play = screen.getByTitle("play");
-    userEvent.click(play);
+    await userEvent.click(play);
 
     const pause = screen.getByTitle("pause");
-    userEvent.click(pause);
+    await userEvent.click(pause);
 
     expect(screen.getByTitle("play")).toBeInTheDocument();
   });
-  test("repeat, then set Repeat ON", () => {
+  test("repeat, then set Repeat ON", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     const repeat = screen.getByTitle("repeat");
-    userEvent.click(repeat);
+    await userEvent.click(repeat);
 
     expect(screen.getByTitle("repeat")).toHaveStyle({ color: "#fafafa" });
   });
@@ -173,18 +173,18 @@ describe("Controller", () => {
 
     expect(target).toHaveValue(5);
   });
-  test("next, then call setGlobalFrame +1", () => {
+  test("next, then call setGlobalFrame +1", async () => {
     renderWithProviders(<Player celList={[]} />);
     // 一旦5にする
     const frame = screen.getByTestId("controller-frame");
     fireEvent.change(frame, { target: { value: "5" } });
 
     const target = screen.getByTitle("next");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(frame).toHaveValue(6);
   });
-  test("prev, then call setGlobalFrame -1", () => {
+  test("prev, then call setGlobalFrame -1", async () => {
     renderWithProviders(<Player celList={[]} />);
 
     // 一旦5にする
@@ -192,7 +192,7 @@ describe("Controller", () => {
     fireEvent.change(frame, { target: { value: "5" } });
 
     const target = screen.getByTitle("prev");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(frame).toHaveValue(4);
   });
@@ -205,13 +205,13 @@ describe("Info", () => {
     const target = screen.queryByText("INFO");
     expect(target).not.toBeInTheDocument();
   });
-  test("click Cel, then show message", () => {
+  test("click Cel, then show message", async () => {
     renderWithProviders(
       <Player celList={[defaultCelConfig]} material={defaultMaterial} />
     );
 
     const target = screen.getByTitle("mock-set-msg");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(screen.getByText("INFO")).toBeInTheDocument();
   });

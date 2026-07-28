@@ -15,7 +15,7 @@ test("config.easing is fixed, then not has addSelect", () => {
   const target = screen.queryByTestId("from-to-easing-select-add");
   expect(target).not.toBeInTheDocument();
 });
-test("change Easing, then new Config add is In and call update", () => {
+test("change Easing, then new Config add is In and call update", async () => {
   const mockFn = vi.fn();
   render(
     <EasingConfig
@@ -26,12 +26,12 @@ test("change Easing, then new Config add is In and call update", () => {
   );
 
   const target = screen.getByTestId("from-to-easing-select");
-  userEvent.selectOptions(target, "easeCircle");
+  await userEvent.selectOptions(target, "easeCircle");
 
   expect(mockFn).toBeCalledWith("ABC", "easeCircle", "In");
 });
 
-test("Change Add, then call update", () => {
+test("Change Add, then call update", async () => {
   const mockFn = vi.fn();
   render(
     <EasingConfig
@@ -42,7 +42,7 @@ test("Change Add, then call update", () => {
   );
 
   const target = screen.getByTestId("from-to-easing-select-add");
-  userEvent.selectOptions(target, "Out");
+  await userEvent.selectOptions(target, "Out");
 
   expect(mockFn).toBeCalledWith("DEF", "easeCubic", "Out");
 });

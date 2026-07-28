@@ -66,7 +66,7 @@ describe("isSelected", () => {
 
 // * 一旦、座標系のテストは無し。
 describe("onClick", () => {
-  test("index: 1, Clicked, then call setCelIndex(1)", () => {
+  test("index: 1, Clicked, then call setCelIndex(1)", async () => {
     const mockFn = vi.fn();
     render(
       <TimeCelView
@@ -78,11 +78,11 @@ describe("onClick", () => {
       />
     );
 
-    userEvent.click(screen.getByTestId("time-cel-view"));
+    await userEvent.click(screen.getByTestId("time-cel-view"));
 
     expect(mockFn).toBeCalledWith(1);
   });
-  test("index: 42, Clicked, then call setCelIndex(42)", () => {
+  test("index: 42, Clicked, then call setCelIndex(42)", async () => {
     const mockFn = vi.fn();
     render(
       <TimeCelView
@@ -94,11 +94,11 @@ describe("onClick", () => {
       />
     );
 
-    userEvent.click(screen.getByTestId("time-cel-view"));
+    await userEvent.click(screen.getByTestId("time-cel-view"));
 
     expect(mockFn).toBeCalledWith(42);
   });
-  test("Ctrl+Click, then call toggleSelectIndex", () => {
+  test("Ctrl+Click, then call toggleSelectIndex", async () => {
     const mockToggle = vi.fn();
     const mockSetCelIndex = vi.fn();
     render(
@@ -112,7 +112,7 @@ describe("onClick", () => {
       />
     );
 
-    userEvent.click(screen.getByTestId("time-cel-view"), { ctrlKey: true });
+    fireEvent.mouseDown(screen.getByTestId("time-cel-view"), { ctrlKey: true });
 
     expect(mockToggle).toBeCalledWith(1);
     expect(mockSetCelIndex).not.toBeCalled();

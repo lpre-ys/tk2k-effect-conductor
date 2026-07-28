@@ -138,7 +138,7 @@ describe("RoundTrip", () => {
     const target = screen.getByTestId("from-to-options-round-trip");
     expect(target).toBeChecked();
   });
-  test("change to True, then call update", () => {
+  test("change to True, then call update", async () => {
     const mockFn = vi.fn();
     render(
       <Options
@@ -150,10 +150,10 @@ describe("RoundTrip", () => {
     );
 
     const target = screen.getByTestId("from-to-options-round-trip");
-    userEvent.click(target);
+    await userEvent.click(target);
     expect(mockFn).toBeCalledWith("test", true);
   });
-  test("change to False, then call update", () => {
+  test("change to False, then call update", async () => {
     const mockFn = vi.fn();
     render(
       <Options
@@ -165,7 +165,7 @@ describe("RoundTrip", () => {
     );
 
     const target = screen.getByTestId("from-to-options-round-trip");
-    userEvent.click(target);
+    await userEvent.click(target);
     expect(mockFn).toBeCalledWith("test", false);
   });
 });

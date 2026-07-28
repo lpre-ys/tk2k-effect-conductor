@@ -12,12 +12,12 @@ describe("Title", () => {
     expect(target).toHaveValue("初期表示");
   });
 
-  test("change, then call setTitle value", () => {
+  test("change, then call setTitle value", async () => {
     const mockFn = vi.fn();
     renderWithProviders(<Export setTitle={mockFn} />);
 
     const target = screen.getByLabelText("名前:");
-    userEvent.type(target, "テストネーム");
+    await userEvent.type(target, "テストネーム");
 
     expect(mockFn).toBeCalledWith("テストネーム");
   });
@@ -31,25 +31,25 @@ describe("image name", () => {
     expect(target).toBeInTheDocument();
     expect(target).toHaveValue("素材初期表示");
   });
-  test("change, then call setImage", () => {
+  test("change, then call setImage", async () => {
     const mockFn = vi.fn();
     renderWithProviders(<Export setImage={mockFn} />);
 
     const target = screen.getByLabelText("素材ファイル:");
-    userEvent.type(target, "テスト素材名");
+    await userEvent.type(target, "テスト素材名");
 
     expect(mockFn).toBeCalledWith("テスト素材名");
   });
 });
 
 describe("COPY button", () => {
-  test("writeData is not function, then noop", () => {
+  test("writeData is not function, then noop", async () => {
     renderWithProviders(<Export />);
 
     const target = screen.getByText("COPY!!");
     expect(target).toBeInTheDocument();
 
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(target).not.toBeDisabled();
   });
@@ -62,24 +62,31 @@ describe("COPY button", () => {
 
     const target = screen.getByText("COPY!!");
 
-    userEvent.click(target);
+    await userEvent.click(target);
 
     await waitFor(() => {
       expect(mockFn).toBeCalled();
     });
   });
   test("writeData is resolved, then button is Enabled", async () => {
+    let resolveWriteData;
     const mockFn = vi.fn();
-    mockFn.mockResolvedValue(true);
+    mockFn.mockReturnValue(
+      new Promise((resolve) => {
+        resolveWriteData = resolve;
+      })
+    );
     window.tk2k = { writeData: mockFn };
 
     renderWithProviders(<Export />);
 
     const target = screen.getByText("COPY!!");
 
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(target).toBeDisabled();
+
+    resolveWriteData(true);
 
     await waitFor(() => {
       expect(target).not.toBeDisabled();
@@ -89,33 +96,33 @@ describe("COPY button", () => {
 });
 
 describe("Options", () => {
-  test("update target", () => {
+  test("update target", async () => {
     renderWithProviders(<Export />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-target");
 
-    userEvent.selectOptions(target, "0");
+    await userEvent.selectOptions(target, "0");
     expect(target).toHaveValue("0");
 
-    userEvent.selectOptions(target, "1");
+    await userEvent.selectOptions(target, "1");
     expect(target).toHaveValue("1");
   });
-  test("update yLine", () => {
+  test("update yLine", async () => {
     renderWithProviders(<Export />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-yline");
 
-    userEvent.selectOptions(target, "0");
+    await userEvent.selectOptions(target, "0");
     expect(target).toHaveValue("0");
 
-    userEvent.selectOptions(target, "1");
+    await userEvent.selectOptions(target, "1");
     expect(target).toHaveValue("1");
 
-    userEvent.selectOptions(target, "2");
+    await userEvent.selectOptions(target, "2");
     expect(target).toHaveValue("2");
   });
   test("load", async () => {
@@ -132,10 +139,10 @@ describe("Options", () => {
     renderWithProviders(<Export />);
 
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText("クリップボードから読み込み");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     await waitFor(() => {
       expect(screen.getByText("クリップボードから読み込み")).toBeInTheDocument();
@@ -158,16 +165,16 @@ describe("Options", () => {
     renderWithProviders(<Export />);
 
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const loadButton = screen.getByText("クリップボードから読み込み");
-    userEvent.click(loadButton);
+    await userEvent.click(loadButton);
 
     await waitFor(() => {
       expect(screen.getByText("クリップボードから読み込み")).toBeInTheDocument();
     })
     const target = screen.getByText('クリア');
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(screen.getByText(/設定無し/)).toBeInTheDocument();
   })

@@ -37,7 +37,7 @@ test("type Easing then show FromToConfig", () => {
 });
 
 // update
-test("type Fixed, change value, then update Value", () => {
+test("type Fixed, change value, then update Value", async () => {
   renderWithProviders(
     <ParameterConfig type="x" easing="fixed" />
   );
@@ -45,8 +45,8 @@ test("type Fixed, change value, then update Value", () => {
   const target = screen.getByTestId("number-input-fixed");
   expect(target).toHaveValue(0);  // xの初期値は0
 
-  userEvent.clear(target);
-  userEvent.type(target, "7");
+  await userEvent.clear(target);
+  await userEvent.type(target, "7");
 
   expect(target).toHaveValue(7);
 });
