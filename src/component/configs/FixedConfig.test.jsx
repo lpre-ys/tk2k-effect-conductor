@@ -76,7 +76,7 @@ describe("Header", () => {
       const target = screen.queryByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
-    test("ckick Icon, then reset value to config", () => {
+    test("ckick Icon, then reset value to config", async () => {
       renderWithProviders(
         <FixedConfig
           type="x"
@@ -89,7 +89,7 @@ describe("Header", () => {
       fireEvent.change(from, { target: { value: "" } });
 
       const icon = screen.getByTestId("config-header-icon-error");
-      userEvent.click(icon);
+      await userEvent.click(icon);
 
       expect(icon).not.toBeInTheDocument();
       expect(screen.getByTestId("number-input-fixed")).toHaveValue(12);

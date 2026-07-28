@@ -45,12 +45,12 @@ describe("isCustom", () => {
       expect(target).not.toBeInTheDocument();
     });
   });
-  test("button click, then call setIsCustom", () => {
+  test("button click, then call setIsCustom", async () => {
     const fn = vi.fn();
     render(<Options isOption={true} isCustom={true} setIsCustom={fn} />);
 
     const button = screen.getByRole("button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     expect(fn).toBeCalledWith(false);
   });

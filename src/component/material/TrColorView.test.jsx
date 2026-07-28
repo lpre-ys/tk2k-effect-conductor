@@ -32,19 +32,19 @@ describe("isShowTrInput", () => {
     const target = screen.getByTestId("trcv-text-view");
     expect(target).toBeInTheDocument();
   });
-  test("click once, then isShowTrInput is true", () => {
+  test("click once, then isShowTrInput is true", async () => {
     render(<TrColorView trColor={defaultColor} />);
 
-    userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+    await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
 
     const target = screen.getByTestId("trcv-input-r");
     expect(target).toBeInTheDocument();
   });
-  test("click twice, then isShowTrInput is false", () => {
+  test("click twice, then isShowTrInput is false", async () => {
     render(<TrColorView trColor={defaultColor} />);
 
-    userEvent.click(screen.getByTestId("trcv-label-wrapper"));
-    userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+    await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+    await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
 
     const target = screen.getByTestId("trcv-text-view");
     expect(target).toBeInTheDocument();
@@ -60,26 +60,26 @@ test("textView is rgb(trColor)", () => {
 
 describe("trColorInput", () => {
   describe("value", () => {
-    test("R value is trColor.r", () => {
+    test("R value is trColor.r", async () => {
       render(<TrColorView trColor={{ r: 11, g: 22, b: 33 }} />);
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
 
       const target = screen.getByTestId("trcv-input-r");
       expect(target).toHaveValue("11");
     });
-    test("G value is trColor.g", () => {
+    test("G value is trColor.g", async () => {
       render(<TrColorView trColor={{ r: 11, g: 22, b: 33 }} />);
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
 
       const target = screen.getByTestId("trcv-input-g");
       expect(target).toHaveValue("22");
     });
-    test("B value is trColor.b", () => {
+    test("B value is trColor.b", async () => {
       render(<TrColorView trColor={{ r: 11, g: 22, b: 33 }} />);
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
 
       const target = screen.getByTestId("trcv-input-b");
       expect(target).toHaveValue("33");
@@ -96,7 +96,7 @@ describe("trColorInput", () => {
         />
       );
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
       const target = screen.getByTestId("trcv-input-r");
 
       fireEvent.change(target, { target: { value: 4 } });
@@ -122,7 +122,7 @@ describe("trColorInput", () => {
         />
       );
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
       const target = screen.getByTestId("trcv-input-g");
 
       fireEvent.change(target, { target: { value: 6 } });
@@ -148,7 +148,7 @@ describe("trColorInput", () => {
         />
       );
 
-      userEvent.click(screen.getByTestId("trcv-label-wrapper"));
+      await userEvent.click(screen.getByTestId("trcv-label-wrapper"));
       const target = screen.getByTestId("trcv-input-b");
 
       fireEvent.change(target, { target: { value: 8 } });

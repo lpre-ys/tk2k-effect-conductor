@@ -17,7 +17,7 @@ test("INIT, then hide dialog", () => {
   expect(target).toHaveStyle({ display: "none" });
 });
 
-test("hover icon, then show dialog", () => {
+test("hover icon, then show dialog", async () => {
   render(<Tips />);
 
   const target = screen.getByTestId("export-tips-dialog");
@@ -25,11 +25,11 @@ test("hover icon, then show dialog", () => {
 
   expect(target).toHaveStyle({ display: "none" });
 
-  userEvent.hover(icon);
+  await userEvent.hover(icon);
   expect(target).toHaveStyle({ display: "block" });
 });
 
-test("unhover icon, then hide dialog", () => {
+test("unhover icon, then hide dialog", async () => {
   render(<Tips />);
 
   const target = screen.getByTestId("export-tips-dialog");
@@ -37,9 +37,9 @@ test("unhover icon, then hide dialog", () => {
 
   expect(target).toHaveStyle({ display: "none" });
 
-  userEvent.hover(icon);
+  await userEvent.hover(icon);
   expect(target).toHaveStyle({ display: "block" });
 
-  userEvent.unhover(icon);
+  await userEvent.unhover(icon);
   expect(target).toHaveStyle({ display: "none" });
 });

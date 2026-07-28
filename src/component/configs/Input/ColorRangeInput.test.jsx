@@ -130,15 +130,15 @@ describe("focus", () => {
     const target = screen.queryByRole("slider");
     expect(target).not.toBeInTheDocument();
   });
-  test("focus Number, then Range is show", () => {
+  test("focus Number, then Range is show", async () => {
     render(<ColorRangeInput setVal={vi.fn()} />);
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     expect(target).toBeInTheDocument();
   });
-  test("focus Number to Other, then Range is hide", () => {
+  test("focus Number to Other, then Range is hide", async () => {
     render(
       <>
         <ColorRangeInput setVal={vi.fn()} />
@@ -146,39 +146,39 @@ describe("focus", () => {
       </>
     );
 
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole("textbox"));
+    await userEvent.click(screen.getByRole("textbox"));
     expect(screen.queryByRole("slider")).not.toBeInTheDocument();
   });
-  test("focus Number to Range, then Range is show", () => {
+  test("focus Number to Range, then Range is show", async () => {
     render(
       <>
         <ColorRangeInput setVal={vi.fn()} />
         <input type="text" name="dummy" />
       </>
     );
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
-    userEvent.click(screen.getByRole("slider"));
+    await userEvent.click(screen.getByRole("slider"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
   });
-  test("focus Range to Other, then Range is hide", () => {
+  test("focus Range to Other, then Range is hide", async () => {
     render(
       <>
         <ColorRangeInput setVal={vi.fn()} />
         <input type="text" name="dummy" />
       </>
     );
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
-    userEvent.hover(screen.getByRole("slider"));
+    await userEvent.hover(screen.getByRole("slider"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
-    userEvent.unhover(screen.getByRole("slider"));
+    await userEvent.unhover(screen.getByRole("slider"));
     expect(screen.getByRole("slider")).toBeInTheDocument();
 
-    userEvent.click(screen.getByRole("textbox"));
+    await userEvent.click(screen.getByRole("textbox"));
     expect(screen.queryByRole("slider")).not.toBeInTheDocument();
   });
 });
@@ -193,11 +193,11 @@ describe("update", () => {
 
     expect(setVal).toBeCalledWith("11");
   });
-  test("change Range and Draging, then not call setVal", () => {
+  test("change Range and Draging, then not call setVal", async () => {
     const setVal = vi.fn();
 
     render(<ColorRangeInput setVal={setVal} value={42} />);
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     fireEvent.mouseDown(target);
@@ -205,11 +205,11 @@ describe("update", () => {
 
     expect(setVal).not.toBeCalledWith("22");
   });
-  test("change Range and Dragend, then call setVal", () => {
+  test("change Range and Dragend, then call setVal", async () => {
     const setVal = vi.fn();
 
     render(<ColorRangeInput setVal={setVal} value={42} />);
-    userEvent.click(screen.getByRole("spinbutton"));
+    await userEvent.click(screen.getByRole("spinbutton"));
 
     const target = screen.getByRole("slider");
     fireEvent.mouseDown(target);

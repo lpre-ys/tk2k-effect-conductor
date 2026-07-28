@@ -16,103 +16,103 @@ describe("show/hide", () => {
     const target = screen.queryByTestId("export-options-container");
     expect(target).not.toBeInTheDocument();
   });
-  test("click button, then show content", () => {
+  test("click button, then show content", async () => {
     render(<Options />);
 
     const button = screen.getByTestId("export-options-button");
 
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-container");
     expect(target).toBeInTheDocument();
   });
-  test("click button twice, then hide content", () => {
+  test("click button twice, then hide content", async () => {
     render(<Options />);
 
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-container");
     expect(target).toBeInTheDocument();
 
-    userEvent.click(button);
+    await userEvent.click(button);
     expect(target).not.toBeInTheDocument();
   });
 });
 
 describe("target", () => {
-  test("has Select", () => {
+  test("has Select", async () => {
     render(<Options />);
 
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-target");
     expect(target).toBeInTheDocument();
   });
-  test("value is props.target", () => {
+  test("value is props.target", async () => {
     render(<Options target={1} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-target");
     expect(target).toHaveValue("1");
   });
-  test("change value, then call props.setTarget", () => {
+  test("change value, then call props.setTarget", async () => {
     const setTarget = vi.fn();
     render(<Options target={1} setTarget={setTarget} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-target");
-    userEvent.selectOptions(target, "0");
+    await userEvent.selectOptions(target, "0");
 
     expect(setTarget).toBeCalledWith("0");
   });
 });
 describe("yLine", () => {
-  test("has Select", () => {
+  test("has Select", async () => {
     render(<Options />);
 
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-yline");
     expect(target).toBeInTheDocument();
   });
-  test("value is props.yLine", () => {
+  test("value is props.yLine", async () => {
     render(<Options yLine={1} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-yline");
     expect(target).toHaveValue("1");
   });
-  test("change value, then call props.setTarget", () => {
+  test("change value, then call props.setTarget", async () => {
     const setYLine = vi.fn();
     render(<Options yLine={1} setYLine={setYLine} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByTestId("export-options-yline");
-    userEvent.selectOptions(target, "2");
+    await userEvent.selectOptions(target, "2");
 
     expect(setYLine).toBeCalledWith("2");
   });
 });
 describe("rawEffect", () => {
-  test("empty, then show OFF text", () => {
+  test("empty, then show OFF text", async () => {
     render(<Options rawEffect={false} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText(/設定無し/);
     expect(target).toBeInTheDocument();
   });
-  test("has Effect, then show ON text and clear button", () => {
+  test("has Effect, then show ON text and clear button", async () => {
     render(<Options rawEffect={true} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText(/設定有り/);
     expect(target).toBeInTheDocument();
@@ -120,77 +120,77 @@ describe("rawEffect", () => {
     const clear = screen.getByText("クリア");
     expect(clear).toBeInTheDocument();
   });
-  test("click Clear, then call clearRawEffect", () => {
+  test("click Clear, then call clearRawEffect", async () => {
     const clearRawEffect = vi.fn();
     render(<Options rawEffect={true} clearRawEffect={clearRawEffect} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText("クリア");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(clearRawEffect).toBeCalled();
   });
 });
 
 describe("load data", () => {
-  test("INIT, has load button", () => {
+  test("INIT, has load button", async () => {
     render(<Options />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText("クリップボードから読み込み");
     expect(target).toBeInTheDocument();
   });
-  test("no electron, then noop", () => {
+  test("no electron, then noop", async () => {
     const loadFromTk2k = vi.fn();
     render(<Options loadFromTk2k={loadFromTk2k} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText("クリップボードから読み込み");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(loadFromTk2k).not.toBeCalled();
   });
-  test("readInfo is not function, then noop", () => {
+  test("readInfo is not function, then noop", async () => {
     const loadFromTk2k = vi.fn();
     window.tk2k = { readInfo: 123 };
     render(<Options loadFromTk2k={loadFromTk2k} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
 
     const target = screen.getByText("クリップボードから読み込み");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(loadFromTk2k).not.toBeCalled();
   });
-  test("readInfo is resolve, then load finished", () => {
+  test("readInfo is resolve, then load finished", async () => {
     const loadFromTk2k = vi.fn();
     let resolve;
     const readInfo = vi.fn(() => new Promise((r) => (resolve = r)));
     window.tk2k = { readInfo: readInfo };
     render(<Options loadFromTk2k={loadFromTk2k} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
     const loadButton = screen.getByText("クリップボードから読み込み");
-    userEvent.click(loadButton);
+    await userEvent.click(loadButton);
     const target = screen.getByText("Loading...");
     expect(target).toBeInTheDocument();
 
     resolve("test data");
     return waitFor(() => expect(loadFromTk2k).toBeCalledWith("test data"));
   });
-  test("readInfo is reject, then noop", () => {
+  test("readInfo is reject, then noop", async () => {
     const loadFromTk2k = vi.fn();
     let reject;
     const readInfo = vi.fn(() => new Promise((rs, rj) => (reject = rj)));
     window.tk2k = { readInfo: readInfo };
     render(<Options loadFromTk2k={loadFromTk2k} />);
     const button = screen.getByTestId("export-options-button");
-    userEvent.click(button);
+    await userEvent.click(button);
     const loadButton = screen.getByText("クリップボードから読み込み");
-    userEvent.click(loadButton);
+    await userEvent.click(loadButton);
     const target = screen.getByText("Loading...");
     expect(target).toBeInTheDocument();
 

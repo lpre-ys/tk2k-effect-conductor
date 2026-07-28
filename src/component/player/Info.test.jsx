@@ -26,12 +26,12 @@ test("has msg, show msg", () => {
   expect(target).toBeInTheDocument();
 });
 
-test("click close icon, then delete msg", () => {
+test("click close icon, then delete msg", async () => {
   const mockFn = vi.fn();
   render(<Info msg="テストメッセージ" setMsg={mockFn} />);
 
   const target = screen.getByTestId("info-close-icon");
-  userEvent.click(target);
+  await userEvent.click(target);
 
   expect(mockFn).toBeCalledWith("");
 });

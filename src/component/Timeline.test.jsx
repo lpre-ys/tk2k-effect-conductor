@@ -9,34 +9,34 @@ const defaultConfig = {
 };
 
 describe("Buttons", () => {
-  test("add,　then Call props.addCel", () => {
+  test("add,　then Call props.addCel", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline celList={[]} selectedIndices={[0]} addCel={mockFn} />
     );
 
-    userEvent.click(screen.getByText("追加"));
+    await userEvent.click(screen.getByText("追加"));
     expect(mockFn).toBeCalled();
   });
-  test("copy,　then Call props.copyCel", () => {
+  test("copy,　then Call props.copyCel", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline celList={[]} selectedIndices={[0]} copyCel={mockFn} />
     );
 
-    userEvent.click(screen.getByText("コピー"));
+    await userEvent.click(screen.getByText("コピー"));
     expect(mockFn).toBeCalled();
   });
-  test("delete　celList.length = 1,then not Call props.deleteCel", () => {
+  test("delete　celList.length = 1,then not Call props.deleteCel", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline celList={[defaultConfig]} selectedIndices={[0]} deleteCel={mockFn} />
     );
 
-    userEvent.click(screen.getByText("削除"));
+    await userEvent.click(screen.getByText("削除"));
     expect(mockFn).not.toBeCalled();
   });
-  test("delete　celList.length = 2,then Call props.deleteCel", () => {
+  test("delete　celList.length = 2,then Call props.deleteCel", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline
@@ -46,7 +46,7 @@ describe("Buttons", () => {
       />
     );
 
-    userEvent.click(screen.getByText("削除"));
+    await userEvent.click(screen.getByText("削除"));
     expect(mockFn).toBeCalled();
   });
   test("↑ボタン: selectedIndices が全て 0 のとき disabled", () => {
@@ -63,7 +63,7 @@ describe("Buttons", () => {
     const sortButtons = buttons.filter((b) => !b.textContent);
     expect(sortButtons[0]).toBeDisabled();
   });
-  test("↑ボタン: selectedIndices に 0 以外があれば enabled", () => {
+  test("↑ボタン: selectedIndices に 0 以外があれば enabled", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline
@@ -76,7 +76,7 @@ describe("Buttons", () => {
     const buttons = screen.getAllByRole("button");
     const sortButtons = buttons.filter((b) => !b.textContent);
     expect(sortButtons[0]).not.toBeDisabled();
-    userEvent.click(sortButtons[0]);
+    await userEvent.click(sortButtons[0]);
     expect(mockFn).toBeCalledWith(-1);
   });
   test("↓ボタン: selectedIndices が全て末尾のとき disabled", () => {
@@ -91,7 +91,7 @@ describe("Buttons", () => {
     const sortButtons = buttons.filter((b) => !b.textContent);
     expect(sortButtons[1]).toBeDisabled();
   });
-  test("↓ボタン: selectedIndices に末尾でないものがあれば enabled", () => {
+  test("↓ボタン: selectedIndices に末尾でないものがあれば enabled", async () => {
     const mockFn = vi.fn();
     renderWithProviders(
       <Timeline
@@ -104,7 +104,7 @@ describe("Buttons", () => {
     const buttons = screen.getAllByRole("button");
     const sortButtons = buttons.filter((b) => !b.textContent);
     expect(sortButtons[1]).not.toBeDisabled();
-    userEvent.click(sortButtons[1]);
+    await userEvent.click(sortButtons[1]);
     expect(mockFn).toBeCalledWith(1);
   });
 });

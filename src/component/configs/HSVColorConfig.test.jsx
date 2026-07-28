@@ -35,27 +35,27 @@ describe("Min Max", () => {
     expect(target).toBeInTheDocument();
     expect(target).toHaveValue(135);
   });
-  test("change Min, then call updateMin", () => {
+  test("change Min, then call updateMin", async () => {
     const updateMin = vi.fn();
     renderWithProviders(
       <HSVColorConfig config={DEFAULT_CONFIG} updateMin={updateMin} />
     );
 
     const target = screen.getByTestId("color-range-input-number-hsv-min");
-    userEvent.clear(target);
-    userEvent.type(target, "11");
+    await userEvent.clear(target);
+    await userEvent.type(target, "11");
 
     expect(updateMin).toBeCalledWith(11);
   });
-  test("change Max, then call updateMax", () => {
+  test("change Max, then call updateMax", async () => {
     const updateMax = vi.fn();
     renderWithProviders(
       <HSVColorConfig config={DEFAULT_CONFIG} updateMax={updateMax} />
     );
 
     const target = screen.getByTestId("color-range-input-number-hsv-max");
-    userEvent.clear(target);
-    userEvent.type(target, "33");
+    await userEvent.clear(target);
+    await userEvent.type(target, "33");
 
     expect(updateMax).toBeCalledWith(33);
   });

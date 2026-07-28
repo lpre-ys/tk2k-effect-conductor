@@ -8,12 +8,12 @@ test('INIT, then show content', () => {
   expect(target).toBeInTheDocument();
 });
 
-test('click close button, then hide content', () => {
+test('click close button, then hide content', async () => {
   render(<ErrorInfo />);
 
   const target = screen.getByTestId('export-error-info');
   expect(target).toBeInTheDocument();
 
-  userEvent.click(screen.getByTestId('export-error-info-close'));
+  await userEvent.click(screen.getByTestId('export-error-info-close'));
   expect(target).not.toBeInTheDocument();
 });

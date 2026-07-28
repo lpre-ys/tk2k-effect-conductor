@@ -26,21 +26,21 @@ describe("Options", () => {
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
   });
-  test("click header once, then has component", () => {
+  test("click header once, then has component", async () => {
     renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
-    userEvent.click(header);
+    await userEvent.click(header);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).toBeInTheDocument();
   });
-  test("click header twice, then no component", () => {
+  test("click header twice, then no component", async () => {
     renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="test" />);
 
     const header = screen.getByRole("heading");
-    userEvent.click(header);
-    userEvent.click(header);
+    await userEvent.click(header);
+    await userEvent.click(header);
 
     const target = screen.queryByTestId("from-to-options");
     expect(target).not.toBeInTheDocument();
@@ -154,10 +154,10 @@ describe("Header", () => {
       const target = screen.getByTestId("config-header-icon-right");
       expect(target).toBeInTheDocument();
     });
-    test("show Option, then show Down icon", () => {
+    test("show Option, then show Down icon", async () => {
       renderWithProviders(<FromToConfig type="x" config={defaultConfig} name="テストネーム" />);
 
-      userEvent.click(screen.getByRole("heading"));
+      await userEvent.click(screen.getByRole("heading"));
 
       const target = screen.getByTestId("config-header-icon-down");
       expect(target).toBeInTheDocument();
@@ -190,7 +190,7 @@ describe("Header", () => {
       const target = screen.queryByTestId("config-header-icon-error");
       expect(target).toBeInTheDocument();
     });
-    test("ckick Icon, then reset value to config", () => {
+    test("ckick Icon, then reset value to config", async () => {
       renderWithProviders(
         <FromToConfig type="x" config={{ from: 12, to: 34 }} name="テストネーム" />
       );
@@ -201,13 +201,13 @@ describe("Header", () => {
       fireEvent.change(to, { target: { value: "" } });
 
       const icon = screen.getByTestId("config-header-icon-error");
-      userEvent.click(icon);
+      await userEvent.click(icon);
 
       expect(icon).not.toBeInTheDocument();
       expect(from).toHaveValue(12);
       expect(to).toHaveValue(34);
     });
-    test("ckick Icon, then not change isOption", () => {
+    test("ckick Icon, then not change isOption", async () => {
       renderWithProviders(
         <FromToConfig type="x" config={defaultConfig} name="テストネーム" />
       );
@@ -216,7 +216,7 @@ describe("Header", () => {
       fireEvent.change(from, { target: { value: "" } });
 
       const icon = screen.getByTestId("config-header-icon-error");
-      userEvent.click(icon);
+      await userEvent.click(icon);
 
       const target = screen.queryByTestId("from-to-options");
       expect(target).not.toBeInTheDocument();

@@ -31,38 +31,38 @@ test("picker element's bgColor is props.color", () => {
   expect(target).toHaveStyle({ backgroundColor: "#FAC184" });
 });
 
-test('color is transparent, click picker, then call setColor', () => {
+test('color is transparent, click picker, then call setColor', async () => {
   const mockFn = vi.fn();
   render(<ColorPicker color="transparent" setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('colorpicker-color'));
+  await userEvent.click(screen.getByTestId('colorpicker-color'));
 
   expect(mockFn).lastCalledWith('#FFFFFF');
 });
 
-test('color is not transparent, click picker, then not call setColor', () => {
+test('color is not transparent, click picker, then not call setColor', async () => {
   const mockFn = vi.fn();
   render(<ColorPicker color="red" setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('colorpicker-color'));
+  await userEvent.click(screen.getByTestId('colorpicker-color'));
 
   expect(mockFn).not.toBeCalled();
 });
 
-test('picker change, then call setColor', () => {
+test('picker change, then call setColor', async () => {
   const mockFn = vi.fn();
   render(<ColorPicker setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('mock-hex-picker'));
+  await userEvent.click(screen.getByTestId('mock-hex-picker'));
 
   expect(mockFn).lastCalledWith('#112233');
 });
 
-test('click preset swatch, then call setColor with preset value', () => {
+test('click preset swatch, then call setColor with preset value', async () => {
   const mockFn = vi.fn();
   render(<ColorPicker setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('colorpicker-preset-transparent'));
+  await userEvent.click(screen.getByTestId('colorpicker-preset-transparent'));
 
   expect(mockFn).lastCalledWith('transparent');
 });

@@ -50,20 +50,20 @@ describe("MaterialImage", () => {
     const target = screen.queryByText("プレビュー");
     expect(target).toBeInTheDocument();
   });
-  test("click Preview Button, then show MaterialImage", () => {
+  test("click Preview Button, then show MaterialImage", async () => {
     renderWithProviders(<Material originalImage="test.png" />);
 
     const target = screen.queryByText("プレビュー");
-    userEvent.click(target);
+    await userEvent.click(target);
 
     expect(screen.getByTestId("material-image")).toBeInTheDocument();
   });
-  test("click twice Preview Button, then hide MaterialImage", () => {
+  test("click twice Preview Button, then hide MaterialImage", async () => {
     renderWithProviders(<Material originalImage="test.png" />);
 
     const target = screen.queryByText("プレビュー");
-    userEvent.click(target);
-    userEvent.click(target);
+    await userEvent.click(target);
+    await userEvent.click(target);
 
     expect(screen.queryByTestId("material-image")).toBeNull();
   });

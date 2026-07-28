@@ -36,14 +36,14 @@ describe("Length", () => {
   });
 });
 describe("bgColor, changeBgColor", () => {
-  test("change BGColor then call changeBgColor", () => {
+  test("change BGColor then call changeBgColor", async () => {
     const mockHandler = vi.fn();
     renderWithProviders(
       <Patterns max={1} image="test.png" bgColor="transparent" changeBgColor={mockHandler} />
     );
     const picker = screen.getByTestId("colorpicker-color");
 
-    userEvent.click(picker);
+    await userEvent.click(picker);
 
     expect(mockHandler).toBeCalledWith("#FFFFFF");
   });

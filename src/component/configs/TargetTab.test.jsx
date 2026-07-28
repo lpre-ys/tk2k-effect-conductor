@@ -9,20 +9,20 @@ test("show 2 tabs", () => {
   expect(targets).toHaveLength(2);
 });
 
-test("click '基本' tab, then setTarget normal", () => {
+test("click '基本' tab, then setTarget normal", async () => {
   const setTarget = vi.fn();
   render(<TargetTab setTarget={setTarget} />);
 
-  userEvent.click(screen.getByText('基本'));
+  await userEvent.click(screen.getByText('基本'));
 
   expect(setTarget).toBeCalledWith('normal');
 });
 
-test("click '色調' tab, then setTarget color", () => {
+test("click '色調' tab, then setTarget color", async () => {
   const setTarget = vi.fn();
   render(<TargetTab setTarget={setTarget} />);
 
-  userEvent.click(screen.getByText('色調'));
+  await userEvent.click(screen.getByText('色調'));
 
   expect(setTarget).toBeCalledWith('color');
 });

@@ -46,36 +46,36 @@ describe("Header", () => {
     const target = screen.getByText("テストセル");
     expect(target).toContainHTML("</h1>");
   });
-  test("header click, then show input and focus", () => {
+  test("header click, then show input and focus", async () => {
     renderWithProviders(<Configs name="テストセル" />);
     const header = screen.getByText("テストセル");
 
-    userEvent.click(header);
+    await userEvent.click(header);
 
     const target = screen.getByDisplayValue("テストセル");
     expect(target).toContainHTML("</input>");
     expect(target).toHaveFocus();
   });
-  test("input on change, then call setCelName", () => {
+  test("input on change, then call setCelName", async () => {
     const mock = vi.fn();
     renderWithProviders(<Configs name="テストセル" setCelName={mock} />);
     const header = screen.getByText("テストセル");
 
-    userEvent.click(header);
+    await userEvent.click(header);
     const target = screen.getByDisplayValue("テストセル");
-    userEvent.type(target, "a");
+    await userEvent.type(target, "a");
 
     expect(mock).lastCalledWith("テストセルa");
   });
-  test("blur input, then hide input and show header", () => {
+  test("blur input, then hide input and show header", async () => {
     renderWithProviders(<Configs name="テストセル" />);
     const header = screen.getByText("テストセル");
 
-    userEvent.click(header);
+    await userEvent.click(header);
     expect(screen.getByDisplayValue("テストセル")).toContainHTML("</input>");
 
     // 適当な場所をクリックして、フォーカスをはずす
-    userEvent.click(screen.getByText("表示タイミング"));
+    await userEvent.click(screen.getByText("表示タイミング"));
     expect(screen.getByText("テストセル")).toContainHTML("</h1>");
   });
 });
@@ -126,19 +126,19 @@ describe("FromTo Components", () => {
 });
 
 describe('Color components', () => {
-  test("has Color component", () => {
+  test("has Color component", async () => {
     renderWithProviders(<Configs />);
 
-    userEvent.click(screen.getByText('色調'));
+    await userEvent.click(screen.getByText('色調'));
 
     const target = screen.getByText("赤");
     expect(target).toBeInTheDocument();
   });
-  test('click HSV mode button, then HSV mode ON', () => {
+  test('click HSV mode button, then HSV mode ON', async () => {
     renderWithProviders(<Configs />);
 
-    userEvent.click(screen.getByText('色調'));
-    userEvent.click(screen.getByTestId('color-config-hsv-mode'));
+    await userEvent.click(screen.getByText('色調'));
+    await userEvent.click(screen.getByTestId('color-config-hsv-mode'));
 
     const target = screen.getByText('H. 色相');
     expect(target).toBeInTheDocument();

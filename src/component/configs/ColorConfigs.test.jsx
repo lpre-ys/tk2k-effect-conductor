@@ -15,12 +15,12 @@ test('has HSV mode button', () => {
   const target = screen.getByRole('button');
   expect(target).toHaveTextContent('HSVモード');
 });
-test("click HSV mode button, then call setIsHSV", () => {
+test("click HSV mode button, then call setIsHSV", async () => {
   const setIsHSV = vi.fn();
   renderWithProviders(<ColorConfigs setIsHSV={setIsHSV} />);
 
   const target = screen.getByRole('button');
-  userEvent.click(target);
+  await userEvent.click(target);
 
   expect(setIsHSV).toBeCalled();
 });
@@ -43,22 +43,22 @@ test('HSV mode ON, then show HSV and tkSat form', () => {
   expect(screen.getByText('※ツクール側の値')).toBeInTheDocument();
 });
 
-test('change HSV min, then update HSV.min', () => {
+test('change HSV min, then update HSV.min', async () => {
   renderWithProviders(<ColorConfigs isHSV={true} />);
 
   const target = screen.getByTestId("color-range-input-number-hsv-min");
-  userEvent.clear(target);
-  userEvent.type(target, "34");
+  await userEvent.clear(target);
+  await userEvent.type(target, "34");
 
   expect(target).toHaveValue(34);
 });
 
-test('change HSV max, then update HSV.max', () => {
+test('change HSV max, then update HSV.max', async () => {
   renderWithProviders(<ColorConfigs isHSV={true} />);
 
   const target = screen.getByTestId("color-range-input-number-hsv-max");
-  userEvent.clear(target);
-  userEvent.type(target, "156");
+  await userEvent.clear(target);
+  await userEvent.type(target, "156");
 
   expect(target).toHaveValue(156);
 });

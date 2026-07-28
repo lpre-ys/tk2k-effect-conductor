@@ -29,7 +29,7 @@ describe("loadImage", () => {
       const file = new File(["testUp"], "testUp.png", { type: "image/png" });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).toBeCalledWith({
@@ -50,7 +50,7 @@ describe("loadImage", () => {
       });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).toBeCalledWith("テスト画像name");
@@ -72,7 +72,7 @@ describe("loadImage", () => {
       });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).toBeCalledWith("");
@@ -88,7 +88,7 @@ describe("loadImage", () => {
       const file = new File(["testUp"], "testUp.png", { type: "image/png" });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).not.toBeCalled();
@@ -102,7 +102,7 @@ describe("loadImage", () => {
       const file = new File(["testUp"], "testUp.png", { type: "image/png" });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).not.toBeCalled();
@@ -116,7 +116,7 @@ describe("loadImage", () => {
       const file = new File(["testUp"], "testUp.png", { type: "image/png" });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).toBeCalledWith("画像の横幅が、規格とは異なっています。");
@@ -130,7 +130,7 @@ describe("loadImage", () => {
       const file = new File(["testUp"], "testUp.png", { type: "image/png" });
       const input = screen.getByTestId("drop-input");
 
-      userEvent.upload(input, file);
+      await userEvent.upload(input, file);
 
       await waitFor(() => {
         expect(mockFn).toBeCalledWith("画像の縦幅が、規格とは異なっています。");
@@ -161,14 +161,14 @@ describe("dropzone settings", () => {
     const file = new File(["testUp"], "testUp.png", { type: "image/png" });
     const input = screen.getByTestId("drop-input");
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
 
     await waitFor(() => {
       expect(mockFn).toBeCalled();
     });
   });
 
-  test("Loader loaded multi png file, then noop", async () => {
+  test("Loader loaded multi png file, then load only the first file", async () => {
     const mockFn = vi.fn();
     render(
       <Loader
@@ -184,9 +184,14 @@ describe("dropzone settings", () => {
     ];
     const input = screen.getByTestId("drop-input");
 
-    userEvent.upload(input, files);
+    await userEvent.upload(input, files);
     await waitFor(() => {
-      expect(mockFn).not.toBeCalled();
+      expect(mockFn).toBeCalledWith({
+        dataUrl: "data:image/png;base64,dGVzdFVwMQ==",
+        transparent: "transparent-image",
+        maxPage: 42,
+        trColor: "test-trcolor",
+      });
     });
   });
 
@@ -203,7 +208,7 @@ describe("dropzone settings", () => {
     const file = new File(["testUpBmp"], "testUp.bmp", { type: "image/bmp" });
     const input = screen.getByTestId("drop-input");
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
 
     await waitFor(() => {
       expect(mockFn).toBeCalled();
@@ -223,7 +228,7 @@ describe("dropzone settings", () => {
     const file = new File(["testUpGif"], "testUp.gif", { type: "image/gif" });
     const input = screen.getByTestId("drop-input");
 
-    userEvent.upload(input, file);
+    await userEvent.upload(input, file);
 
     await waitFor(() => {
       expect(mockFn).not.toBeCalled();
