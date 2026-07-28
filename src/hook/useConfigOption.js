@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export function useConfigOption(hasOption, reset) {
   const [isOption, setIsOption] = useState(false);
-  const [optionKey, setOptionKey] = useState(Date.now());
+  const [optionKey, setOptionKey] = useState(() => Date.now());
 
   const headerColorStyle = {
     color: hasOption() ? "#00838F" : "#9E9E9E",
