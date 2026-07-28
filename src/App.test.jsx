@@ -6,10 +6,10 @@ import App from "./App";
 import { renderWithProviders } from "./util/renderWithProviders";
 import testdata from "./App.testdata.json";
 
-vi.mock("react-color", () => {
+vi.mock("react-colorful", () => {
   return {
-    SketchPicker: () => {
-      return <div data-testid="mock-sketch-picker"></div>;
+    HexColorPicker: () => {
+      return <div data-testid="mock-hex-picker"></div>;
     },
   };
 });
