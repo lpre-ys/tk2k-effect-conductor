@@ -2,10 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ViewSettings } from "./ViewSettings";
 
-vi.mock("react-color", () => {
+vi.mock("react-colorful", () => {
   return {
-    SketchPicker: () => {
-      return <div data-testid="mock-sketch-picker"></div>;
+    HexColorPicker: () => {
+      return <div data-testid="mock-hex-picker"></div>;
     },
   };
 });

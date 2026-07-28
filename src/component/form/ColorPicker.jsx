@@ -2,8 +2,27 @@
 
 import { css } from "@emotion/react";
 import { useRef, useState } from "react";
-import { SketchPicker } from "react-color";
+import { HexColorPicker } from "react-colorful";
 import TrImage from "../../tr2x.png";
+
+const PRESET_COLORS = [
+  "#D0021B",
+  "#F5A623",
+  "#F8E71C",
+  "#8B572A",
+  "#7ED321",
+  "#417505",
+  "#BD10E0",
+  "#9013FE",
+  "#4A90E2",
+  "#50E3C2",
+  "#B8E986",
+  "#000000",
+  "#4A4A4A",
+  "#9B9B9B",
+  "#FFFFFF",
+  "transparent",
+];
 
 export default function ColorPicker({ label, color, setColor }) {
   const [showPalette, setShowPalette] = useState(false);
@@ -13,6 +32,8 @@ export default function ColorPicker({ label, color, setColor }) {
   if (labelRef.current) {
     pickerLeft = labelRef.current.getBoundingClientRect().width + 8;
   }
+
+  const pickerColor = color === "transparent" ? "#FFFFFF" : color;
 
   return (
     <>
@@ -47,34 +68,18 @@ export default function ColorPicker({ label, color, setColor }) {
             left: `${pickerLeft}px`,
           }}
         >
-          <SketchPicker
-            color={color === "transparent" ? "rgba(0, 0, 0, 0.0)" : color}
-            presetColors={[
-              "#D0021B",
-              "#F5A623",
-              "#F8E71C",
-              "#8B572A",
-              "#7ED321",
-              "#417505",
-              "#BD10E0",
-              "#9013FE",
-              "#4A90E2",
-              "#50E3C2",
-              "#B8E986",
-              "#000000",
-              "#4A4A4A",
-              "#9B9B9B",
-              "#FFFFFF",
-              "transparent",
-            ]}
-            onChange={(color, event) => {
-              let value = color.hex;
-              if (color.rgb.a < 1.0) {
-                value = `rgba(${color.rgb.r},${color.rgb.g},${color.rgb.b},${color.rgb.a})`;
-              }
-              setColor(value);
-            }}
-          />
+          <HexColorPicker color={pickerColor} onChange={setColor} />
+          <div css={styles.presetRow}>
+            {PRESET_COLORS.map((preset) => (
+              <div
+                key={preset}
+                css={preset === "transparent" ? styles.presetSwatchTr : styles.presetSwatch}
+                style={{ backgroundColor: preset }}
+                onClick={() => setColor(preset)}
+                data-testid={`colorpicker-preset-${preset}`}
+              ></div>
+            ))}
+          </div>
         </div>
       </div>
     </>
@@ -117,5 +122,32 @@ const styles = {
     top: 24px;
     z-index: 2;
     user-select: none;
+    background: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  `,
+  presetRow: css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+    width: 200px;
+  `,
+  presetSwatch: css`
+    width: 20px;
+    height: 20px;
+    border: 1px solid #212121;
+    border-radius: 2px;
+    cursor: pointer;
+  `,
+  presetSwatchTr: css`
+    width: 20px;
+    height: 20px;
+    border: 1px solid #212121;
+    border-radius: 2px;
+    cursor: pointer;
+    background-image: url(${TrImage});
+    background-size: cover;
   `,
 };

@@ -2,32 +2,13 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ColorPicker from "./ColorPicker";
 
-vi.mock("react-color", () => {
+vi.mock("react-colorful", () => {
   return {
-    SketchPicker: ({ onChange }) => {
-      return (
-        <div data-testid="mock-sketch-picker">
-          <button
-            data-testid="mock-picker-no-alpha"
-            onClick={() => {
-              onChange({
-                hex: "#112233",
-                rgb: { r: 10, g: 20, b: 30, a: 1.0 },
-              });
-            }}
-          ></button>
-          <button
-            data-testid="mock-picker-alpha"
-            onClick={() => {
-              onChange({
-                hex: "#112233",
-                rgb: { r: 10, g: 20, b: 30, a: 0.9 },
-              });
-            }}
-          ></button>
-        </div>
-      );
-    },
+    HexColorPicker: ({ color, onChange }) => (
+      <button data-testid="mock-hex-picker" onClick={() => onChange("#112233")}>
+        {color}
+      </button>
+    ),
   };
 });
 
@@ -72,16 +53,16 @@ test('picker change, then call setColor', () => {
   const mockFn = vi.fn();
   render(<ColorPicker setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('mock-picker-no-alpha'));
+  userEvent.click(screen.getByTestId('mock-hex-picker'));
 
   expect(mockFn).lastCalledWith('#112233');
 });
 
-test('picker change to alphacolor, then call setColor', () => {
+test('click preset swatch, then call setColor with preset value', () => {
   const mockFn = vi.fn();
   render(<ColorPicker setColor={mockFn} />);
 
-  userEvent.click(screen.getByTestId('mock-picker-alpha'));
+  userEvent.click(screen.getByTestId('colorpicker-preset-transparent'));
 
-  expect(mockFn).lastCalledWith('rgba(10,20,30,0.9)');
+  expect(mockFn).lastCalledWith('transparent');
 });
