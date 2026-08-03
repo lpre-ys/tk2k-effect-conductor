@@ -102,7 +102,7 @@ describe("isSub", () => {
       renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
 
       const target = screen.getByTestId("const-config-params-wrapper");
-      expect(target).not.toHaveStyle({ fontSize: "0.9em" });
+      expect(target).not.toHaveStyle({ fontSize: "14.4px" });
     });
     test("input do not have sub style", () => {
       renderWithProviders(<FixedConfig type="x" config={{ from: 3, to: 6 }} />);
@@ -118,7 +118,7 @@ describe("isSub", () => {
       );
 
       const target = screen.getByTestId("const-config-params-wrapper");
-      expect(target).toHaveStyle({ fontSize: "0.9em" });
+      expect(target).toHaveStyle({ fontSize: "14.4px" });
     });
     test("input have sub style", () => {
       renderWithProviders(
