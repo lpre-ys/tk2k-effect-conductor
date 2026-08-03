@@ -67,7 +67,7 @@ describe("sub", () => {
         render(<Header />);
 
         const target = screen.getByRole("heading", { level: 2 });
-        expect(target).not.toHaveStyle({ fontSize: '1.1em' });
+        expect(target).not.toHaveStyle({ fontSize: '17.6px' });
       });
     });
     describe("icon do not have sub style", () => {
@@ -76,17 +76,17 @@ describe("sub", () => {
         render(<Header setIsOption={mockFn} isOption={true} />);
 
         const target1 = screen.getByTestId("config-header-icon-down");
-        expect(target1).not.toHaveStyle({ top: "0.15em" });
+        expect(target1).not.toHaveStyle({ top: "2.4px" });
 
         render(<Header setIsOption={mockFn} isOption={false} />);
         const target2 = screen.getByTestId("config-header-icon-right");
-        expect(target2).not.toHaveStyle({ top: "0.15em" });
+        expect(target2).not.toHaveStyle({ top: "2.4px" });
       });
       test("not use Option", () => {
         render(<Header />);
 
         const target = screen.getByTestId("config-header-icon-dot");
-        expect(target).not.toHaveStyle({ top: "0.15em" });
+        expect(target).not.toHaveStyle({ top: "2.4px" });
       });
     });
   });
@@ -102,7 +102,7 @@ describe("sub", () => {
         render(<Header isSub={true} />);
 
         const target = screen.getByRole("heading", { level: 3 });
-        expect(target).toHaveStyle({ fontSize: '1.1em' });
+        expect(target).toHaveStyle({ fontSize: '17.6px' });
       });
     });
     describe("icon have sub style", () => {
@@ -111,17 +111,17 @@ describe("sub", () => {
         render(<Header isSub={true} setIsOption={mockFn} isOption={true} />);
 
         const target1 = screen.getByTestId("config-header-icon-down");
-        expect(target1).toHaveStyle({ top: "0.15em" });
+        expect(target1).toHaveStyle({ top: "2.4px" });
 
         render(<Header isSub={true} setIsOption={mockFn} isOption={false} />);
         const target2 = screen.getByTestId("config-header-icon-right");
-        expect(target2).toHaveStyle({ top: "0.15em" });
+        expect(target2).toHaveStyle({ top: "2.4px" });
       });
       test("not use Option", () => {
         render(<Header isSub={true} />);
 
         const target = screen.getByTestId("config-header-icon-dot");
-        expect(target).toHaveStyle({ top: "0em" });
+        expect(target).toHaveStyle({ top: "0px" });
       });
     });
   });
