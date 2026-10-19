@@ -53,13 +53,13 @@ describe("bgColor, changeBgColor", () => {
       <Patterns max={1} image="test.png" bgColor="transparent" />
     );
     const target = screen.getByTestId("patterns-pattern-bgcolor-div");
-    expect(target).toHaveStyle(`background: transparent`);
+    expect(target).toHaveStyle(`background-color: rgba(0, 0, 0, 0)`);
   });
 
   test("bgColor is gray, then bg style is gray", () => {
     renderWithProviders(<Patterns max={1} image="test.png" bgColor="gray" />);
     const target = screen.getByTestId("patterns-pattern-bgcolor-div");
-    expect(target).toHaveStyle(`background: gray`);
+    expect(target).toHaveStyle(`background-color: rgb(128, 128, 128)`);
   });
 
   test("ColorPicker color is bgColor", () => {
