@@ -31,14 +31,14 @@ test("target is normal, then only 1st tab has selected style", () => {
   render(<TargetTab target="normal" />);
 
   const targets = screen.getAllByTestId('target-tab');
-  expect(targets[0]).toHaveStyle({ "background": "white" });
-  expect(targets[1]).not.toHaveStyle({ "background": "white" });
+  expect(targets[0]).toHaveStyle({ "backgroundColor": "rgb(255, 255, 255)" });
+  expect(targets[1]).not.toHaveStyle({ "backgroundColor": "rgb(255, 255, 255)" });
 })
 
 test("target is color, then only 2nd tab has selected style", () => {
   render(<TargetTab target="color" />);
 
   const targets = screen.getAllByTestId('target-tab');
-  expect(targets[0]).not.toHaveStyle({ "background": "white" });
-  expect(targets[1]).toHaveStyle({ "background": "white" });
+  expect(targets[0]).not.toHaveStyle({ "backgroundColor": "rgb(255, 255, 255)" });
+  expect(targets[1]).toHaveStyle({ "backgroundColor": "rgb(255, 255, 255)" });
 })
