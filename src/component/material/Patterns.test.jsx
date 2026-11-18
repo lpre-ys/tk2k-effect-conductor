@@ -15,7 +15,8 @@ test("image is div.backgroundImage", () => {
   renderWithProviders(<Patterns max={1} image="testbg.png" />);
 
   const target = screen.getByTestId("patterns-pattern-sprite");
-  expect(target).toHaveStyle({ backgroundImage: "url(testbg.png)" });
+  // jsdom 31+ resolves url() to an absolute URL in computed style, so check the inline style
+  expect(target.style.backgroundImage).toBe('url("testbg.png")');
 });
 
 describe("Length", () => {
